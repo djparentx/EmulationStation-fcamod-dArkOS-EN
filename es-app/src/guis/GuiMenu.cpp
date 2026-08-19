@@ -2266,7 +2266,7 @@ void GuiMenu::openOtherSettings()
 	});
 
         // Battery Settings
-	s->addEntry(_("BATTERY SETTINGS"), true, [this] { openBatterySettings(); }, "iconBattery");
+	s->addEntry(_("BATTERYPLUS SETTINGS"), true, [this] { openBatterySettings(); }, "iconBattery");
 
 #ifndef _RPI_
 	// full exit
