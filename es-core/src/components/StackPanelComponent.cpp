@@ -1,6 +1,7 @@
 #include "components/StackPanelComponent.h"
 #include "Window.h"
 #include "renderers/Renderer.h"
+#include "math/Vector2i.h"
 #include "math/Misc.h"
 
 StackPanelComponent::StackPanelComponent(Window* window) : GuiComponent(window), mHorizontal(true), mReverse(false), mClipChildren(true), mSeparator(0.0f)
