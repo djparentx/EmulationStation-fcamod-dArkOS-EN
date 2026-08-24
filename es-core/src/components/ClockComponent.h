@@ -12,8 +12,6 @@ class ClockComponent : public TextComponent
 public:
 	ClockComponent(Window* window);
 
-	std::string getThemeTypeName() override { return "clock"; }
-
 	virtual void update(int deltaTime);
 
 private:

@@ -12,8 +12,6 @@ class NetworkIconComponent : public ImageComponent
 public:
 	NetworkIconComponent(Window* window);
 
-	std::string getThemeTypeName() override { return "networkIcon"; }
-
 	void update(int deltaTime) override;
 	void applyTheme(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties) override;
 
