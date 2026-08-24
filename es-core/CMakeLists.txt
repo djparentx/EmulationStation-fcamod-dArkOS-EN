@@ -33,7 +33,12 @@ set(CORE_HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/src/components/AsyncNotificationComponent.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/components/BrightnessInfoComponent.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/components/ControllerActivityComponent.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/components/BatteryIndicatorComponent.h	
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/components/BatteryIndicatorComponent.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/components/ClockComponent.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/components/NetworkIconComponent.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/components/BatteryIconComponent.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/components/BatteryTextComponent.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/components/StackPanelComponent.h	
 	${CMAKE_CURRENT_SOURCE_DIR}/src/components/BusyComponent.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/components/ButtonComponent.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/components/ComponentGrid.h
@@ -126,6 +131,11 @@ set(CORE_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/components/BrightnessInfoComponent.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/components/ControllerActivityComponent.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/components/BatteryIndicatorComponent.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/components/ClockComponent.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/components/NetworkIconComponent.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/components/BatteryIconComponent.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/components/BatteryTextComponent.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/components/StackPanelComponent.cpp	
 	${CMAKE_CURRENT_SOURCE_DIR}/src/components/BusyComponent.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/components/ButtonComponent.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/components/ComponentGrid.cpp
