@@ -13,8 +13,6 @@ class BatteryTextComponent : public TextComponent
 public:
 	BatteryTextComponent(Window* window);
 
-	std::string getThemeTypeName() override { return "batteryText"; }
-
 	virtual void update(int deltaTime);
 
 private:
