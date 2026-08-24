@@ -139,7 +139,7 @@ void BatteryIconComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, c
 {
 	ImageComponent::applyTheme(theme, view, element, properties);
 
-	const ThemeData::ThemeElement* elem = theme->getElement(view, element, getThemeTypeName());
+	const ThemeData::ThemeElement* elem = theme->getElement(view, element, "batteryIcon");
 	if (!elem)
 		return;
 
