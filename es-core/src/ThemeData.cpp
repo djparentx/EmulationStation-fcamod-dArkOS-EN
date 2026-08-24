@@ -12,6 +12,11 @@
 #include "Settings.h"
 #include <algorithm>
 #include "EsLocale.h"
+#include "components/ClockComponent.h"
+#include "components/NetworkIconComponent.h"
+#include "components/BatteryIconComponent.h"
+#include "components/BatteryTextComponent.h"
+#include "components/StackPanelComponent.h"
 
 std::vector<std::string> ThemeData::sSupportedViews { { "system" }, { "basic" }, { "detailed" }, { "grid" }, { "video" }, { "menu" }, { "screen" } };
 std::vector<std::string> ThemeData::sSupportedFeatures { { "video" }, { "carousel" }, { "z-index" }, { "visible" } };
@@ -95,6 +100,91 @@ std::map<std::string, std::map<std::string, ThemeData::ElementPropertyType>> The
 		{ "padding", NORMALIZED_RECT },
 		{ "visible", BOOLEAN },
 		{ "zIndex", FLOAT } } },
+	{ "stackpanel", {
+		{ "pos", NORMALIZED_PAIR },
+		{ "size", NORMALIZED_PAIR },
+		{ "orientation", STRING },
+		{ "reverse", BOOLEAN },
+		{ "separator", FLOAT },
+		{ "opacity", FLOAT },
+		{ "visible", BOOLEAN },
+		{ "clipChildren", BOOLEAN },
+		{ "zIndex", FLOAT } } },
+	{ "clock", {
+		{ "pos", NORMALIZED_PAIR },
+		{ "size", NORMALIZED_PAIR },
+		{ "origin", NORMALIZED_PAIR },
+		{ "rotation", FLOAT },
+		{ "rotationOrigin", NORMALIZED_PAIR },
+		{ "text", STRING },
+		{ "backgroundColor", COLOR },
+		{ "fontPath", PATH },
+		{ "fontSize", FLOAT },
+		{ "color", COLOR },
+		{ "alignment", STRING },
+		{ "verticalAlignment", STRING },
+		{ "forceUppercase", BOOLEAN },
+		{ "lineSpacing", FLOAT },
+		{ "padding", NORMALIZED_RECT },
+		{ "visible", BOOLEAN },
+		{ "zIndex", FLOAT } } },
+	{ "batteryText", {
+		{ "pos", NORMALIZED_PAIR },
+		{ "size", NORMALIZED_PAIR },
+		{ "origin", NORMALIZED_PAIR },
+		{ "rotation", FLOAT },
+		{ "rotationOrigin", NORMALIZED_PAIR },
+		{ "text", STRING },
+		{ "backgroundColor", COLOR },
+		{ "fontPath", PATH },
+		{ "fontSize", FLOAT },
+		{ "color", COLOR },
+		{ "alignment", STRING },
+		{ "verticalAlignment", STRING },
+		{ "forceUppercase", BOOLEAN },
+		{ "lineSpacing", FLOAT },
+		{ "padding", NORMALIZED_RECT },
+		{ "visible", BOOLEAN },
+		{ "zIndex", FLOAT } } },
+	{ "batteryIcon", {
+		{ "pos", NORMALIZED_PAIR },
+		{ "size", NORMALIZED_PAIR },
+		{ "maxSize", NORMALIZED_PAIR },
+		{ "minSize", NORMALIZED_PAIR },
+		{ "origin", NORMALIZED_PAIR },
+		{ "rotation", FLOAT },
+		{ "rotationOrigin", NORMALIZED_PAIR },
+		{ "path", PATH },
+		{ "color", COLOR },
+		{ "visible", BOOLEAN },
+		{ "horizontalAlignment", STRING },
+		{ "verticalAlignment", STRING },
+		{ "flipX", BOOLEAN },
+		{ "flipY", BOOLEAN },
+		{ "zIndex", FLOAT },
+		{ "incharge", PATH },
+		{ "full", PATH },
+		{ "at75", PATH },
+		{ "at50", PATH },
+		{ "at25", PATH },
+		{ "empty", PATH } } },
+	{ "networkIcon", {
+		{ "pos", NORMALIZED_PAIR },
+		{ "size", NORMALIZED_PAIR },
+		{ "maxSize", NORMALIZED_PAIR },
+		{ "minSize", NORMALIZED_PAIR },
+		{ "origin", NORMALIZED_PAIR },
+		{ "rotation", FLOAT },
+		{ "rotationOrigin", NORMALIZED_PAIR },
+		{ "path", PATH },
+		{ "color", COLOR },
+		{ "visible", BOOLEAN },
+		{ "horizontalAlignment", STRING },
+		{ "verticalAlignment", STRING },
+		{ "flipX", BOOLEAN },
+		{ "flipY", BOOLEAN },
+		{ "zIndex", FLOAT },
+		{ "networkIcon", PATH } } },
 	{ "textlist", {
 		{ "pos", NORMALIZED_PAIR },
 		{ "size", NORMALIZED_PAIR },
@@ -724,6 +814,47 @@ bool ThemeData::parseFilterAttributes(const pugi::xml_node& node)
 			return false;
 	}
 
+	if (node.attribute("ifSubset"))
+	{
+		const std::string ifSubsetAttr = node.attribute("ifSubset").as_string();
+		for (auto subset : Utils::String::split(ifSubsetAttr, ','))
+		{
+			auto splits = Utils::String::split(Utils::String::trim(subset), ':');
+			if (splits.size() == 2)
+			{
+				const std::string subsetToFind = Utils::String::trim(splits[0]);
+				const std::string subsetValue = Utils::String::trim(splits[1]);
+
+				std::string selectedSubset = Settings::getInstance()->getString("subset." + mSystemThemeFolder + "." + subsetToFind);
+				if (selectedSubset.empty())
+					selectedSubset = Settings::getInstance()->getString("subset." + subsetToFind);
+
+				if (selectedSubset.empty())
+				{
+					for (const auto& it : mSubsets)
+					{
+						if (it.subset == subsetToFind)
+						{
+							selectedSubset = it.name;
+							break;
+						}
+					}
+				}
+
+				if (selectedSubset.empty())
+					return true;
+
+				bool hasValue = false;
+				for (auto value : Utils::String::split(subsetValue, '|'))
+					if (selectedSubset == Utils::String::trim(value))
+						hasValue = true;
+
+				if (!hasValue)
+					return false;
+			}
+		}
+	}
+
 	return true;
 }
 
@@ -1297,6 +1428,16 @@ std::vector<GuiComponent*> ThemeData::makeExtras(const std::shared_ptr<ThemeData
 				comp = new NinePatchComponent(window);
 			else if (t == "video")
 				comp = new VideoVlcComponent(window);
+			else if (t == "stackpanel")
+				comp = new StackPanelComponent(window);
+			else if (t == "clock")
+				comp = new ClockComponent(window);
+			else if (t == "networkIcon")
+				comp = new NetworkIconComponent(window);
+			else if (t == "batteryIcon")
+				comp = new BatteryIconComponent(window);
+			else if (t == "batteryText")
+				comp = new BatteryTextComponent(window);
 
 			if (comp == nullptr)
 				continue;
