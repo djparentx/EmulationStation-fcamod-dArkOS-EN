@@ -179,6 +179,10 @@ public:
 
 		std::string type;
 
+		// Name (view element key) of the container element (e.g. a stackpanel) this
+		// element is nested under in the theme XML. Empty if this is a top-level element.
+		std::string parent;
+
 		struct Property
 		{
 			void operator= (const Vector2f& value)     { v = value; }

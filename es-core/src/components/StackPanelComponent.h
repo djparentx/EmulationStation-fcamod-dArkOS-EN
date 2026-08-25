@@ -9,7 +9,8 @@ class StackPanelComponent : public GuiComponent
 {
 public:
 	StackPanelComponent(Window* window);
-
+	~StackPanelComponent();
+	
 	void render(const Transform4x4f& parentTrans) override;
 	void applyTheme(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties) override;
 
