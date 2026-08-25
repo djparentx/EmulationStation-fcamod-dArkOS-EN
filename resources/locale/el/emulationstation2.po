@@ -2237,3 +2237,59 @@ msgstr "ΠΡΟΣΑΡΜΟΓΉ ΠΡΟΒΟΛΉΣ"
 
 msgid "CPU GRADE"
 msgstr "ΒΑΘΜΊΔΑ CPU"
+
+msgid "DATE & TIME"
+msgstr "ΗΜΕΡΟΜΗΝΊΑ & ΏΡΑ"
+
+msgid "CURRENT TIME"
+msgstr "ΤΡΈΧΟΥΣΑ ΏΡΑ"
+
+msgid "NETWORK SYNC"
+msgstr "ΣΥΓΧΡΟΝΙΣΜΌΣ ΔΙΚΤΎΟΥ"
+
+msgid "NO NETWORK CONNECTION"
+msgstr "ΔΕΝ ΥΠΆΡΧΕΙ ΣΎΝΔΕΣΗ ΔΙΚΤΎΟΥ"
+
+msgid "TIME SYNCED"
+msgstr "Η ΏΡΑ ΣΥΓΧΡΟΝΊΣΤΗΚΕ"
+
+msgid "SET MANUALLY"
+msgstr "ΧΕΙΡΟΚΊΝΗΤΟΣ ΟΡΙΣΜΌΣ"
+
+msgid "SET YEAR"
+msgstr "ΟΡΙΣΜΌΣ ΈΤΟΥΣ"
+
+msgid "SET MONTH"
+msgstr "ΟΡΙΣΜΌΣ ΜΉΝΑ"
+
+msgid "SET DATE"
+msgstr "ΟΡΙΣΜΌΣ ΗΜΕΡΟΜΗΝΊΑΣ"
+
+msgid "SET HOURS"
+msgstr "ΟΡΙΣΜΌΣ ΩΡΏΝ"
+
+msgid "SET MINUTES"
+msgstr "ΟΡΙΣΜΌΣ ΛΕΠΤΏΝ"
+
+msgid "INVALID DATE SET"
+msgstr "ΜΗ ΈΓΚΥΡΗ ΗΜΕΡΟΜΗΝΊΑ"
+
+msgid "TIME SET"
+msgstr "Η ΏΡΑ ΟΡΊΣΤΗΚΕ"
+
+msgid "NETWORK ICON"
+msgstr "ΕΙΚΟΝΊΔΙΟ ΔΙΚΤΎΟΥ"
+
+msgid "MARIO"
+msgstr "MARIO"
+
+msgid "POKEMON"
+msgstr "POKÉMON"
+
+msgid "SOLSTICE"
+msgstr "SOLSTICE"
+
+msgid "ZELDA"
+msgstr "ZELDA"
+msgid "LIFELINE"
+msgstr "ΓΡΑΜΜΉ ΖΩΉΣ"

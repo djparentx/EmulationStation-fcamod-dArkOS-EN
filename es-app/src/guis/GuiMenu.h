@@ -54,6 +54,8 @@ private:
 
 	void createInputTextRow(GuiSettings *gui, std::string title, const char *settingsID, bool password);
 	void openDisplaySettings();
+	void openDateTimeSettings();
+	void openManualDateTimeSettings(std::function<void()> onApplied = nullptr);
 
 	void openPerformanceSettings();
 	std::string getCpuBinning();

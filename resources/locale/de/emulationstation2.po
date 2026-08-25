@@ -2537,3 +2537,59 @@ msgstr "ANSICHT ANPASSEN"
 
 msgid "COLORFUL"
 msgstr "BUNT"
+
+msgid "DATE & TIME"
+msgstr "DATUM & UHRZEIT"
+
+msgid "CURRENT TIME"
+msgstr "AKTUELLE UHRZEIT"
+
+msgid "NETWORK SYNC"
+msgstr "NETZWERK-SYNCHRONISATION"
+
+msgid "NO NETWORK CONNECTION"
+msgstr "KEINE NETZWERKVERBINDUNG"
+
+msgid "TIME SYNCED"
+msgstr "UHRZEIT SYNCHRONISIERT"
+
+msgid "SET MANUALLY"
+msgstr "MANUELL EINSTELLEN"
+
+msgid "SET YEAR"
+msgstr "JAHR EINSTELLEN"
+
+msgid "SET MONTH"
+msgstr "MONAT EINSTELLEN"
+
+msgid "SET DATE"
+msgstr "DATUM EINSTELLEN"
+
+msgid "SET HOURS"
+msgstr "STUNDEN EINSTELLEN"
+
+msgid "SET MINUTES"
+msgstr "MINUTEN EINSTELLEN"
+
+msgid "INVALID DATE SET"
+msgstr "UNGÜLTIGES DATUM"
+
+msgid "TIME SET"
+msgstr "UHRZEIT EINGESTELLT"
+
+msgid "NETWORK ICON"
+msgstr "NETZWERKSYMBOL"
+
+msgid "MARIO"
+msgstr "MARIO"
+
+msgid "POKEMON"
+msgstr "POKÉMON"
+
+msgid "SOLSTICE"
+msgstr "SOLSTICE"
+
+msgid "ZELDA"
+msgstr "ZELDA"
+msgid "LIFELINE"
+msgstr "LEBENSLINIE"

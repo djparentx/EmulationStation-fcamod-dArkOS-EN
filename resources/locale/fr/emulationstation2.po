@@ -1738,3 +1738,59 @@ msgstr "FR"
 
 msgid "COLORFUL"
 msgstr "COLORÉ"
+
+msgid "DATE & TIME"
+msgstr "DATE ET HEURE"
+
+msgid "CURRENT TIME"
+msgstr "HEURE ACTUELLE"
+
+msgid "NETWORK SYNC"
+msgstr "SYNCHRONISATION RÉSEAU"
+
+msgid "NO NETWORK CONNECTION"
+msgstr "AUCUNE CONNEXION RÉSEAU"
+
+msgid "TIME SYNCED"
+msgstr "HEURE SYNCHRONISÉE"
+
+msgid "SET MANUALLY"
+msgstr "DÉFINIR MANUELLEMENT"
+
+msgid "SET YEAR"
+msgstr "DÉFINIR L'ANNÉE"
+
+msgid "SET MONTH"
+msgstr "DÉFINIR LE MOIS"
+
+msgid "SET DATE"
+msgstr "DÉFINIR LA DATE"
+
+msgid "SET HOURS"
+msgstr "DÉFINIR LES HEURES"
+
+msgid "SET MINUTES"
+msgstr "DÉFINIR LES MINUTES"
+
+msgid "INVALID DATE SET"
+msgstr "DATE INVALIDE"
+
+msgid "TIME SET"
+msgstr "HEURE DÉFINIE"
+
+msgid "NETWORK ICON"
+msgstr "ICÔNE RÉSEAU"
+
+msgid "MARIO"
+msgstr "MARIO"
+
+msgid "POKEMON"
+msgstr "POKÉMON"
+
+msgid "SOLSTICE"
+msgstr "SOLSTICE"
+
+msgid "ZELDA"
+msgstr "ZELDA"
+msgid "LIFELINE"
+msgstr "LIGNE DE VIE"

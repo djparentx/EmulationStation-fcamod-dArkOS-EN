@@ -3964,3 +3964,59 @@ msgstr "СКРИПТ ОНОВЛЕННЯ НЕ ЗНАЙДЕНО\n/usr/local/bin/Up
 
 msgid "VIEW CUSTOMIZATION"
 msgstr "НАЛАШТУВАННЯ ВІДОБРАЖЕННЯ"
+
+msgid "DATE & TIME"
+msgstr "ДАТА ТА ЧАС"
+
+msgid "CURRENT TIME"
+msgstr "ПОТОЧНИЙ ЧАС"
+
+msgid "NETWORK SYNC"
+msgstr "СИНХРОНІЗАЦІЯ ПО МЕРЕЖІ"
+
+msgid "NO NETWORK CONNECTION"
+msgstr "НЕМАЄ МЕРЕЖЕВОГО ПІДКЛЮЧЕННЯ"
+
+msgid "TIME SYNCED"
+msgstr "ЧАС СИНХРОНІЗОВАНО"
+
+msgid "SET MANUALLY"
+msgstr "ВСТАНОВИТИ ВРУЧНУ"
+
+msgid "SET YEAR"
+msgstr "ВСТАНОВИТИ РІК"
+
+msgid "SET MONTH"
+msgstr "ВСТАНОВИТИ МІСЯЦЬ"
+
+msgid "SET DATE"
+msgstr "ВСТАНОВИТИ ДАТУ"
+
+msgid "SET HOURS"
+msgstr "ВСТАНОВИТИ ГОДИНИ"
+
+msgid "SET MINUTES"
+msgstr "ВСТАНОВИТИ ХВИЛИНИ"
+
+msgid "INVALID DATE SET"
+msgstr "НЕВІРНА ДАТА"
+
+msgid "TIME SET"
+msgstr "ЧАС ВСТАНОВЛЕНО"
+
+msgid "NETWORK ICON"
+msgstr "ЗНАЧОК МЕРЕЖІ"
+
+msgid "MARIO"
+msgstr "МАРІО"
+
+msgid "POKEMON"
+msgstr "ПОКЕМОН"
+
+msgid "SOLSTICE"
+msgstr "СОНЦЕСТОЯННЯ"
+
+msgid "ZELDA"
+msgstr "ЗЕЛЬДА"
+msgid "LIFELINE"
+msgstr "ЛІНІЯ ЖИТТЯ"

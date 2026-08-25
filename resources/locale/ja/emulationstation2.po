@@ -1615,3 +1615,59 @@ msgstr "更新スクリプトが見つかりません\n/usr/local/bin/Update.sh"
 
 msgid "VIEW CUSTOMIZATION"
 msgstr "表示のカスタマイズ"
+
+msgid "DATE & TIME"
+msgstr "日付と時刻"
+
+msgid "CURRENT TIME"
+msgstr "現在時刻"
+
+msgid "NETWORK SYNC"
+msgstr "ネットワーク同期"
+
+msgid "NO NETWORK CONNECTION"
+msgstr "ネットワーク接続がありません"
+
+msgid "TIME SYNCED"
+msgstr "時刻が同期されました"
+
+msgid "SET MANUALLY"
+msgstr "手動で設定"
+
+msgid "SET YEAR"
+msgstr "年を設定"
+
+msgid "SET MONTH"
+msgstr "月を設定"
+
+msgid "SET DATE"
+msgstr "日付を設定"
+
+msgid "SET HOURS"
+msgstr "時を設定"
+
+msgid "SET MINUTES"
+msgstr "分を設定"
+
+msgid "INVALID DATE SET"
+msgstr "無効な日付です"
+
+msgid "TIME SET"
+msgstr "時刻を設定しました"
+
+msgid "NETWORK ICON"
+msgstr "ネットワークアイコン"
+
+msgid "MARIO"
+msgstr "マリオ"
+
+msgid "POKEMON"
+msgstr "ポケモン"
+
+msgid "SOLSTICE"
+msgstr "ソルスティス"
+
+msgid "ZELDA"
+msgstr "ゼルダ"
+msgid "LIFELINE"
+msgstr "ライフライン"

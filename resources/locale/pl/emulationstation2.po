@@ -3134,3 +3134,59 @@ msgstr "MAKS. CZĘSTOT."
 
 msgid "UPDATE SCRIPT NOT FOUND\n/usr/local/bin/Update.sh"
 msgstr "SKRYPT AKTUALIZACJI NIE ZNALEZIONY\n/usr/local/bin/Update.sh"
+
+msgid "DATE & TIME"
+msgstr "DATA I GODZINA"
+
+msgid "CURRENT TIME"
+msgstr "BIEŻĄCA GODZINA"
+
+msgid "NETWORK SYNC"
+msgstr "SYNCHRONIZACJA SIECIOWA"
+
+msgid "NO NETWORK CONNECTION"
+msgstr "BRAK POŁĄCZENIA SIECIOWEGO"
+
+msgid "TIME SYNCED"
+msgstr "GODZINA ZSYNCHRONIZOWANA"
+
+msgid "SET MANUALLY"
+msgstr "USTAW RĘCZNIE"
+
+msgid "SET YEAR"
+msgstr "USTAW ROK"
+
+msgid "SET MONTH"
+msgstr "USTAW MIESIĄC"
+
+msgid "SET DATE"
+msgstr "USTAW DATĘ"
+
+msgid "SET HOURS"
+msgstr "USTAW GODZINY"
+
+msgid "SET MINUTES"
+msgstr "USTAW MINUTY"
+
+msgid "INVALID DATE SET"
+msgstr "NIEPRAWIDŁOWA DATA"
+
+msgid "TIME SET"
+msgstr "GODZINA USTAWIONA"
+
+msgid "NETWORK ICON"
+msgstr "IKONA SIECI"
+
+msgid "MARIO"
+msgstr "MARIO"
+
+msgid "POKEMON"
+msgstr "POKÉMON"
+
+msgid "SOLSTICE"
+msgstr "SOLSTICE"
+
+msgid "ZELDA"
+msgstr "ZELDA"
+msgid "LIFELINE"
+msgstr "LINIA ŻYCIA"

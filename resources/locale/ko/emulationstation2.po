@@ -1938,3 +1938,59 @@ msgstr "기본"
 
 msgid "UPDATE SCRIPT NOT FOUND\n/usr/local/bin/Update.sh"
 msgstr "업데이트 스크립트를 찾을 수 없음\n/usr/local/bin/Update.sh"
+
+msgid "DATE & TIME"
+msgstr "날짜 및 시간"
+
+msgid "CURRENT TIME"
+msgstr "현재 시간"
+
+msgid "NETWORK SYNC"
+msgstr "네트워크 동기화"
+
+msgid "NO NETWORK CONNECTION"
+msgstr "네트워크 연결 없음"
+
+msgid "TIME SYNCED"
+msgstr "시간 동기화됨"
+
+msgid "SET MANUALLY"
+msgstr "수동으로 설정"
+
+msgid "SET YEAR"
+msgstr "연도 설정"
+
+msgid "SET MONTH"
+msgstr "월 설정"
+
+msgid "SET DATE"
+msgstr "날짜 설정"
+
+msgid "SET HOURS"
+msgstr "시간 설정"
+
+msgid "SET MINUTES"
+msgstr "분 설정"
+
+msgid "INVALID DATE SET"
+msgstr "잘못된 날짜"
+
+msgid "TIME SET"
+msgstr "시간 설정됨"
+
+msgid "NETWORK ICON"
+msgstr "네트워크 아이콘"
+
+msgid "MARIO"
+msgstr "마리오"
+
+msgid "POKEMON"
+msgstr "포켓몬"
+
+msgid "SOLSTICE"
+msgstr "솔스티스"
+
+msgid "ZELDA"
+msgstr "젤다"
+msgid "LIFELINE"
+msgstr "생명선"

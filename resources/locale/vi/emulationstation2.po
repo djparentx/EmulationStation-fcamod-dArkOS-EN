@@ -1833,3 +1833,59 @@ msgstr "KHÔNG TÌM THẤY SCRIPT CẬP NHẬT\n/usr/local/bin/Update.sh"
 
 msgid "VIEW CUSTOMIZATION"
 msgstr "TÙY CHỈNH XEM"
+
+msgid "DATE & TIME"
+msgstr "NGÀY & GIỜ"
+
+msgid "CURRENT TIME"
+msgstr "GIỜ HIỆN TẠI"
+
+msgid "NETWORK SYNC"
+msgstr "ĐỒNG BỘ QUA MẠNG"
+
+msgid "NO NETWORK CONNECTION"
+msgstr "KHÔNG CÓ KẾT NỐI MẠNG"
+
+msgid "TIME SYNCED"
+msgstr "ĐÃ ĐỒNG BỘ GIỜ"
+
+msgid "SET MANUALLY"
+msgstr "ĐẶT THỦ CÔNG"
+
+msgid "SET YEAR"
+msgstr "ĐẶT NĂM"
+
+msgid "SET MONTH"
+msgstr "ĐẶT THÁNG"
+
+msgid "SET DATE"
+msgstr "ĐẶT NGÀY"
+
+msgid "SET HOURS"
+msgstr "ĐẶT GIỜ"
+
+msgid "SET MINUTES"
+msgstr "ĐẶT PHÚT"
+
+msgid "INVALID DATE SET"
+msgstr "NGÀY KHÔNG HỢP LỆ"
+
+msgid "TIME SET"
+msgstr "ĐÃ ĐẶT GIỜ"
+
+msgid "NETWORK ICON"
+msgstr "BIỂU TƯỢNG MẠNG"
+
+msgid "MARIO"
+msgstr "MARIO"
+
+msgid "POKEMON"
+msgstr "POKÉMON"
+
+msgid "SOLSTICE"
+msgstr "SOLSTICE"
+
+msgid "ZELDA"
+msgstr "ZELDA"
+msgid "LIFELINE"
+msgstr "ĐƯỜNG SỐNG"

@@ -3039,3 +3039,59 @@ msgstr "FREQ. MAX"
 
 msgid "UPDATE SCRIPT NOT FOUND\n/usr/local/bin/Update.sh"
 msgstr "SCRIPT DI AGGIORNAMENTO NON TROVATO\n/usr/local/bin/Update.sh"
+
+msgid "DATE & TIME"
+msgstr "DATA E ORA"
+
+msgid "CURRENT TIME"
+msgstr "ORA ATTUALE"
+
+msgid "NETWORK SYNC"
+msgstr "SINCRONIZZAZIONE DI RETE"
+
+msgid "NO NETWORK CONNECTION"
+msgstr "NESSUNA CONNESSIONE DI RETE"
+
+msgid "TIME SYNCED"
+msgstr "ORA SINCRONIZZATA"
+
+msgid "SET MANUALLY"
+msgstr "IMPOSTA MANUALMENTE"
+
+msgid "SET YEAR"
+msgstr "IMPOSTA ANNO"
+
+msgid "SET MONTH"
+msgstr "IMPOSTA MESE"
+
+msgid "SET DATE"
+msgstr "IMPOSTA DATA"
+
+msgid "SET HOURS"
+msgstr "IMPOSTA ORE"
+
+msgid "SET MINUTES"
+msgstr "IMPOSTA MINUTI"
+
+msgid "INVALID DATE SET"
+msgstr "DATA NON VALIDA"
+
+msgid "TIME SET"
+msgstr "ORA IMPOSTATA"
+
+msgid "NETWORK ICON"
+msgstr "ICONA RETE"
+
+msgid "MARIO"
+msgstr "MARIO"
+
+msgid "POKEMON"
+msgstr "POKÉMON"
+
+msgid "SOLSTICE"
+msgstr "SOLSTICE"
+
+msgid "ZELDA"
+msgstr "ZELDA"
+msgid "LIFELINE"
+msgstr "LINEA VITALE"

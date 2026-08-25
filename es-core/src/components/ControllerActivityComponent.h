@@ -44,6 +44,11 @@ public:
 	
 	bool hasBattery() { return mBatteryInfo.hasBattery; }
 
+	// Drops the cached network/bluetooth icon textures and reloads them from disk.
+	// Call this after overwriting the SVG files (e.g. icon pack switch) to refresh
+	// them without requiring a full EmulationStation restart.
+	void reloadNetworkIcons();
+
 protected:
 	virtual void	init();
 

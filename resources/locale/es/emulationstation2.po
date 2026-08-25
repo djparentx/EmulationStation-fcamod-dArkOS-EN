@@ -2693,3 +2693,59 @@ msgstr "SCRIPT DE ACTUALIZACIÓN NO ENCONTRADO\n/usr/local/bin/Update.sh"
 
 msgid "VIEW CUSTOMIZATION"
 msgstr "PERSONALIZACIÓN DE VISTA"
+
+msgid "DATE & TIME"
+msgstr "FECHA Y HORA"
+
+msgid "CURRENT TIME"
+msgstr "HORA ACTUAL"
+
+msgid "NETWORK SYNC"
+msgstr "SINCRONIZACIÓN DE RED"
+
+msgid "NO NETWORK CONNECTION"
+msgstr "SIN CONEXIÓN DE RED"
+
+msgid "TIME SYNCED"
+msgstr "HORA SINCRONIZADA"
+
+msgid "SET MANUALLY"
+msgstr "ESTABLECER MANUALMENTE"
+
+msgid "SET YEAR"
+msgstr "ESTABLECER AÑO"
+
+msgid "SET MONTH"
+msgstr "ESTABLECER MES"
+
+msgid "SET DATE"
+msgstr "ESTABLECER FECHA"
+
+msgid "SET HOURS"
+msgstr "ESTABLECER HORAS"
+
+msgid "SET MINUTES"
+msgstr "ESTABLECER MINUTOS"
+
+msgid "INVALID DATE SET"
+msgstr "FECHA NO VÁLIDA"
+
+msgid "TIME SET"
+msgstr "HORA ESTABLECIDA"
+
+msgid "NETWORK ICON"
+msgstr "ICONO DE RED"
+
+msgid "MARIO"
+msgstr "MARIO"
+
+msgid "POKEMON"
+msgstr "POKÉMON"
+
+msgid "SOLSTICE"
+msgstr "SOLSTICE"
+
+msgid "ZELDA"
+msgstr "ZELDA"
+msgid "LIFELINE"
+msgstr "LÍNEA DE VIDA"

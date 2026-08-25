@@ -3523,3 +3523,59 @@ msgstr "UPPDATERINGSSKRIPT HITTADES INTE\n/usr/local/bin/Update.sh"
 
 msgid "VIEW CUSTOMIZATION"
 msgstr "ANPASSA VY"
+
+msgid "DATE & TIME"
+msgstr "DATUM & TID"
+
+msgid "CURRENT TIME"
+msgstr "AKTUELL TID"
+
+msgid "NETWORK SYNC"
+msgstr "NÄTVERKSSYNKRONISERING"
+
+msgid "NO NETWORK CONNECTION"
+msgstr "INGEN NÄTVERKSANSLUTNING"
+
+msgid "TIME SYNCED"
+msgstr "TIDEN ÄR SYNKRONISERAD"
+
+msgid "SET MANUALLY"
+msgstr "STÄLL IN MANUELLT"
+
+msgid "SET YEAR"
+msgstr "STÄLL IN ÅR"
+
+msgid "SET MONTH"
+msgstr "STÄLL IN MÅNAD"
+
+msgid "SET DATE"
+msgstr "STÄLL IN DATUM"
+
+msgid "SET HOURS"
+msgstr "STÄLL IN TIMMAR"
+
+msgid "SET MINUTES"
+msgstr "STÄLL IN MINUTER"
+
+msgid "INVALID DATE SET"
+msgstr "OGILTIGT DATUM"
+
+msgid "TIME SET"
+msgstr "TID INSTÄLLD"
+
+msgid "NETWORK ICON"
+msgstr "NÄTVERKSIKON"
+
+msgid "MARIO"
+msgstr "MARIO"
+
+msgid "POKEMON"
+msgstr "POKÉMON"
+
+msgid "SOLSTICE"
+msgstr "SOLSTICE"
+
+msgid "ZELDA"
+msgstr "ZELDA"
+msgid "LIFELINE"
+msgstr "LIVSLINJE"

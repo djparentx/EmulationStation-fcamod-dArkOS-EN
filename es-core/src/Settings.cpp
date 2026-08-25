@@ -152,6 +152,7 @@ void Settings::setDefaults()
 	mStringMap["TransitionStyle"] = "auto";
 	mStringMap["BatteryPlusMode"] = "voltage";
 	mStringMap["BatteryIconPack"] = "Default";
+	mStringMap["NetworkIconPack"] = "Default";
 	mStringMap["Language"] = "en";	
 	mStringMap["ThemeSet"] = "";
 	mStringMap["ScreenSaverBehavior"] = "dim";	

@@ -333,7 +333,10 @@ void ControllerActivityComponent::render(const Transform4x4f& parentTrans)
 			if (mBatteryText == nullptr || mBatteryTextX != x)
 			{
 				mBatteryTextX = x;
-				float batteryTextPad = mSize.y() * 0.125f;
+				// mSpacing was already applied by renderTexture() above when advancing x past
+				// the battery icon, so no extra padding here keeps this gap identical to the
+				// one between the other icons (network/bluetooth/battery).
+				float batteryTextPad = 0.0f;
 				mBatteryText = std::unique_ptr<TextCache>(mBatteryFont->buildTextCache(batteryText, Vector2f(x + batteryTextPad, batteryTextOffset), mColorShift, mSize.x(), Alignment::ALIGN_LEFT, 1.0f));
 			}
 

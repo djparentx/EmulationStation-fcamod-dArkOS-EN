@@ -27,6 +27,13 @@ void BatteryIndicatorComponent::init()
 		setSize(Renderer::getScreenWidth() * 0.033, Renderer::getScreenHeight() *0.033);
 	}
 
+	// Use the same gap between icons (network/bluetooth/battery) as the one used
+	// between the battery icon and its percentage text, for a consistent look.
+	// Reproduce the exact original battery-icon-to-percentage gap
+	// (old mSpacing + old batteryTextPad) and apply it uniformly to every
+	// icon in the row (network/bluetooth/battery/text).
+	mSpacing = (Renderer::getScreenHeight() / 200.0f) + (mSize.y() * 0.125f);
+
 	mView = ActivityView::BATTERY;
 
 	if (ResourceManager::getInstance()->fileExists(":/battery/incharge.svg"))
@@ -69,4 +76,35 @@ void BatteryIndicatorComponent::init()
 	}
 
 	updateBatteryInfo();
+}
+
+void ControllerActivityComponent::reloadNetworkIcons()
+{
+	// Drop the existing references first: TextureResource caches by path using a
+	// weak_ptr, so as long as we hold the last strong reference the cache entry
+	// stays "alive" and get() below would just return the stale texture again.
+	mNetworkImage = nullptr;
+	mNetworkActiveImage = nullptr;
+	mNetworkOffImage = nullptr;
+	mNetworkShareImage = nullptr;
+	mNetworkServiceImage = nullptr;
+	mBluetoothImage = nullptr;
+	mBluetoothActiveImage = nullptr;
+	mBluetoothOffImage = nullptr;
+
+	if (ResourceManager::getInstance()->fileExists(":/network.svg") && Settings::getInstance()->getBool("networkIcon"))
+	{
+		mNetworkImage = TextureResource::get(ResourceManager::getInstance()->getResourcePath(":/network.svg"), false, true);
+		mNetworkActiveImage = TextureResource::get(ResourceManager::getInstance()->getResourcePath(":/network_active.svg"), false, true);
+		mNetworkOffImage = TextureResource::get(ResourceManager::getInstance()->getResourcePath(":/network_off.svg"), false, true);
+		mNetworkShareImage = TextureResource::get(ResourceManager::getInstance()->getResourcePath(":/network_share.svg"), false, true);
+		mNetworkServiceImage = TextureResource::get(ResourceManager::getInstance()->getResourcePath(":/network_service.svg"), false, true);
+	}
+
+	if (Settings::getInstance()->getBool("bluetoothIcon") && ResourceManager::getInstance()->fileExists(":/bluetooth.svg"))
+	{
+		mBluetoothImage = TextureResource::get(ResourceManager::getInstance()->getResourcePath(":/bluetooth.svg"), false, true);
+		mBluetoothActiveImage = TextureResource::get(ResourceManager::getInstance()->getResourcePath(":/bluetooth_active.svg"), false, true);
+		mBluetoothOffImage = TextureResource::get(ResourceManager::getInstance()->getResourcePath(":/bluetooth_off.svg"), false, true);
+	}
 }

@@ -24,10 +24,16 @@ Built automatically via GitHub Actions using the official Mali RK3326 libraries 
 
 - **Battery Icon Pack selector** in **START > UI SETTINGS > BATTERY ICON**:
   - `Default` — colored icons (green/orange/red/cyan)
-  - `Power Pulse` — animated power-style icons
-  - `Segmented` — segmented bar style
+  - `Power Pulse` — power-style icons
   - `Hearts` — heart-shaped icons
   - `Stock` — original white icons from christianhaitian
+
+- **Network Icon Pack selector** in **START > UI SETTINGS > NETWORK ICON**:
+  - `Default` — standard WiFi & Bluetooth icons
+  - `Mario` — Mario themed icons
+  - `Pokemon` — Pokémon themed icons
+  - `Solstice` — Solstice themed icons
+  - `Zelda` — Zelda themed icons
 
 ### 📶 5-state WiFi icon
 - <img src="https://img.shields.io/badge/-WiFi-red?style=flat-square&logo=wifi&logoColor=white"> → Disabled / rfkill blocked
@@ -49,6 +55,13 @@ Built automatically via GitHub Actions using the official Mali RK3326 libraries 
 
 ### 🖥️ Display Settings
 - **Gamma slider** — adjust screen gamma (0.4 → 1.8) in real time via **START > DISPLAY SETTINGS**
+- **Mipmap rendering fix** — battery and network icons are now sharp at all sizes
+- **Distro Version** — click to check for updates directly from the main menu
+- **BatteryPlus calibration** — detection path fixed for dArkOS EN (`/home/ark/.config`)
+
+### 📅 Date & Time (by djparentx)
+- Real-time clock display in **START > ADVANCED SETTINGS > DATE & TIME**
+- Set date, time and timezone directly from ES
 
 ### ⚡ Performance Settings (by djparentx)
 New menu — **START > PERFORMANCE SETTINGS**:
@@ -118,6 +131,9 @@ Full remote access management integrated directly in ES:
 - PSK flags fix for persistent WiFi connections
 
 **Gamma slider** — adjust screen gamma (0.4 → 1.8) in real time via **START > DISPLAY SETTINGS**
+- **Mipmap rendering fix** — battery and network icons are now sharp at all sizes
+- **Distro Version** — click to check for updates directly from the main menu
+- **BatteryPlus calibration** — detection path fixed for dArkOS EN (`/home/ark/.config`)
 
 ---
 

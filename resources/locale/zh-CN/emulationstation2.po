@@ -3747,3 +3747,59 @@ msgstr "未找到更新脚本\n/usr/local/bin/Update.sh"
 
 msgid "VIEW CUSTOMIZATION"
 msgstr "界面自定义"
+
+msgid "DATE & TIME"
+msgstr "日期和时间"
+
+msgid "CURRENT TIME"
+msgstr "当前时间"
+
+msgid "NETWORK SYNC"
+msgstr "网络同步"
+
+msgid "NO NETWORK CONNECTION"
+msgstr "无网络连接"
+
+msgid "TIME SYNCED"
+msgstr "时间已同步"
+
+msgid "SET MANUALLY"
+msgstr "手动设置"
+
+msgid "SET YEAR"
+msgstr "设置年份"
+
+msgid "SET MONTH"
+msgstr "设置月份"
+
+msgid "SET DATE"
+msgstr "设置日期"
+
+msgid "SET HOURS"
+msgstr "设置小时"
+
+msgid "SET MINUTES"
+msgstr "设置分钟"
+
+msgid "INVALID DATE SET"
+msgstr "日期无效"
+
+msgid "TIME SET"
+msgstr "时间已设置"
+
+msgid "NETWORK ICON"
+msgstr "网络图标"
+
+msgid "MARIO"
+msgstr "马里奥"
+
+msgid "POKEMON"
+msgstr "宝可梦"
+
+msgid "SOLSTICE"
+msgstr "至日"
+
+msgid "ZELDA"
+msgstr "塞尔达"
+msgid "LIFELINE"
+msgstr "生命线"
