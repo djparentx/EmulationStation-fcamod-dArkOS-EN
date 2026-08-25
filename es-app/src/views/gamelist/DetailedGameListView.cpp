@@ -1,6 +1,6 @@
 #include <string>
 #include "views/gamelist/DetailedGameListView.h"
-
+#include "ThemeGameBindings.h"
 #include "animations/LambdaAnimation.h"
 
 #ifdef _RPI_
@@ -396,6 +396,36 @@ void DetailedGameListView::updateInfoPanel()
 		{
 			mLastPlayed.setValue(getMetadata(file, "lastplayed"));
 			mPlayCount.setValue(getMetadata(file, "playcount"));
+		}
+
+		for (auto extra : mThemeExtras)
+		{
+			const std::string& tag = extra->getTag();
+			const ThemeData::ThemeElement* elem = getTheme()->getElement(getName(), tag, "");
+			if (elem == nullptr)
+				continue;
+
+			if (elem->has("path"))
+			{
+				std::string resolved = ThemeGameBindings::resolve(elem->get<std::string>("path"), file, file->getSystem());
+				if (resolved != elem->get<std::string>("path"))
+				{
+					auto* img = dynamic_cast<ImageComponent*>(extra);
+					if (img != nullptr)
+						img->setImage(resolved);
+				}
+			}
+
+			if (elem->has("text"))
+			{
+				std::string resolved = ThemeGameBindings::resolve(elem->get<std::string>("text"), file, file->getSystem());
+				if (resolved != elem->get<std::string>("text"))
+				{
+					auto* txt = dynamic_cast<TextComponent*>(extra);
+					if (txt != nullptr)
+						txt->setText(resolved);
+				}
+			}
 		}
 		
 		fadingOut = false;
