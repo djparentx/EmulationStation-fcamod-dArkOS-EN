@@ -445,6 +445,24 @@ void GuiComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const std
 	if(properties & ThemeFlags::SIZE && elem->has("size"))
 		setSize(elem->get<Vector2f>("size") * scale);
 
+	if (properties & POSITION && elem->has("x"))
+	{
+		float x = elem->get<float>("x") * scale.x();
+		setPosition(Vector3f(x, mPosition.y(), mPosition.z()));
+	}
+
+	if (properties & POSITION && elem->has("y"))
+	{
+		float y = elem->get<float>("y") * scale.y();
+		setPosition(Vector3f(mPosition.x(), y, mPosition.z()));
+	}
+
+	if (properties & ThemeFlags::SIZE && elem->has("w"))
+		setSize(Vector2f(elem->get<float>("w") * scale.x(), mSize.y()));
+
+	if (properties & ThemeFlags::SIZE && elem->has("h"))
+		setSize(Vector2f(mSize.x(), elem->get<float>("h") * scale.y()));
+
 	// position + size also implies origin
 	if((properties & ORIGIN || (properties & POSITION && properties & ThemeFlags::SIZE)) && elem->has("origin"))
 		setOrigin(elem->get<Vector2f>("origin"));

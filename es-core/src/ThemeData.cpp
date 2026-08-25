@@ -24,6 +24,10 @@ std::vector<std::string> ThemeData::sSupportedFeatures { { "video" }, { "carouse
 std::map<std::string, std::map<std::string, ThemeData::ElementPropertyType>> ThemeData::sElementMap {
 	{ "image", {
 		{ "pos", NORMALIZED_PAIR },
+		{ "x", FLOAT }
+		{ "y", FLOAT }
+		{ "w", FLOAT }
+		{ "h", FLOAT }
 		{ "size", NORMALIZED_PAIR },
 		{ "maxSize", NORMALIZED_PAIR },
 		{ "minSize", NORMALIZED_PAIR },
@@ -48,6 +52,10 @@ std::map<std::string, std::map<std::string, ThemeData::ElementPropertyType>> The
 		{ "zIndex", FLOAT } } },
 	{ "imagegrid", {
 		{ "pos", NORMALIZED_PAIR },
+		{ "x", FLOAT }
+		{ "y", FLOAT }
+		{ "w", FLOAT }
+		{ "h", FLOAT }
 		{ "size", NORMALIZED_PAIR },
 		{ "margin", NORMALIZED_PAIR },
 		{ "padding", NORMALIZED_RECT },
@@ -77,6 +85,10 @@ std::map<std::string, std::map<std::string, ThemeData::ElementPropertyType>> The
 		{ "imageSizeMode", STRING } } },
 	{ "text", {
 		{ "pos", NORMALIZED_PAIR },
+		{ "x", FLOAT }
+		{ "y", FLOAT }
+		{ "w", FLOAT }
+		{ "h", FLOAT }
 		{ "size", NORMALIZED_PAIR },
 		{ "origin", NORMALIZED_PAIR },
 		{ "rotation", FLOAT },
@@ -102,6 +114,10 @@ std::map<std::string, std::map<std::string, ThemeData::ElementPropertyType>> The
 		{ "zIndex", FLOAT } } },
 	{ "stackpanel", {
 		{ "pos", NORMALIZED_PAIR },
+		{ "x", FLOAT }
+		{ "y", FLOAT }
+		{ "w", FLOAT }
+		{ "h", FLOAT }
 		{ "size", NORMALIZED_PAIR },
 		{ "orientation", STRING },
 		{ "reverse", BOOLEAN },
@@ -112,6 +128,10 @@ std::map<std::string, std::map<std::string, ThemeData::ElementPropertyType>> The
 		{ "zIndex", FLOAT } } },
 	{ "clock", {
 		{ "pos", NORMALIZED_PAIR },
+		{ "x", FLOAT }
+		{ "y", FLOAT }
+		{ "w", FLOAT }
+		{ "h", FLOAT }
 		{ "size", NORMALIZED_PAIR },
 		{ "origin", NORMALIZED_PAIR },
 		{ "rotation", FLOAT },
@@ -130,6 +150,10 @@ std::map<std::string, std::map<std::string, ThemeData::ElementPropertyType>> The
 		{ "zIndex", FLOAT } } },
 	{ "batteryText", {
 		{ "pos", NORMALIZED_PAIR },
+		{ "x", FLOAT }
+		{ "y", FLOAT }
+		{ "w", FLOAT }
+		{ "h", FLOAT }
 		{ "size", NORMALIZED_PAIR },
 		{ "origin", NORMALIZED_PAIR },
 		{ "rotation", FLOAT },
@@ -148,6 +172,10 @@ std::map<std::string, std::map<std::string, ThemeData::ElementPropertyType>> The
 		{ "zIndex", FLOAT } } },
 	{ "batteryIcon", {
 		{ "pos", NORMALIZED_PAIR },
+		{ "x", FLOAT }
+		{ "y", FLOAT }
+		{ "w", FLOAT }
+		{ "h", FLOAT }
 		{ "size", NORMALIZED_PAIR },
 		{ "maxSize", NORMALIZED_PAIR },
 		{ "minSize", NORMALIZED_PAIR },
@@ -170,6 +198,10 @@ std::map<std::string, std::map<std::string, ThemeData::ElementPropertyType>> The
 		{ "empty", PATH } } },
 	{ "networkIcon", {
 		{ "pos", NORMALIZED_PAIR },
+		{ "x", FLOAT }
+		{ "y", FLOAT }
+		{ "w", FLOAT }
+		{ "h", FLOAT }
 		{ "size", NORMALIZED_PAIR },
 		{ "maxSize", NORMALIZED_PAIR },
 		{ "minSize", NORMALIZED_PAIR },
@@ -187,6 +219,10 @@ std::map<std::string, std::map<std::string, ThemeData::ElementPropertyType>> The
 		{ "networkIcon", PATH } } },
 	{ "textlist", {
 		{ "pos", NORMALIZED_PAIR },
+		{ "x", FLOAT }
+		{ "y", FLOAT }
+		{ "w", FLOAT }
+		{ "h", FLOAT }
 		{ "size", NORMALIZED_PAIR },
 		{ "origin", NORMALIZED_PAIR },
 		{ "selectorHeight", FLOAT },
@@ -209,12 +245,20 @@ std::map<std::string, std::map<std::string, ThemeData::ElementPropertyType>> The
 		{ "zIndex", FLOAT } } },
 	{ "container", {
 		{ "pos", NORMALIZED_PAIR },
+		{ "x", FLOAT }
+		{ "y", FLOAT }
+		{ "w", FLOAT }
+		{ "h", FLOAT }
 		{ "size", NORMALIZED_PAIR },
 	 	{ "origin", NORMALIZED_PAIR },
 	 	{ "visible", BOOLEAN },
 	 	{ "zIndex", FLOAT } } },
 	{ "ninepatch", {
 		{ "pos", NORMALIZED_PAIR },
+		{ "x", FLOAT }
+		{ "y", FLOAT }
+		{ "w", FLOAT }
+		{ "h", FLOAT }
 		{ "size", NORMALIZED_PAIR },
 		{ "path", PATH },
 	 	{ "visible", BOOLEAN },
@@ -227,6 +271,10 @@ std::map<std::string, std::map<std::string, ThemeData::ElementPropertyType>> The
 		{ "zIndex", FLOAT } } },
 	{ "datetime", {
 		{ "pos", NORMALIZED_PAIR },
+		{ "x", FLOAT }
+		{ "y", FLOAT }
+		{ "w", FLOAT }
+		{ "h", FLOAT }
 		{ "size", NORMALIZED_PAIR },
 		{ "origin", NORMALIZED_PAIR },
 		{ "rotation", FLOAT },
@@ -245,6 +293,10 @@ std::map<std::string, std::map<std::string, ThemeData::ElementPropertyType>> The
 	 	{ "zIndex", FLOAT } } },
 	{ "rating", {
 		{ "pos", NORMALIZED_PAIR },
+		{ "x", FLOAT }
+		{ "y", FLOAT }
+		{ "w", FLOAT }
+		{ "h", FLOAT }
 		{ "size", NORMALIZED_PAIR },
 		{ "origin", NORMALIZED_PAIR },
 		{ "rotation", FLOAT },
@@ -259,6 +311,10 @@ std::map<std::string, std::map<std::string, ThemeData::ElementPropertyType>> The
 		{ "path", PATH } } },
 	{ "controllerActivity", {
 		{ "pos", NORMALIZED_PAIR },
+		{ "x", FLOAT }
+		{ "y", FLOAT }
+		{ "w", FLOAT }
+		{ "h", FLOAT }
 		{ "size", NORMALIZED_PAIR },
 		{ "itemSpacing", FLOAT },
 		{ "horizontalAlignment", STRING },
@@ -270,6 +326,10 @@ std::map<std::string, std::map<std::string, ThemeData::ElementPropertyType>> The
 		{ "zIndex", FLOAT } } },
 	{ "batteryIndicator", {
 		{ "pos", NORMALIZED_PAIR },
+		{ "x", FLOAT }
+		{ "y", FLOAT }
+		{ "w", FLOAT }
+		{ "h", FLOAT }
 		{ "size", NORMALIZED_PAIR },		
 		{ "itemSpacing", FLOAT },
 		{ "horizontalAlignment", STRING },
@@ -284,6 +344,10 @@ std::map<std::string, std::map<std::string, ThemeData::ElementPropertyType>> The
 		{ "zIndex", FLOAT } } },
 	{ "helpsystem", {
 		{ "pos", NORMALIZED_PAIR },
+		{ "x", FLOAT }
+		{ "y", FLOAT }
+		{ "w", FLOAT }
+		{ "h", FLOAT }
 		{ "origin", NORMALIZED_PAIR },
 		{ "textColor", COLOR },
 		{ "iconColor", COLOR },
@@ -302,6 +366,10 @@ std::map<std::string, std::map<std::string, ThemeData::ElementPropertyType>> The
 		{ "iconSelect", PATH } } },
 	{ "video", {
 		{ "pos", NORMALIZED_PAIR },
+		{ "x", FLOAT }
+		{ "y", FLOAT }
+		{ "w", FLOAT }
+		{ "h", FLOAT }
 		{ "size", NORMALIZED_PAIR },
 		{ "maxSize", NORMALIZED_PAIR },
 		{ "minSize", NORMALIZED_PAIR },
@@ -324,6 +392,10 @@ std::map<std::string, std::map<std::string, ThemeData::ElementPropertyType>> The
 		{ "type", STRING },
 		{ "size", NORMALIZED_PAIR },
 		{ "pos", NORMALIZED_PAIR },
+		{ "x", FLOAT }
+		{ "y", FLOAT }
+		{ "w", FLOAT }
+		{ "h", FLOAT }
 		{ "origin", NORMALIZED_PAIR },
 		{ "color", COLOR },
 		{ "colorEnd", COLOR },

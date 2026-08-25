@@ -364,7 +364,9 @@ void FileData::launchGame(Window* window, int entrySlot)
 
 	Scripting::fireEvent("game-start", rom, basename);
 
-	LOG(LogInfo) << "	" << command;
+	LOG(LogInfo) << "\t" << command;
+
+	time_t sessionStart = Utils::Time::now();
 
 	time_t esSessionStart = Utils::Time::now();
 	int exitCode = runSystemCommand(command, getDisplayName(), hideWindow ? NULL : window);
@@ -374,6 +376,16 @@ void FileData::launchGame(Window* window, int entrySlot)
 	}
 
 	Scripting::fireEvent("game-end");
+
+	{
+		int elapsed = (int)(Utils::Time::now() - sessionStart);
+		if (elapsed > 0)
+		{
+			FileData* gameToUpdate = getSourceFileData();
+			int priorGametime = gameToUpdate->getMetadata().getInt("gametime");
+			gameToUpdate->getMetadata().set("gametime", std::to_string(static_cast<long long>(priorGametime + elapsed)));
+		}
+	}
 
 	window->init(hideWindow);
 
