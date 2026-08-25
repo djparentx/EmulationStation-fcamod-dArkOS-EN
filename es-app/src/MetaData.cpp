@@ -32,8 +32,12 @@ MetaDataDecl gameDecls[] = {
 	{ 19, "playcount",   MD_INT,                 "0",                true,       "play count",           "enter number of times played"},
 	{ 20, "lastplayed",  MD_TIME,                "0",                true,       "last played",          "enter last played date"},
 	{ 21, "arcadesystemname",  MD_STRING,        "",                 false,      "arcade system",        "enter arcade system name"},
+<<<<<<< HEAD
         { 22, "gametime",    MD_INT,                 "0",                true,       "play time",            "total play time in seconds"},
         { 23, "lastsession", MD_INT,                 "0",                true,       "last session",         "last session length in seconds"}
+=======
+	{ 22, "gametime",    MD_INT,                 "0",                true,       "time played",          "enter total time played in seconds"}	
+>>>>>>> 1da20137 (fix gamelists not displaying)
 };
 
 const std::vector<MetaDataDecl> gameMDD(gameDecls, gameDecls + sizeof(gameDecls) / sizeof(gameDecls[0]));

@@ -365,6 +365,11 @@ void FileData::launchGame(Window* window, int entrySlot)
 	Scripting::fireEvent("game-start", rom, basename);
 
 	LOG(LogInfo) << "\t" << command;
+<<<<<<< HEAD
+=======
+
+	time_t sessionStart = Utils::Time::now();
+>>>>>>> 1da20137 (fix gamelists not displaying)
 
 	time_t sessionStart = Utils::Time::now();
 
