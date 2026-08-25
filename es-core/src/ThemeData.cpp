@@ -333,12 +333,14 @@ std::map<std::string, std::map<std::string, ThemeData::ElementPropertyType>> The
 		{ "size", NORMALIZED_PAIR },		
 		{ "itemSpacing", FLOAT },
 		{ "horizontalAlignment", STRING },
+		{ "alignment", STRING },
 		{ "incharge", PATH },
 		{ "full", PATH },
 		{ "at75", PATH },
 		{ "at50", PATH },
 		{ "at25", PATH },
 		{ "empty", PATH },
+		{ "networkIcon", PATH },
 		{ "color", COLOR },
 		{ "visible", BOOLEAN },
 		{ "zIndex", FLOAT } } },
@@ -1156,6 +1158,45 @@ void ThemeData::parseView(const pugi::xml_node& root, ThemeView& view, bool over
 
 			if (std::find(view.orderedKeys.cbegin(), view.orderedKeys.cend(), elemKey) == view.orderedKeys.cend())
 				view.orderedKeys.push_back(elemKey);
+
+			// Container elements (e.g. stackpanel) can nest real components (clock, batteryIcon,
+			// batteryText, networkIcon, image, text, ...) as XML children rather than properties.
+			// parseElement() above already parsed the container's own properties and, since these
+			// child tags aren't in the container's typeMap, logged/skipped them as unknown
+			// properties. Parse them here as ordinary top-level view elements instead, tagged with
+			// "parent" so makeExtras() can nest their GuiComponents under the container.
+			if (node.name() == std::string("stackpanel"))
+			{
+				for (pugi::xml_node childNode = node.first_child(); childNode; childNode = childNode.next_sibling())
+				{
+					if (!childNode.attribute("name"))
+						continue;
+
+					auto childTypeIt = sElementMap.find(childNode.name());
+					if (childTypeIt == sElementMap.cend())
+						continue;
+
+					if (!parseFilterAttributes(childNode))
+						continue;
+
+					const std::string childNameAttr = childNode.attribute("name").as_string();
+					size_t cPrevOff = childNameAttr.find_first_not_of(delim, 0);
+					size_t cOff = childNameAttr.find_first_of(delim, cPrevOff);
+					while (cOff != std::string::npos || cPrevOff != std::string::npos)
+					{
+						std::string childElemKey = childNameAttr.substr(cPrevOff, cOff - cPrevOff);
+						cPrevOff = childNameAttr.find_first_not_of(delim, cOff);
+						cOff = childNameAttr.find_first_of(delim, cPrevOff);
+
+						ThemeElement& childElement = view.elements.insert(std::pair<std::string, ThemeElement>(childElemKey, ThemeElement())).first->second;
+						parseElement(childNode, childTypeIt->second, childElement, overwriteElements);
+						childElement.parent = elemKey;
+
+						if (std::find(view.orderedKeys.cbegin(), view.orderedKeys.cend(), childElemKey) == view.orderedKeys.cend())
+							view.orderedKeys.push_back(childElemKey);
+					}
+				}
+			}
 		}		
 	}
 }
@@ -1476,6 +1517,30 @@ const std::shared_ptr<ThemeData>& ThemeData::getDefault()
 	return theme;
 }
 
+static GuiComponent* createThemeExtraComponent(const std::string& t, Window* window)
+{
+	if(t == "image")
+		return new ImageComponent(window);
+	else if(t == "text")
+		return new TextComponent(window);
+	else if (t == "ninepatch")
+		return new NinePatchComponent(window);
+	else if (t == "video")
+		return new VideoVlcComponent(window);
+	else if (t == "stackpanel")
+		return new StackPanelComponent(window);
+	else if (t == "clock")
+		return new ClockComponent(window);
+	else if (t == "networkIcon")
+		return new NetworkIconComponent(window);
+	else if (t == "batteryIcon")
+		return new BatteryIconComponent(window);
+	else if (t == "batteryText")
+		return new BatteryTextComponent(window);
+
+	return nullptr;
+}
+
 std::vector<GuiComponent*> ThemeData::makeExtras(const std::shared_ptr<ThemeData>& theme, const std::string& view, Window* window)
 {
 	std::vector<GuiComponent*> comps;
@@ -1483,34 +1548,16 @@ std::vector<GuiComponent*> ThemeData::makeExtras(const std::shared_ptr<ThemeData
 	auto viewIt = theme->mViews.find(view);
 	if(viewIt == theme->mViews.cend())
 		return comps;
-	
+
+	// Pass 1: top-level extras (elem.parent empty) - unchanged behaviour.
+	std::map<std::string, GuiComponent*> tagToComp;
+
 	for(auto it = viewIt->second.orderedKeys.cbegin(); it != viewIt->second.orderedKeys.cend(); it++)
 	{
 		ThemeElement& elem = viewIt->second.elements.at(*it);
-		if(elem.extra)
+		if(elem.extra && elem.parent.empty())
 		{
-			GuiComponent* comp = nullptr;
-
-			const std::string& t = elem.type;
-			if(t == "image")
-				comp = new ImageComponent(window);
-			else if(t == "text")
-				comp = new TextComponent(window);
-			else if (t == "ninepatch")
-				comp = new NinePatchComponent(window);
-			else if (t == "video")
-				comp = new VideoVlcComponent(window);
-			else if (t == "stackpanel")
-				comp = new StackPanelComponent(window);
-			else if (t == "clock")
-				comp = new ClockComponent(window);
-			else if (t == "networkIcon")
-				comp = new NetworkIconComponent(window);
-			else if (t == "batteryIcon")
-				comp = new BatteryIconComponent(window);
-			else if (t == "batteryText")
-				comp = new BatteryTextComponent(window);
-
+			GuiComponent* comp = createThemeExtraComponent(elem.type, window);
 			if (comp == nullptr)
 				continue;
 
@@ -1519,8 +1566,51 @@ std::vector<GuiComponent*> ThemeData::makeExtras(const std::shared_ptr<ThemeData
 			comp->setDefaultZIndex(10);
 			comp->applyTheme(theme, view, *it, ThemeFlags::ALL);
 			comps.push_back(comp);
+			tagToComp[*it] = comp;
 		}
 	}
+
+	// Pass 2: elements nested inside a container (e.g. stackpanel) in the theme XML.
+	// These are NOT added to comps - they're owned/rendered/updated via the container's
+	// mChildren (the container is responsible for deleting them, see StackPanelComponent
+	// destructor) - adding them to comps as well would double-render/double-update them.
+	std::vector<GuiComponent*> touchedContainers;
+
+	for(auto it = viewIt->second.orderedKeys.cbegin(); it != viewIt->second.orderedKeys.cend(); it++)
+	{
+		ThemeElement& elem = viewIt->second.elements.at(*it);
+		if(elem.parent.empty())
+			continue;
+
+		auto parentIt = tagToComp.find(elem.parent);
+		if (parentIt == tagToComp.end())
+		{
+			LOG(LogWarning) << "Element \"" << *it << "\" declares parent \"" << elem.parent << "\" but that container was not found or is not an extra";
+			continue;
+		}
+
+		GuiComponent* comp = createThemeExtraComponent(elem.type, window);
+		if (comp == nullptr)
+			continue;
+
+		comp->setTag((*it).c_str());
+		// addChild() BEFORE applyTheme(): pos/size normalization in GuiComponent::applyTheme
+		// scales against getParent()->getSize() when a parent exists, so the child must already
+		// be parented to the stackpanel for its coordinates to resolve relative to the container
+		// instead of the full screen.
+		parentIt->second->addChild(comp);
+		comp->applyTheme(theme, view, *it, ThemeFlags::ALL);
+
+		if (std::find(touchedContainers.cbegin(), touchedContainers.cend(), parentIt->second) == touchedContainers.cend())
+			touchedContainers.push_back(parentIt->second);
+	}
+
+	// StackPanelComponent's own applyTheme() (pass 1, before any children existed) already ran
+	// performLayout() once on an empty child list. onSizeChanged() re-runs it now that the real
+	// children are in place, so they're positioned before the first render instead of waiting on
+	// a later child size change during update().
+	for (GuiComponent* container : touchedContainers)
+		container->onSizeChanged();
 
 	return comps;
 }

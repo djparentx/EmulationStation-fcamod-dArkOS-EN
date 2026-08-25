@@ -8,6 +8,16 @@ StackPanelComponent::StackPanelComponent(Window* window) : GuiComponent(window),
 {
 }
 
+StackPanelComponent::~StackPanelComponent()
+{
+	// mChildren was populated by ThemeData::makeExtras() with components created solely for
+	// this stackpanel; nothing else owns/tracks them, so this container is responsible for
+	// deleting them. Each child's own destructor calls mParent->removeChild(this), which erases
+	// it from mChildren - deleting front-to-back keeps that mutation-during-iteration safe.
+	while (getChildCount() > 0)
+		delete getChild(0);
+}
+
 void StackPanelComponent::render(const Transform4x4f& parentTrans)
 {
 	if (!mVisible)

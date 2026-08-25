@@ -417,9 +417,14 @@ void ControllerActivityComponent::applyTheme(const std::shared_ptr<ThemeData>& t
 
 	if (properties & ALIGNMENT)
 	{
-		if (elem->has("horizontalAlignment"))
+		// "alignment" is the tag some Batocera-format themes (e.g. art-book-next-es-demake) use
+		// instead of "horizontalAlignment"; prefer horizontalAlignment when both are present.
+		const char* alignProp = elem->has("horizontalAlignment") ? "horizontalAlignment"
+			: (elem->has("alignment") ? "alignment" : nullptr);
+
+		if (alignProp != nullptr)
 		{
-			std::string str = elem->get<std::string>("horizontalAlignment");
+			std::string str = elem->get<std::string>(alignProp);
 			if (str == "left")
 				setHorizontalAlignment(ALIGN_LEFT);
 			else if (str == "right")
