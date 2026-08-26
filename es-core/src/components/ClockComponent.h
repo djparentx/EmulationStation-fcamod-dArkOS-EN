@@ -39,9 +39,12 @@ public:
 	ClockComponent(Window* window);
 
 	virtual void update(int deltaTime);
+	void onShow() override;
+	void onHide() override;
 
 private:
 	int mClockElapsed;
+	bool mActive;
 };
 
 >>>>>>> 1eee1723 (added format version7 theme support)

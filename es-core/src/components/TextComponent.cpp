@@ -6,7 +6,7 @@
 #include "Settings.h"
 
 TextComponent::TextComponent(Window* window) : GuiComponent(window),
-	mFont(Font::get(FONT_SIZE_MEDIUM)), mUppercase(false), mColor(0x000000FF), mAutoCalcExtent(true, true), mLastExtentSize(0.0f, 0.0f),
+	mFont(Font::get(FONT_SIZE_MEDIUM)), mUppercase(false), mColor(0x000000FF), mAutoCalcExtent(true, true),
 	mHorizontalAlignment(ALIGN_LEFT), mVerticalAlignment(ALIGN_CENTER), mLineSpacing(1.5f), mBgColor(0),
 	mRenderBackground(false), mGlowColor(0), mGlowSize(2), mPadding(Vector4f(0, 0, 0, 0)), mGlowOffset(Vector2f(0, 0)),
 	mReflection(0.0f, 0.0f), mReflectOnBorders(false)
@@ -21,7 +21,7 @@ TextComponent::TextComponent(Window* window) : GuiComponent(window),
 
 TextComponent::TextComponent(Window* window, const std::string& text, const std::shared_ptr<Font>& font, unsigned int color, Alignment align,
 	Vector3f pos, Vector2f size, unsigned int bgcolor) : GuiComponent(window),
-	mFont(NULL), mUppercase(false), mColor(0x000000FF), mAutoCalcExtent(true, true), mLastExtentSize(0.0f, 0.0f),
+	mFont(NULL), mUppercase(false), mColor(0x000000FF), mAutoCalcExtent(true, true),
 	mHorizontalAlignment(align), mVerticalAlignment(ALIGN_CENTER), mLineSpacing(1.5f), mBgColor(0),
 	mRenderBackground(false), mGlowColor(0), mGlowSize(2), mPadding(Vector4f(0, 0, 0, 0)), mGlowOffset(Vector2f(0, 0)),
 	mReflection(0.0f, 0.0f), mReflectOnBorders(false)
@@ -42,24 +42,7 @@ TextComponent::TextComponent(Window* window, const std::string& text, const std:
 
 void TextComponent::onSizeChanged()
 {
-	LOG(LogInfo) << "[ThemeDebug] onSizeChanged tag=" << getTag() << " incoming=(" << getSize().x() << "," << getSize().y() << ")"
-		<< " lastExtent=(" << mLastExtentSize.x() << "," << mLastExtentSize.y() << ")"
-		<< " autoCalcBefore=(" << mAutoCalcExtent.x() << "," << mAutoCalcExtent.y() << ")";
-
-	// GuiComponent::setSize() has already overwritten mSize with the caller's requested
-	// (w,h) by the time we get here. Only treat a dimension as an explicit external
-	// override - and re-evaluate its auto-calc flag - if it actually differs from the
-	// size we last computed ourselves in calculateExtent(). A container re-applying the
-	// same value back to us (StackPanelComponent's layout pass does this every frame)
-	// must not freeze auto-calc off for a dimension nothing really changed.
-	if (getSize().x() != mLastExtentSize.x())
-		mAutoCalcExtent[0] = (getSize().x() == 0);
-
-	if (getSize().y() != mLastExtentSize.y())
-		mAutoCalcExtent[1] = (getSize().y() == 0);
-
-	LOG(LogInfo) << "[ThemeDebug] onSizeChanged tag=" << getTag() << " autoCalcAfter=(" << mAutoCalcExtent.x() << "," << mAutoCalcExtent.y() << ")";
-
+	mAutoCalcExtent = Vector2i((getSize().x() == 0), (getSize().y() == 0));
 	onTextChanged();
 }
 
@@ -316,14 +299,6 @@ void TextComponent::calculateExtent()
 			mSize[1] = mFont->sizeWrappedText(mUppercase ? Utils::String::toUpper(mText) : mText, getSize().x(), mLineSpacing).y();
 		}
 	}
-
-	// record what the size actually became after this recalculation, so onSizeChanged()
-	// can later tell a genuinely new externally-requested size apart from a container
-	// (e.g. StackPanelComponent) simply feeding back a value we already reported
-	mLastExtentSize = mSize;
-
-	LOG(LogInfo) << "[ThemeDebug] calculateExtent tag=" << getTag() << " text=\"" << mText << "\" autoCalc=(" << mAutoCalcExtent.x() << "," << mAutoCalcExtent.y() << ")"
-		<< " resultSize=(" << mSize.x() << "," << mSize.y() << ")";
 }
 
 void TextComponent::onTextChanged()
@@ -469,16 +444,11 @@ std::string TextComponent::getValue() const
 
 void TextComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties)
 {
-	applyThemeWithType(theme, view, element, properties, "text");
-}
-
-void TextComponent::applyThemeWithType(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties, const std::string& expectedType)
-{
 	GuiComponent::applyTheme(theme, view, element, properties);
 
 	using namespace ThemeFlags;
 
-	const ThemeData::ThemeElement* elem = theme->getElement(view, element, expectedType);
+	const ThemeData::ThemeElement* elem = theme->getElement(view, element, "text");
 	if (!elem)
 		return;
 
@@ -530,6 +500,12 @@ void TextComponent::applyThemeWithType(const std::shared_ptr<ThemeData>& theme, 
 
 	if (properties & COLOR)
 	{
+		// TEMP DEBUG - remove once color issue is diagnosed
+		LOG(LogInfo) << "[ThemeDebug] TextComponent \"" << element << "\" (tag=" << getTag() << ") has(color)="
+			<< (elem->has("color") ? "true" : "false")
+			<< (elem->has("color") ? (" value=" + std::to_string(elem->get<unsigned int>("color"))) : "")
+			<< " currentColor(before)=" << std::to_string(mColor);
+
 		if (elem->has("color"))
 			setColor(elem->get<unsigned int>("color"));
 
