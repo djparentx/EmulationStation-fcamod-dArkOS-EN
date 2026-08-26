@@ -89,12 +89,6 @@ void ImageComponent::resize()
 				mSize[0] = Math::min((mSize[1] / textureSize.y()) * textureSize.x(), mTargetSize.x());
 			}
 
-			// TEMP DEBUG - remove once icon sizing issue is diagnosed
-			LOG(LogInfo) << "[ThemeDebug] ImageComponent::resize() tag=" << getTag()
-				<< " textureSize=(" << textureSize.x() << "," << textureSize.y()
-				<< ") mTargetSize=(" << mTargetSize.x() << "," << mTargetSize.y()
-				<< ") resizeScale=(" << resizeScale.x() << "," << resizeScale.y()
-				<< ") finalSize=(" << mSize.x() << "," << mSize.y() << ")";
 		}else if(mTargetIsMin)
 		{
 			mSize = textureSize;
@@ -554,9 +548,14 @@ bool ImageComponent::hasImage()
 
 void ImageComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties)
 {
+	applyThemeWithType(theme, view, element, properties, "image");
+}
+
+void ImageComponent::applyThemeWithType(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties, const std::string& expectedType)
+{
 	using namespace ThemeFlags;
 
-	const ThemeData::ThemeElement* elem = theme->getElement(view, element, "image");
+	const ThemeData::ThemeElement* elem = theme->getElement(view, element, expectedType);
 	if(!elem)
 	{
 		return;
@@ -592,15 +591,7 @@ void ImageComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const s
 				setResize(sz * scale);
 		}
 		else if(elem->has("maxSize"))
-		{
-			Vector2f maxSz = elem->get<Vector2f>("maxSize") * scale;
-			// TEMP DEBUG - remove once icon sizing issue is diagnosed
-			LOG(LogInfo) << "[ThemeDebug] ImageComponent \"" << element << "\" (tag=" << getTag()
-				<< ") getParent()=" << (getParent() != nullptr) << " scale=(" << scale.x() << "," << scale.y()
-				<< ") maxSizeRaw=(" << elem->get<Vector2f>("maxSize").x() << "," << elem->get<Vector2f>("maxSize").y()
-				<< ") computedMaxSize=(" << maxSz.x() << "," << maxSz.y() << ")";
-			setMaxSize(maxSz);
-		}
+			setMaxSize(elem->get<Vector2f>("maxSize") * scale);
 		else if(elem->has("minSize"))
 			setMinSize(elem->get<Vector2f>("minSize") * scale);
 	}
