@@ -89,7 +89,7 @@ void NetworkIconComponent::update(int deltaTime)
 
 void NetworkIconComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties)
 {
-	ImageComponent::applyTheme(theme, view, element, properties);
+	ImageComponent::applyThemeWithType(theme, view, element, properties, "networkIcon");
 
 	const ThemeData::ThemeElement* elem = theme->getElement(view, element, "networkIcon");
 	if (!elem)

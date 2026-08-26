@@ -21,6 +21,11 @@ void ClockComponent::onHide()
 	mActive = false;
 }
 
+void ClockComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties)
+{
+	TextComponent::applyThemeWithType(theme, view, element, properties, "clock");
+}
+
 void ClockComponent::update(int deltaTime)
 {
 	TextComponent::update(deltaTime);

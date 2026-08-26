@@ -444,11 +444,16 @@ std::string TextComponent::getValue() const
 
 void TextComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties)
 {
+	applyThemeWithType(theme, view, element, properties, "text");
+}
+
+void TextComponent::applyThemeWithType(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties, const std::string& expectedType)
+{
 	GuiComponent::applyTheme(theme, view, element, properties);
 
 	using namespace ThemeFlags;
 
-	const ThemeData::ThemeElement* elem = theme->getElement(view, element, "text");
+	const ThemeData::ThemeElement* elem = theme->getElement(view, element, expectedType);
 	if (!elem)
 		return;
 
@@ -500,12 +505,6 @@ void TextComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const st
 
 	if (properties & COLOR)
 	{
-		// TEMP DEBUG - remove once color issue is diagnosed
-		LOG(LogInfo) << "[ThemeDebug] TextComponent \"" << element << "\" (tag=" << getTag() << ") has(color)="
-			<< (elem->has("color") ? "true" : "false")
-			<< (elem->has("color") ? (" value=" + std::to_string(elem->get<unsigned int>("color"))) : "")
-			<< " currentColor(before)=" << std::to_string(mColor);
-
 		if (elem->has("color"))
 			setColor(elem->get<unsigned int>("color"));
 

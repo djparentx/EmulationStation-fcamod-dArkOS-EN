@@ -21,6 +21,11 @@ void BatteryTextComponent::onHide()
 	mActive = false;
 }
 
+void BatteryTextComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties)
+{
+	TextComponent::applyThemeWithType(theme, view, element, properties, "batteryText");
+}
+
 void BatteryTextComponent::update(int deltaTime)
 {
 	TextComponent::update(deltaTime);
