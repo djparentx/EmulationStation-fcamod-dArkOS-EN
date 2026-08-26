@@ -3,6 +3,7 @@
 #include "renderers/Renderer.h"
 #include "math/Vector2i.h"
 #include "math/Misc.h"
+#include "Log.h"
 
 StackPanelComponent::StackPanelComponent(Window* window) : GuiComponent(window), mHorizontal(true), mReverse(false), mClipChildren(true), mSeparator(0.0f)
 {
@@ -71,6 +72,10 @@ void StackPanelComponent::onSizeChanged()
 
 void StackPanelComponent::performLayout()
 {
+	// TEMP DEBUG - remove once icon sizing issue is diagnosed
+	LOG(LogInfo) << "[ThemeDebug] StackPanelComponent \"" << getTag() << "\" performLayout() ownSize=("
+		<< mSize.x() << "," << mSize.y() << ") childCount=" << mChildren.size();
+
 	float pos = mReverse ? (mHorizontal ? mSize.x() : mSize.y()) : 0.0f;
 
 	for (auto child : mChildren)
@@ -112,6 +117,10 @@ void StackPanelComponent::performLayout()
 				pos += child->getSize().y() + mSeparator;
 			}
 		}
+
+		// TEMP DEBUG - remove once icon sizing issue is diagnosed
+		LOG(LogInfo) << "[ThemeDebug]   child tag=" << child->getTag() << " size=(" << child->getSize().x()
+			<< "," << child->getSize().y() << ") pos=(" << child->getPosition().x() << "," << child->getPosition().y() << ")";
 	}
 }
 

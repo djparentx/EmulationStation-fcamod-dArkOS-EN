@@ -14,10 +14,13 @@ public:
 	BatteryTextComponent(Window* window);
 
 	virtual void update(int deltaTime);
+	void onShow() override;
+	void onHide() override;
 
 private:
 	BatteryInformation mBatteryInfo;
 	int mUpdateElapsed;
+	bool mActive;
 };
 
 #endif // ES_CORE_COMPONENTS_BATTTEXT_COMPONENT_H

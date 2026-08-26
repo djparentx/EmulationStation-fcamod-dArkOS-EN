@@ -3,14 +3,30 @@
 #include "utils/TimeUtil.h"
 #include <time.h>
 
-ClockComponent::ClockComponent(Window* window) : TextComponent(window)
+ClockComponent::ClockComponent(Window* window) : TextComponent(window), mActive(false)
 {
 	mClockElapsed = 0;
+}
+
+void ClockComponent::onShow()
+{
+	TextComponent::onShow();
+	mActive = true;
+	mClockElapsed = 0;
+}
+
+void ClockComponent::onHide()
+{
+	TextComponent::onHide();
+	mActive = false;
 }
 
 void ClockComponent::update(int deltaTime)
 {
 	TextComponent::update(deltaTime);
+
+	if (!mActive)
+		return;
 
 	setVisible(Settings::getInstance()->getBool("DrawClock"));
 
