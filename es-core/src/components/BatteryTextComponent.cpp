@@ -3,14 +3,30 @@
 
 #define UPDATE_BATTERY_DELAY 2000
 
-BatteryTextComponent::BatteryTextComponent(Window* window) : TextComponent(window), mUpdateElapsed(0)
+BatteryTextComponent::BatteryTextComponent(Window* window) : TextComponent(window), mUpdateElapsed(0), mActive(false)
 {
 	mBatteryInfo = BatteryInformation();
+}
+
+void BatteryTextComponent::onShow()
+{
+	TextComponent::onShow();
+	mActive = true;
+	mUpdateElapsed = UPDATE_BATTERY_DELAY;
+}
+
+void BatteryTextComponent::onHide()
+{
+	TextComponent::onHide();
+	mActive = false;
 }
 
 void BatteryTextComponent::update(int deltaTime)
 {
 	TextComponent::update(deltaTime);
+
+	if (!mActive)
+		return;
 
 	mUpdateElapsed += deltaTime;
 	if (mUpdateElapsed < UPDATE_BATTERY_DELAY)

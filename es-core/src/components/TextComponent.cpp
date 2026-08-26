@@ -500,6 +500,12 @@ void TextComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const st
 
 	if (properties & COLOR)
 	{
+		// TEMP DEBUG - remove once color issue is diagnosed
+		LOG(LogInfo) << "[ThemeDebug] TextComponent \"" << element << "\" (tag=" << getTag() << ") has(color)="
+			<< (elem->has("color") ? "true" : "false")
+			<< (elem->has("color") ? (" value=" + std::to_string(elem->get<unsigned int>("color"))) : "")
+			<< " currentColor(before)=" << std::to_string(mColor);
+
 		if (elem->has("color"))
 			setColor(elem->get<unsigned int>("color"));
 

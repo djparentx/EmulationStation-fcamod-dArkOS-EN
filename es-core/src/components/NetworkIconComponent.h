@@ -14,10 +14,13 @@ public:
 
 	void update(int deltaTime) override;
 	void applyTheme(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties) override;
+	void onShow() override;
+	void onHide() override;
 
 private:
 	bool mConnected;
 	int mUpdateElapsed;
+	bool mActive;
 
 	std::string mNetworkIcon;
 };

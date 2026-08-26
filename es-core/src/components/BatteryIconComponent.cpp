@@ -3,14 +3,30 @@
 
 #define UPDATE_BATTERY_DELAY 2000
 
-BatteryIconComponent::BatteryIconComponent(Window* window) : ImageComponent(window), mUpdateElapsed(0)
+BatteryIconComponent::BatteryIconComponent(Window* window) : ImageComponent(window), mUpdateElapsed(0), mActive(false)
 {
 	mBatteryInfo = BatteryInformation();
+}
+
+void BatteryIconComponent::onShow()
+{
+	ImageComponent::onShow();
+	mActive = true;
+	mUpdateElapsed = UPDATE_BATTERY_DELAY;
+}
+
+void BatteryIconComponent::onHide()
+{
+	ImageComponent::onHide();
+	mActive = false;
 }
 
 void BatteryIconComponent::update(int deltaTime)
 {
 	ImageComponent::update(deltaTime);
+
+	if (!mActive)
+		return;
 
 	mUpdateElapsed += deltaTime;
 	if (mUpdateElapsed < UPDATE_BATTERY_DELAY)

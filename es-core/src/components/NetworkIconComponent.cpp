@@ -43,14 +43,35 @@ static bool checkNetworkConnected()
 	return false;
 }
 
-NetworkIconComponent::NetworkIconComponent(Window* window) : ImageComponent(window), mConnected(false), mUpdateElapsed(0)
+NetworkIconComponent::NetworkIconComponent(Window* window) : ImageComponent(window), mConnected(false), mUpdateElapsed(0), mActive(false)
 {
 	setVisible(false);
+}
+
+void NetworkIconComponent::onShow()
+{
+	ImageComponent::onShow();
+	mActive = true;
+	// Poll right away instead of waiting up to UPDATE_NETWORK_DELAY so a freshly-selected
+	// system's status bar isn't showing stale/default state for up to 2 seconds.
+	mUpdateElapsed = UPDATE_NETWORK_DELAY;
+}
+
+void NetworkIconComponent::onHide()
+{
+	ImageComponent::onHide();
+	mActive = false;
 }
 
 void NetworkIconComponent::update(int deltaTime)
 {
 	ImageComponent::update(deltaTime);
+
+	// SystemView creates one of these per carousel entry but calls update() on all of them
+	// every frame regardless of selection - only do the actual (blocking, subprocess-based)
+	// network check while this entry is the one currently shown.
+	if (!mActive)
+		return;
 
 	mUpdateElapsed += deltaTime;
 	if (mUpdateElapsed < UPDATE_NETWORK_DELAY)
