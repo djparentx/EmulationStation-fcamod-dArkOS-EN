@@ -63,7 +63,7 @@ void BatteryIconComponent::update(int deltaTime)
 
 void BatteryIconComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties)
 {
-	ImageComponent::applyTheme(theme, view, element, properties);
+	ImageComponent::applyThemeWithType(theme, view, element, properties, "batteryIcon");
 
 	const ThemeData::ThemeElement* elem = theme->getElement(view, element, "batteryIcon");
 	if (!elem)

@@ -44,6 +44,15 @@ public:
 
 	virtual void applyTheme(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties) override;
 
+protected:
+	// Same as applyTheme() but looks up the theme element with theme->getElement(view, element,
+	// expectedType) instead of the hardcoded "text" - used by subclasses (ClockComponent,
+	// BatteryTextComponent) whose theme element type is "clock"/"batteryText", not "text", so
+	// getElement()'s type check would otherwise reject them and skip every property below.
+	void applyThemeWithType(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties, const std::string& expectedType);
+
+public:
+
 	void setGlowColor(unsigned int color) { mGlowColor = color; };
 	void setGlowSize(unsigned int size) { mGlowSize = size; };
 

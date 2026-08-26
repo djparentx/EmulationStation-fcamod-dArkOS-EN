@@ -96,6 +96,14 @@ public:
 
 	virtual void applyTheme(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties) override;
 
+protected:
+	// Same as applyTheme() but looks up the theme element with theme->getElement(view, element,
+	// expectedType) instead of the hardcoded "image" - used by subclasses (BatteryIconComponent,
+	// NetworkIconComponent) whose theme element type is "batteryIcon"/"networkIcon", not "image".
+	void applyThemeWithType(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties, const std::string& expectedType);
+
+public:
+
 	virtual std::vector<HelpPrompt> getHelpPrompts() override;
 
 	std::shared_ptr<TextureResource> getTexture() { return mTexture; };
