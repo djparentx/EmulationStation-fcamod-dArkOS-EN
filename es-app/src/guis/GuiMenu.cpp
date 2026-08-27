@@ -2974,6 +2974,30 @@ void GuiMenu::openUISettings()
 			s->setVariable("reloadAll", true);
 	});
 
+	// --- Network Icon Pack ---
+	auto networkIconPack = std::make_shared<OptionListComponent<std::string>>(mWindow, _("NETWORK ICON"), false);
+	std::string currentNetPack = Settings::getInstance()->getString("NetworkIconPack");
+	if (currentNetPack.empty()) currentNetPack = "Default";
+	networkIconPack->add(_("DEFAULT"),  "Default",  currentNetPack == "Default");
+	networkIconPack->add(_("MARIO"),    "Mario",    currentNetPack == "Mario");
+	networkIconPack->add(_("POKEMON"),  "Pokemon",  currentNetPack == "Pokemon");
+	networkIconPack->add(_("SOLSTICE"), "Solstice", currentNetPack == "Solstice");
+	networkIconPack->add(_("ZELDA"),    "Zelda",    currentNetPack == "Zelda");
+	networkIconPack->add(_("STOCK"),    "Stock",    currentNetPack == "Stock");
+	s->addWithLabel(_("NETWORK ICON"), networkIconPack);
+	s->addSaveFunc([this, s, networkIconPack] {
+		std::string pack = networkIconPack->getSelected();
+		if (Settings::getInstance()->setString("NetworkIconPack", pack)) {
+			std::string src = "/usr/bin/emulationstation/resources/network-packs/" + pack;
+			runSystemCommand("sudo -n cp -f " + src + "/bluetooth*.svg /usr/bin/emulationstation/resources/ 2>/dev/null", "", nullptr);
+			runSystemCommand("sudo -n cp -f " + src + "/network*.svg /usr/bin/emulationstation/resources/ 2>/dev/null", "", nullptr);
+			Settings::getInstance()->saveFile();
+			if (mWindow->getBatteryIndicator() != nullptr)
+				mWindow->getBatteryIndicator()->reloadNetworkIcons();
+			s->setVariable("reloadAll", true);
+		}
+	});
+
 	// show help
 	auto show_help = std::make_shared<SwitchComponent>(mWindow);
 	show_help->setState(Settings::getInstance()->getBool("ShowHelpPrompts"));
@@ -3005,11 +3029,11 @@ void GuiMenu::openUISettings()
 	auto batteryIconPack = std::make_shared<OptionListComponent<std::string>>(mWindow, _("BATTERY ICON"), false);
 	std::string currentPack = Settings::getInstance()->getString("BatteryIconPack");
 	if (currentPack.empty()) currentPack = "Default";
-	batteryIconPack->add(_("DEFAULT"),          "default",          currentPack == "default");
-	batteryIconPack->add(_("COLORFUL"),      "colorful", currentPack == "colorful");
-	// batteryIconPack->add(_("SEGMENTED"),        "segmented-battery", currentPack == "segmented-battery");
-	batteryIconPack->add(_("STOCK"),            "stock",            currentPack == "stock");
-	batteryIconPack->add(_("HEARTS"),           "hearts",   currentPack == "hearts");
+	batteryIconPack->add(_("DEFAULT"),       "default",    currentPack == "default");
+	batteryIconPack->add(_("COLORFUL"),      "colorful",   currentPack == "colorful");
+	batteryIconPack->add(_("VERTICAL"),      "vertical",   currentPack == "vertical");
+	batteryIconPack->add(_("STOCK"),         "stock",      currentPack == "stock");
+	batteryIconPack->add(_("HEARTS"),        "hearts",     currentPack == "hearts");
 	if (!batteryIconPack->hasSelection())
 		batteryIconPack->selectFirstItem();
 	s->addWithLabel(_("BATTERY ICON"), batteryIconPack);
@@ -3025,33 +3049,8 @@ void GuiMenu::openUISettings()
 		}
 	});
 
-
-
-	// --- Network Icon Pack ---
-	auto networkIconPack = std::make_shared<OptionListComponent<std::string>>(mWindow, _("NETWORK ICON"), false);
-	std::string currentNetPack = Settings::getInstance()->getString("NetworkIconPack");
-	if (currentNetPack.empty()) currentNetPack = "Default";
-	networkIconPack->add(_("DEFAULT"),  "Default",  currentNetPack == "Default");
-	networkIconPack->add(_("MARIO"),    "Mario",    currentNetPack == "Mario");
-	networkIconPack->add(_("POKEMON"),  "Pokemon",  currentNetPack == "Pokemon");
-	networkIconPack->add(_("SOLSTICE"), "Solstice", currentNetPack == "Solstice");
-	networkIconPack->add(_("ZELDA"),    "Zelda",    currentNetPack == "Zelda");
-	s->addWithLabel(_("NETWORK ICON"), networkIconPack);
-	s->addSaveFunc([this, s, networkIconPack] {
-		std::string pack = networkIconPack->getSelected();
-		if (Settings::getInstance()->setString("NetworkIconPack", pack)) {
-			std::string src = "/usr/bin/emulationstation/resources/network-packs/" + pack;
-			runSystemCommand("sudo -n cp -f " + src + "/bluetooth*.svg /usr/bin/emulationstation/resources/ 2>/dev/null", "", nullptr);
-			runSystemCommand("sudo -n cp -f " + src + "/network*.svg /usr/bin/emulationstation/resources/ 2>/dev/null", "", nullptr);
-			Settings::getInstance()->saveFile();
-			if (mWindow->getBatteryIndicator() != nullptr)
-				mWindow->getBatteryIndicator()->reloadNetworkIcons();
-			s->setVariable("reloadAll", true);
-		}
-	});
-
 	// Network indicator
-	auto networkIndicator = std::make_shared<SwitchComponent>(mWindow);
+	/*auto networkIndicator = std::make_shared<SwitchComponent>(mWindow);
 	networkIndicator->setState(Settings::getInstance()->getBool("ShowNetworkIndicator"));
 	s->addWithLabel(_("SHOW NETWORK ICON"), networkIndicator);
 	s->addSaveFunc([s, networkIndicator]
@@ -3059,7 +3058,7 @@ void GuiMenu::openUISettings()
     		if (Settings::getInstance()->setBool("ShowNetworkIndicator", networkIndicator->getState()))
         	s->setVariable("reloadAll", true);
 	});
-
+	*/
 	// filenames
 	auto hidden_files = std::make_shared<SwitchComponent>(mWindow);
 	hidden_files->setState(Settings::getInstance()->getBool("ShowFilenames"));
