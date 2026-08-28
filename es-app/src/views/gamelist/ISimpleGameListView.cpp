@@ -34,13 +34,6 @@ void ISimpleGameListView::onThemeChanged(const std::shared_ptr<ThemeData>& theme
 {
 	using namespace ThemeFlags;
 	mBackground.applyTheme(theme, getName(), "background", ALL);
-	const ThemeData::ThemeElement* logoElem = theme->getElement(getName(), "logo", "image");
-	LOG(LogInfo) << "[ThemeDebug] view=" << getName() << " logo elemFound=" << (logoElem != nullptr)
-		<< " has(x)=" << (logoElem != nullptr && logoElem->has("x"))
-		<< " has(y)=" << (logoElem != nullptr && logoElem->has("y"))
-		<< " has(pos)=" << (logoElem != nullptr && logoElem->has("pos"))
-		<< " has(origin)=" << (logoElem != nullptr && logoElem->has("origin"));
-
 	mHeaderImage.applyTheme(theme, getName(), "logo", ALL);
 	mHeaderText.applyTheme(theme, getName(), "logoText", ALL);
 
@@ -63,15 +56,6 @@ void ISimpleGameListView::onThemeChanged(const std::shared_ptr<ThemeData>& theme
 	for (auto extra : mThemeExtras)
 	{
 		addChild(extra);
-
-		// This view's own onShow() cascade (which normally activates children like
-		// ClockComponent/BatteryIconComponent/NetworkIconComponent via their mActive flag)
-		// may already have run earlier in this same transition, before these extras existed -
-		// addChild() alone doesn't retroactively fire onShow() on a child added afterward.
-		// Fire it explicitly here so freshly (re)built extras aren't left permanently inactive.
-		// Harmless if the view isn't visible yet - it just means the extra starts computing
-		// its state a little early, and the real onShow() cascade later is a no-op repeat.
-		extra->onShow();
 	}
 
 	if(mHeaderImage.hasImage())

@@ -226,7 +226,8 @@ void StackPanelComponent::performLayout()
 
 		if (mHorizontal)
 		{
-			child->setSize(child->getSize().x(), mSize.y());
+			if (child->getSize().y() != mSize.y())
+				child->setSize(child->getSize().x(), mSize.y());
 
 			if (mReverse)
 			{
@@ -243,8 +244,9 @@ void StackPanelComponent::performLayout()
 		}
 		else
 		{
-			child->setSize(mSize.x(), child->getSize().y());
-
+			if (child->getSize().x() != mSize.x())
+				child->setSize(mSize.x(), child->getSize().y());
+			
 			if (mReverse)
 			{
 				float childpos = pos - child->getSize().y() + child->getSize().y() * child->getOrigin().y();
