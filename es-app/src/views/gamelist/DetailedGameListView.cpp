@@ -11,6 +11,7 @@
 #include "views/ViewController.h"
 #ifdef _RPI_
 #include "Settings.h"
+#include "Log.h"
 #endif
 
 DetailedGameListView::DetailedGameListView(Window* window, FolderData* root) :
@@ -402,17 +403,28 @@ void DetailedGameListView::updateInfoPanel()
 		{
 			const std::string& tag = extra->getTag();
 			const ThemeData::ThemeElement* elem = getTheme()->getElement(getName(), tag, "");
+			LOG(LogInfo) << "[ThemeDebug] binding extra tag=" << tag << " elemFound=" << (elem != nullptr);
 			if (elem == nullptr)
 				continue;
 
 			if (elem->has("path"))
 			{
 				std::string resolved = ThemeGameBindings::resolve(elem->get<std::string>("path"), file, file->getSystem());
+				LOG(LogInfo) << "[ThemeDebug] tag=" << tag << " path raw=" << elem->get<std::string>("path") << " resolved=" << resolved;
 				if (resolved != elem->get<std::string>("path"))
 				{
 					auto* img = dynamic_cast<ImageComponent*>(extra);
 					if (img != nullptr)
+					{
 						img->setImage(resolved);
+					}
+					else
+					{
+						auto* vid = dynamic_cast<VideoComponent*>(extra);
+						if (vid != nullptr)
+							vid->setVideo(resolved);
+						LOG(LogInfo) << "[ThemeDebug] tag=" << tag << " imgCast=false videoCast=" << (vid != nullptr);
+					}
 				}
 			}
 

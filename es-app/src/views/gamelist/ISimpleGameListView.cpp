@@ -7,6 +7,7 @@
 #include "Settings.h"
 #include "Sound.h"
 #include "SystemData.h"
+#include "Log.h"
 
 ISimpleGameListView::ISimpleGameListView(Window* window, FolderData* root) : IGameListView(window, root),
 	mHeaderText(window), mHeaderImage(window), mBackground(window)
@@ -35,6 +36,12 @@ void ISimpleGameListView::onThemeChanged(const std::shared_ptr<ThemeData>& theme
 	mBackground.applyTheme(theme, getName(), "background", ALL);
 	mHeaderImage.applyTheme(theme, getName(), "logo", ALL);
 	mHeaderText.applyTheme(theme, getName(), "logoText", ALL);
+
+	LOG(LogInfo) << "[ThemeDebug] view=" << getName()
+		<< " logo pos=(" << mHeaderImage.getPosition().x() << "," << mHeaderImage.getPosition().y() << ")"
+		<< " size=(" << mHeaderImage.getSize().x() << "," << mHeaderImage.getSize().y() << ")"
+		<< " origin=(" << mHeaderImage.getOrigin().x() << "," << mHeaderImage.getOrigin().y() << ")"
+		<< " hasImage=" << mHeaderImage.hasImage();
 
 	// Remove old theme extras
 	for (auto extra : mThemeExtras)
