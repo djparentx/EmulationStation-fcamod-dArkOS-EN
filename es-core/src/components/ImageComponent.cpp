@@ -572,6 +572,22 @@ void ImageComponent::applyThemeWithType(const std::shared_ptr<ThemeData>& theme,
 		setPosition(Vector3f(denormalized.x(), denormalized.y(), 0));
 	}
 
+	// ImageComponent reimplements applyTheme() from scratch instead of delegating to
+	// GuiComponent::applyTheme(), so it needs its own handling of the standalone <x>/<y>
+	// tags (as opposed to the combined <pos> tag above) - previously missing here, which
+	// silently dropped image positioning for any theme using <x>/<y> instead of <pos>
+	if (properties & POSITION && elem->has("x"))
+	{
+		float x = elem->get<float>("x") * scale.x();
+		setPosition(Vector3f(x, mPosition.y(), mPosition.z()));
+	}
+
+	if (properties & POSITION && elem->has("y"))
+	{
+		float y = elem->get<float>("y") * scale.y();
+		setPosition(Vector3f(mPosition.x(), y, mPosition.z()));
+	}
+
 	if(properties & ThemeFlags::SIZE)
 	{
 		if(elem->has("size"))

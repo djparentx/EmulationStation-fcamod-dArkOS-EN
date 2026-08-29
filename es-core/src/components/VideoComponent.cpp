@@ -222,6 +222,21 @@ void VideoComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const s
 		mStaticImage.setPosition(Vector3f(denormalized.x(), denormalized.y(), 0));
 	}
 
+	// same standalone <x>/<y> gap as ImageComponent - see comment there
+	if ((properties & POSITION) && elem->has("x"))
+	{
+		float x = elem->get<float>("x") * scale.x();
+		setPosition(Vector3f(x, mPosition.y(), mPosition.z()));
+		mStaticImage.setPosition(Vector3f(x, mPosition.y(), mPosition.z()));
+	}
+
+	if ((properties & POSITION) && elem->has("y"))
+	{
+		float y = elem->get<float>("y") * scale.y();
+		setPosition(Vector3f(mPosition.x(), y, mPosition.z()));
+		mStaticImage.setPosition(Vector3f(mPosition.x(), y, mPosition.z()));
+	}
+
 	if(properties & ThemeFlags::SIZE)
 	{
 		if(elem->has("size"))
