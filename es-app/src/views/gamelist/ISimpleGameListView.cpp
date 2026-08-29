@@ -34,6 +34,13 @@ void ISimpleGameListView::onThemeChanged(const std::shared_ptr<ThemeData>& theme
 {
 	using namespace ThemeFlags;
 	mBackground.applyTheme(theme, getName(), "background", ALL);
+	const ThemeData::ThemeElement* logoElem = theme->getElement(getName(), "logo", "image");
+	LOG(LogInfo) << "[ThemeDebug] view=" << getName() << " logo elemFound=" << (logoElem != nullptr)
+		<< " has(x)=" << (logoElem != nullptr && logoElem->has("x"))
+		<< " has(y)=" << (logoElem != nullptr && logoElem->has("y"))
+		<< " has(pos)=" << (logoElem != nullptr && logoElem->has("pos"))
+		<< " has(origin)=" << (logoElem != nullptr && logoElem->has("origin"));
+
 	mHeaderImage.applyTheme(theme, getName(), "logo", ALL);
 	mHeaderText.applyTheme(theme, getName(), "logoText", ALL);
 

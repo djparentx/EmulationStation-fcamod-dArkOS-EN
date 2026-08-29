@@ -2812,6 +2812,8 @@ bool ThemeData::parseFilterAttributes(const pugi::xml_node& node)
 					if (selectedSubset == Utils::String::trim(value))
 						hasValue = true;
 
+				LOG(LogInfo) << "[ThemeDebug] ifSubset check subset=" << subsetToFind << " selected=\"" << selectedSubset << "\" requiredAnyOf=\"" << subsetValue << "\" result=" << hasValue;
+
 				if (!hasValue)
 					return false;
 			}

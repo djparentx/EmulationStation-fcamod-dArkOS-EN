@@ -226,8 +226,7 @@ void StackPanelComponent::performLayout()
 
 		if (mHorizontal)
 		{
-			if (child->getSize().y() != mSize.y())
-				child->setSize(child->getSize().x(), mSize.y());
+			child->setSize(child->getSize().x(), mSize.y());
 
 			if (mReverse)
 			{
@@ -244,8 +243,7 @@ void StackPanelComponent::performLayout()
 		}
 		else
 		{
-			if (child->getSize().x() != mSize.x())
-				child->setSize(mSize.x(), child->getSize().y());
+			child->setSize(mSize.x(), child->getSize().y());
 			
 			if (mReverse)
 			{
