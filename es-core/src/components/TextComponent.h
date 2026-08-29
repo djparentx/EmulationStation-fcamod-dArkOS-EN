@@ -83,6 +83,7 @@ private:
 
 	bool mUppercase;
 	Vector2i mAutoCalcExtent;
+	Vector2f mLastExtentSize; // size as of the last calculateExtent() call - see onSizeChanged()
 	std::shared_ptr<TextCache> mTextCache;
 	Alignment mHorizontalAlignment;
 	Alignment mVerticalAlignment;
