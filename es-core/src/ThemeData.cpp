@@ -881,10 +881,12 @@ bool ThemeData::parseFilterAttributes(const pugi::xml_node& node)
 	{
 		const std::string helpVisibleAttr = node.attribute("ifHelpPrompts").as_string();
 		bool help = Settings::getInstance()->getBool("ShowHelpPrompts");
+		bool excluded = (!help && helpVisibleAttr == "true") || (help && helpVisibleAttr == "false");
 
-		if (!help && helpVisibleAttr == "true")
-			return false;
-		else if (help && helpVisibleAttr == "false")
+		LOG(LogInfo) << "[ThemeDebug] ifHelpPrompts node=<" << node.name() << "> attr=" << helpVisibleAttr
+			<< " liveShowHelpPrompts=" << help << " excluded=" << excluded;
+
+		if (excluded)
 			return false;
 	}
 
