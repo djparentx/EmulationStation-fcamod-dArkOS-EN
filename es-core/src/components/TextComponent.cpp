@@ -6,7 +6,7 @@
 #include "Settings.h"
 
 TextComponent::TextComponent(Window* window) : GuiComponent(window),
-	mFont(Font::get(FONT_SIZE_MEDIUM)), mUppercase(false), mColor(0x000000FF), mAutoCalcExtent(true, true),
+	mFont(Font::get(FONT_SIZE_MEDIUM)), mUppercase(false), mColor(0x000000FF), mAutoCalcExtent(true, true), mLastExtentSize(0.0f, 0.0f),
 	mHorizontalAlignment(ALIGN_LEFT), mVerticalAlignment(ALIGN_CENTER), mLineSpacing(1.5f), mBgColor(0),
 	mRenderBackground(false), mGlowColor(0), mGlowSize(2), mPadding(Vector4f(0, 0, 0, 0)), mGlowOffset(Vector2f(0, 0)),
 	mReflection(0.0f, 0.0f), mReflectOnBorders(false)
@@ -21,7 +21,7 @@ TextComponent::TextComponent(Window* window) : GuiComponent(window),
 
 TextComponent::TextComponent(Window* window, const std::string& text, const std::shared_ptr<Font>& font, unsigned int color, Alignment align,
 	Vector3f pos, Vector2f size, unsigned int bgcolor) : GuiComponent(window),
-	mFont(NULL), mUppercase(false), mColor(0x000000FF), mAutoCalcExtent(true, true),
+	mFont(NULL), mUppercase(false), mColor(0x000000FF), mAutoCalcExtent(true, true), mLastExtentSize(0.0f, 0.0f),
 	mHorizontalAlignment(align), mVerticalAlignment(ALIGN_CENTER), mLineSpacing(1.5f), mBgColor(0),
 	mRenderBackground(false), mGlowColor(0), mGlowSize(2), mPadding(Vector4f(0, 0, 0, 0)), mGlowOffset(Vector2f(0, 0)),
 	mReflection(0.0f, 0.0f), mReflectOnBorders(false)
@@ -42,7 +42,18 @@ TextComponent::TextComponent(Window* window, const std::string& text, const std:
 
 void TextComponent::onSizeChanged()
 {
-	mAutoCalcExtent = Vector2i((getSize().x() == 0), (getSize().y() == 0));
+	// GuiComponent::setSize() has already overwritten mSize with the caller's requested
+	// (w,h) by the time we get here. Only treat a dimension as an explicit external
+	// override - and re-evaluate its auto-calc flag - if it actually differs from the
+	// size we last computed ourselves in calculateExtent(). A container re-applying the
+	// same value back to us (StackPanelComponent's layout pass does this every frame)
+	// must not freeze auto-calc off for a dimension nothing really changed.
+	if (getSize().x() != mLastExtentSize.x())
+		mAutoCalcExtent[0] = (getSize().x() == 0);
+
+	if (getSize().y() != mLastExtentSize.y())
+		mAutoCalcExtent[1] = (getSize().y() == 0);
+
 	onTextChanged();
 }
 
@@ -299,6 +310,11 @@ void TextComponent::calculateExtent()
 			mSize[1] = mFont->sizeWrappedText(mUppercase ? Utils::String::toUpper(mText) : mText, getSize().x(), mLineSpacing).y();
 		}
 	}
+
+	// record what the size actually became after this recalculation, so onSizeChanged()
+	// can later tell a genuinely new externally-requested size apart from a container
+	// (e.g. StackPanelComponent) simply feeding back a value we already reported
+	mLastExtentSize = mSize;
 }
 
 void TextComponent::onTextChanged()
