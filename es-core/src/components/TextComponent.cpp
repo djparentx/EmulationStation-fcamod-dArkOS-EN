@@ -42,6 +42,10 @@ TextComponent::TextComponent(Window* window, const std::string& text, const std:
 
 void TextComponent::onSizeChanged()
 {
+	LOG(LogInfo) << "[ThemeDebug] onSizeChanged tag=" << getTag() << " incoming=(" << getSize().x() << "," << getSize().y() << ")"
+		<< " lastExtent=(" << mLastExtentSize.x() << "," << mLastExtentSize.y() << ")"
+		<< " autoCalcBefore=(" << mAutoCalcExtent.x() << "," << mAutoCalcExtent.y() << ")";
+
 	// GuiComponent::setSize() has already overwritten mSize with the caller's requested
 	// (w,h) by the time we get here. Only treat a dimension as an explicit external
 	// override - and re-evaluate its auto-calc flag - if it actually differs from the
@@ -53,6 +57,8 @@ void TextComponent::onSizeChanged()
 
 	if (getSize().y() != mLastExtentSize.y())
 		mAutoCalcExtent[1] = (getSize().y() == 0);
+
+	LOG(LogInfo) << "[ThemeDebug] onSizeChanged tag=" << getTag() << " autoCalcAfter=(" << mAutoCalcExtent.x() << "," << mAutoCalcExtent.y() << ")";
 
 	onTextChanged();
 }
@@ -315,6 +321,9 @@ void TextComponent::calculateExtent()
 	// can later tell a genuinely new externally-requested size apart from a container
 	// (e.g. StackPanelComponent) simply feeding back a value we already reported
 	mLastExtentSize = mSize;
+
+	LOG(LogInfo) << "[ThemeDebug] calculateExtent tag=" << getTag() << " text=\"" << mText << "\" autoCalc=(" << mAutoCalcExtent.x() << "," << mAutoCalcExtent.y() << ")"
+		<< " resultSize=(" << mSize.x() << "," << mSize.y() << ")";
 }
 
 void TextComponent::onTextChanged()
