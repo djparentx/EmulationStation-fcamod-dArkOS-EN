@@ -77,7 +77,12 @@ private:
 	void setGpuMaxFreq(const std::string& freq);
 	std::vector<std::string> getGpuAvailableFreqs();
 	bool isGpuBootApplyEnabled();
-	void toggleGpuBootApply(bool enable);	
+	void toggleGpuBootApply(bool enable);
+	void writeCpuBootConfig();
+	void writeGpuBootConfig();
+	void writeDmcBootConfig();
+	bool isDmcBootApplyEnabled();
+	void toggleDmcBootApply(bool enable);	
 	bool hasDmcFreqControl();
 	std::string getDmcMaxFreq();
 	void setDmcMaxFreq(const std::string& freq);

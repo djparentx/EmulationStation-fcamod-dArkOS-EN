@@ -97,7 +97,7 @@ GuiMenu::GuiMenu(Window* window, bool animate) : GuiComponent(window), mMenu(win
 	
 	addEntry(_("QUIT"), !Settings::getInstance()->getBool("ShowOnlyExit"), [this] {openQuitMenu(); }, "iconQuit");
 
-	addEntry(_("BAT") + ": " + std::string(getShOutput(R"(cat /sys/class/power_supply/battery/capacity)")) + "%" + " | " + _("SND") + ": " + std::string(getShOutput(R"(current_volume)")) + " | " + _("BRT") + ": " + std::to_string(ApiSystem::getInstance()->getBrightnessLevel()) + "% | " + _("WIFI") + ": " + std::string(getShOutput(R"(if [ -z $(cat /sys/class/net/wlan0/operstate) ]; then echo "Off"; else cat /sys/class/net/wlan0/operstate; fi)")), false, [this] {  });
+	addEntry(_("BAT") + ": " + std::string(getShOutput(R"(cat /sys/class/power_supply/battery/capacity)")) + "%" + " | " + _("SND") + ": " + std::string(getShOutput(R"(current_volume)")) + " | " + _("BRT") + ": " + std::to_string(ApiSystem::getInstance()->getBrightnessLevel()) + "% | " + _("WIFI") + ": " + std::string(getShOutput(R"(if [ -z $(cat /sys/class/net/wlan0/operstate) ]; then echo "Off"; else cat /sys/class/net/wlan0/operstate; fi)")), true, [this] {  });
 
 	addEntry(_("Distro Version") + ": " + std::string(getShOutput(R"(cat /usr/share/plymouth/themes/text.plymouth | grep title | cut -c 7-50)")), false, [this] {
 		if (access("/usr/local/bin/Update.sh", F_OK) == 0)
@@ -1832,6 +1832,44 @@ void GuiMenu::toggleGpuBootApply(bool enable)
     }
 }
 
+void GuiMenu::writeCpuBootConfig()
+{
+    std::string gov = getCpuGovernor();
+    std::string freq = getCpuMaxFreq();
+    std::string content = "GOV=" + gov + "\nFREQ=" + freq + "\n";
+    executeCommand("echo '" + content + "' | sudo tee /etc/cpu-settings.conf >/dev/null 2>&1");
+}
+
+void GuiMenu::writeGpuBootConfig()
+{
+    std::string freq = getGpuMaxFreq();
+    std::string content = "FREQ=" + freq + "\n";
+    executeCommand("echo '" + content + "' | sudo tee /etc/gpu-settings.conf >/dev/null 2>&1");
+}
+
+void GuiMenu::writeDmcBootConfig()
+{
+    std::string freq = getDmcMaxFreq();
+    std::string content = "FREQ=" + freq + "\n";
+    executeCommand("echo '" + content + "' | sudo tee /etc/dmc-settings.conf >/dev/null 2>&1");
+}
+
+bool GuiMenu::isDmcBootApplyEnabled()
+{
+    std::string result = executeCommand("systemctl is-enabled dmc-governor.service 2>/dev/null");
+    result.erase(std::remove_if(result.begin(), result.end(), ::isspace), result.end());
+    return result == "enabled";
+}
+
+void GuiMenu::toggleDmcBootApply(bool enable)
+{
+    if (enable) {
+        executeCommand("sudo systemctl enable dmc-governor.service 2>/dev/null || true");
+    } else {
+        executeCommand("sudo systemctl disable dmc-governor.service 2>/dev/null || true");
+    }
+}
+
 bool GuiMenu::hasDmcFreqControl()
 {
     std::string result = executeCommand("ls /sys/class/devfreq/dmc/available_frequencies 2>/dev/null");
@@ -1955,10 +1993,8 @@ void GuiMenu::saveZramConfig(const std::string& size, const std::string& compAlg
     else if (size == "512M") bytes = 536870912;
     else if (size == "1024M") bytes = 1073741824;
 
-    std::string cmd = "echo -e 'ENABLED=1\\nALGORITHM=" + compAlgo +
-                      "\\nSIZE=" + std::to_string(bytes) +
-                      "' | sudo tee /etc/zram.conf >/dev/null 2>&1";
-    executeCommand(cmd);
+    std::string content = "ENABLED=1\nALGORITHM=" + compAlgo + "\nSIZE=" + std::to_string(bytes) + "\n";
+    executeCommand("echo '" + content + "' | sudo tee /etc/zram.conf >/dev/null 2>&1");
 }
 
 bool GuiMenu::isZramAutoStart()
@@ -2127,6 +2163,14 @@ void GuiMenu::openPerformanceSettings()
         });
     }	
 
+	// --- RAM Persistence ---
+    auto dmcBootApplySwitch = std::make_shared<SwitchComponent>(mWindow);
+    dmcBootApplySwitch->setState(isDmcBootApplyEnabled());
+    s->addWithLabel(_("RAM APPLY ON BOOT"), dmcBootApplySwitch);
+    dmcBootApplySwitch->setOnChangedCallback([this, dmcBootApplySwitch] {
+        toggleDmcBootApply(dmcBootApplySwitch->getState());
+    });
+
     // ZRAM Enable/Disable
     bool zramEnabled = isZramEnabled();
     auto zramSwitch = std::make_shared<SwitchComponent>(mWindow);
@@ -2195,6 +2239,12 @@ void GuiMenu::openPerformanceSettings()
             toggleZramAutoStart(true, val, selectedAlgo);
         }
     });
+
+	s->addSaveFunc([this] {
+		writeCpuBootConfig();
+		writeGpuBootConfig();
+		writeDmcBootConfig();
+	});
 
 	mWindow->pushGui(s);
 }
@@ -3731,7 +3781,7 @@ void GuiMenu::openOtherSettings()
 	s->addWithLabel(_("THREADED LOADING"), threadedLoading);
 	s->addSaveFunc([threadedLoading] { Settings::getInstance()->setBool("ThreadedLoading", threadedLoading->getState()); });
 
-	// global default emualtor performance governor
+	// global default emulator performance governor
 	auto gdepg = std::make_shared< OptionListComponent<std::string> >(mWindow, _("Default Emulator Governor"), false);
 
 	EmulatorData GOVs;
@@ -4014,6 +4064,43 @@ void GuiMenu::onSizeChanged()
 	mVersion.setSize(mSize.x(), h);
 	mVersion.setPosition(0, mSize.y() - h); //  mVersion.getSize().y()
 }
+
+/*
+void GuiMenu::openQuickStatusMenu()
+{
+	auto s = new GuiSettings(mWindow, _("QUICK SETTINGS"));
+	auto theme = ThemeData::getMenuTheme();
+
+	ComponentListRow row;
+
+	row.elements.clear();
+	row.makeAcceptInputHandler([this] { openBatterySettings(); });
+	row.addElement(std::make_shared<TextComponent>(mWindow, _("BATTERY PLUS"), theme->Text.font, theme->Text.color), true);
+	row.addElement(makeArrow(mWindow), false);
+	s->addRow(row);
+
+	row.elements.clear();
+	row.makeAcceptInputHandler([this] { openSoundSettings(); });
+	row.addElement(std::make_shared<TextComponent>(mWindow, _("SOUND"), theme->Text.font, theme->Text.color), true);
+	row.addElement(makeArrow(mWindow), false);
+	s->addRow(row);
+
+	row.elements.clear();
+	row.makeAcceptInputHandler([this] { openDisplaySettings(); });
+	row.addElement(std::make_shared<TextComponent>(mWindow, _("BRIGHTNESS"), theme->Text.font, theme->Text.color), true);
+	row.addElement(makeArrow(mWindow), false);
+	s->addRow(row);
+
+	row.elements.clear();
+	row.makeAcceptInputHandler([this] { openNetworkSettings(); });
+	row.addElement(std::make_shared<TextComponent>(mWindow, _("WI-FI"), theme->Text.font, theme->Text.color), true);
+	row.addElement(makeArrow(mWindow), false);
+	s->addRow(row);
+
+	s->updatePosition();
+	mWindow->pushGui(s);
+}
+*/
 
 void GuiMenu::addEntry(std::string name, bool add_arrow, const std::function<void()>& func, const std::string iconName)
 {

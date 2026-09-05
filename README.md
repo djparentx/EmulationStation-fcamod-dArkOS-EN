@@ -24,7 +24,7 @@ Built automatically via GitHub Actions using the official Mali RK3326 libraries 
 
   | Pack | Look |
   |------|------|
-  | `Default` | Simple green battery icons |
+  | `Default` | Simple green / red / yellow (charging) icons |
   | `Colorful` | Graduated colors by level (full → good → medium → low → charging) |
   | `Hearts` | Heart-shaped icons |
   | `Stock` | Original monochrome icons from christianhaitian |
@@ -42,6 +42,7 @@ Built automatically via GitHub Actions using the official Mali RK3326 libraries 
 
 ### 🖥️ Display Settings
 - **Gamma slider** — adjust screen gamma (0.4 → 1.8) in real time, in **START > DISPLAY SETTINGS**.
+- Mipmap rendering fix for crisp status bar icons at any size.
 - **Distro Version** — click to check for dArkOS EN updates directly from the main menu.
 
 ### 📅 Date & Time (by djparentx)
@@ -56,34 +57,30 @@ New menu — **START > PERFORMANCE SETTINGS**:
 | **CPU Temp** | Real-time CPU temperature |
 | **CPU Cores** | Enable/disable CPU cores on the fly (1–4) |
 | **CPU Governor** | performance / ondemand / schedutil / powersave |
-| **CPU Max Freq** | Set CPU clock speed |
 | **GPU Governor** | GPU frequency governor |
-| **GPU Max Freq** | Set GPU clock speed |
-| **RAM Max Freq** | Set RAM clock speed |
-| **ZRAM Enable** | Enable disable ZRAM, persists after reboot |
-| **ZRAM Size** | Set ZRAM size |
-| **ZRAM Compression** | Choose ZRAM compression |
+| **Global Performance** | Quick preset for the whole device |
 
 ### 🌐 Network Settings menu
 New menu between **UI Settings** and **Sound Settings** — **START > NETWORK SETTINGS**:
-Wi-Fi Manager is fully integrated into the menu and OS.
 
 | Entry | Description |
 |-------|-------------|
-| **Current Network** | Shows current connected network |
-| **Hostname** | Editable; shown only when Remote Services is active |
+| **Hostname** | Editable; shown only when SSH or Samba is active |
 | **IP Address** | Shown only when WiFi is connected |
-| **Gateway** | Shown only when WiFi is connected |
-| **DNS** | Shown only when WiFi is connected |
-| **Wi-Fi Enabled** | Enables/disables wifi |
-| **Scan Wifi Networks** | Scans for open networks |
-| **Activate Existing Connection** | Connects to saved networks |
-| **Delete Existing Connection** | Delete a saved network |
-| **Remote Services** | Enable/disable ssh, samba, and filebrowser sharing in one click |
-| **Remote Services Auto-start** | Start remote services at boot |
-| **Root Samba Access** | Enable/disable root access for samba, toggle to add SD2 if available |
-| **Wifi Monitor Service** | Enable/disable wifi monitor service |
+| **Wi-Fi Manager** | Launches `/opt/system/Wi-Fi Manager.sh` |
 | **Bluetooth Manager** | Launches `/opt/system/BT Manager.sh` |
+| **Samba Sharing** | Toggle Samba on/off instantly, plus "on boot" |
+| **SSH Sharing** | Toggle SSH on/off instantly, plus "on boot" |
+
+### ⚡ Quick Settings
+The status line at the bottom of the **Main Menu** (`BAT: | SND: | BRT: | WIFI:`) is now clickable and opens a shortcut menu:
+
+| Entry | Jumps to |
+|-------|----------|
+| **Battery Plus** | Advanced Settings > BatteryPlus Settings |
+| **Sound** | Sound Settings |
+| **Brightness** | Display Settings and Info |
+| **Wi-Fi** | Network Settings |
 
 ### 🔋 Battery Settings menu
 New menu — **START > BATTERY SETTINGS**:
@@ -93,7 +90,7 @@ New menu — **START > BATTERY SETTINGS**:
 | **BatteryPlus Status** | Daemon active/inactive |
 | **Calibration** | Current calibration state |
 | **Battery Level** | Live % from `/tmp/battery.percent` |
-| **BatteryPlus Enabled** | Toggle on/off |
+| **BatteryPlus Daemon** | Toggle on/off |
 | **BatteryPlus Mode** | `voltage` or `pmic` |
 | **Reset Calibration** | Delete learned voltage anchors |
 
@@ -119,9 +116,9 @@ Every push builds automatically via GitHub Actions:
 
 ## 📋 Requirements
 
-- R36S running **dArkOSen**
+- R36S running **dArkOS EN**
 - No internet connection required — everything is included in the zip
-- `Update.sh` and `BT Manager.sh` in `/opt/system/` for the network manager entries
+- `Wi-Fi Manager.sh` and `BT Manager.sh` in `/opt/system/` for the network manager entries
 
 ---
 
