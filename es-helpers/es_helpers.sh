@@ -20,8 +20,6 @@ chmod +x "/usr/local/bin/batt_life_warning.py"
 chmod +x "/usr/local/bin/fix_power_led.red"
 chmod +x "/usr/local/bin/fix_power_led.green"
 chmod +x "/usr/local/bin/fix_power_led"
-chmod +x "/usr/local/bin/savesync.sh"
-chmod +x "/home/ark/.emulationstation/scripts/savesync.sh"
 chmod +x "/etc/NetworkManager/dispatcher.d/99-disable-bgscan.sh"
 chmod +x "/etc/NetworkManager/dispatcher.d/99-disable-ipv6.sh"
 chown ark:ark /etc/samba/smb.conf

@@ -82,16 +82,6 @@ The status line at the bottom of the **Main Menu** (`BAT: | SND: | BRT: | WIFI:`
 | **Brightness** | Display Settings and Info |
 | **Wi-Fi** | Network Settings |
 
-### 🎮 Last 20 Played Games
-New menu — **START > GAME COLLECTION SETTINGS > LAST 20 PLAYED GAMES**:
-
-- Lists the **20 most recently played games**, most recent first, across every system.
-- Three columns: **game name**, **system**, and **session | total** play time.
-- Play time is tracked per game via two new metadata fields (`gametime`, `lastsession`) written on every exit.
-- Selecting a game **relaunches it on its most recent savestate** — manual slots (`0`–`9`) take priority over the auto-state, injected through RetroArch's `--entryslot`.
-- A `*` marks entries that have a savestate available to resume from.
-- RetroArch launcher scripts are filtered out; slot injection is skipped for MAME cores and non-RetroArch emulators (PICO-8, PPSSPP standalone), which still launch normally.
-
 ### 🔋 Battery Settings menu
 New menu — **START > BATTERY SETTINGS**:
 
@@ -110,20 +100,6 @@ One-click toggle that starts/stops **SSH**, **Samba** (with optional `/roms2` sh
 - **Auto-start at boot** for all remote services
 - **WiFi Monitor** — background service for connection stability
 - Tuned NetworkManager config (IPv6 off, background scan, buffer sizes) and a PSK fix for persistent WiFi connections
-
-### ☁️ SaveSync (by djparentx)
-New menu — **START > ADVANCED SETTINGS > SAVESYNC SETTINGS**. Syncs your saves and savestates with a remote share:
-
-| Entry | Description |
-|-------|-------------|
-| **Enable SaveSync** | Toggles the `savesync.service` daemon |
-| **Synchronize Now** | Manual sync on demand |
-| **Rebuild Folder Cache** | Rescans the folders to sync |
-| **Credentials** | Server, share, user and password |
-| **Protocol** | `SMB` (Windows / Samba), `NFS` (Linux / NAS), `SSHFS` (SSH / SFTP), `WebDAV` (Nextcloud / ownCloud) |
-| **Log** | View the sync log |
-
-Entries below the toggle appear only while SaveSync is enabled, and missing dependencies for the selected protocol are checked automatically.
 
 ### 🌍 Translations
 All new strings translated into **17 languages**:
@@ -163,7 +139,7 @@ Every push builds automatically via GitHub Actions:
 ## 🙏 Thanks
 
 - [christianhaitian](https://github.com/christianhaitian) for the base EmulationStation fork
-- [djparentx](https://github.com/djparentx) for dArkOS EN, the R36S ecosystem and major contributions (gamma slider, WiFi helpers, Remote Services, Performance Settings, Date & Time, SaveSync)
+- [djparentx](https://github.com/djparentx) for dArkOS EN, the R36S ecosystem and major contributions (gamma slider, WiFi helpers, Remote Services, Performance Settings, Date & Time)
 - [lcdyk0517](https://github.com/lcdyk0517) for key latency improvements
 - [Mikhailzrick](https://github.com/Mikhailzrick) for BatteryPlus
 

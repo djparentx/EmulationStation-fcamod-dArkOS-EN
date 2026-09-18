@@ -273,7 +273,7 @@ FileData* FileData::getSourceFileData()
 	return this;
 }
 
-void FileData::launchGame(Window* window, int entrySlot)
+void FileData::launchGame(Window* window)
 {
 	LOG(LogInfo) << "Attempting to launch game...";
 
@@ -325,29 +325,6 @@ void FileData::launchGame(Window* window, int entrySlot)
 	command = Utils::String::replace(command, "%SYSTEM%", getSystemName());
 	command = Utils::String::replace(command, "%HOME%", Utils::FileSystem::getHomePath());
 
-	// injection du slot de savestate demande depuis le menu des derniers joues
-	if (entrySlot >= 0)
-	{
-		// le plus long d'abord : retroarch32 contient retroarch
-		const std::string bins[2] = { "/usr/local/bin/retroarch32", "/usr/local/bin/retroarch" };
-		bool injected = false;
-		for (int i = 0; i < 2 && !injected; i++)
-		{
-			size_t pos = command.find(bins[i]);
-			if (pos == std::string::npos)
-				continue;
-			size_t end = pos + bins[i].length();
-			// le nom doit se terminer la (espace ou fin), sinon c'est un prefixe
-			if (end < command.length() && command[end] != ' ')
-				continue;
-			command.insert(end, " --entryslot " + std::to_string(entrySlot));
-			injected = true;
-		}
-		// hors RetroArch (pico8, ppsspp, drastic...) : aucune injection,
-		// ces emulateurs ont leur propre format de sauvegarde
-		(void)injected;
-	}
-
 	if (Utils::FileSystem::exists("/usr/local/bin/quickmode.sh"))
 	{
 	    FileData* gameToUpdate = getSourceFileData();
@@ -365,15 +342,9 @@ void FileData::launchGame(Window* window, int entrySlot)
 	Scripting::fireEvent("game-start", rom, basename);
 
 	LOG(LogInfo) << "\t" << command;
-<<<<<<< HEAD
-=======
-
-	time_t sessionStart = Utils::Time::now();
->>>>>>> 1da20137 (fix gamelists not displaying)
 
 	time_t sessionStart = Utils::Time::now();
 
-	time_t esSessionStart = Utils::Time::now();
 	int exitCode = runSystemCommand(command, getDisplayName(), hideWindow ? NULL : window);
 	if (exitCode != 0)
 	{
@@ -414,17 +385,6 @@ void FileData::launchGame(Window* window, int entrySlot)
 	}
 
 	// music
-	// mise a jour du temps de jeu, commune aux deux branches de lancement
-	int esSessionTime = (int)(Utils::Time::now() - esSessionStart);
-	if (esSessionTime > 0 && esSessionTime < 86400)
-	{
-		FileData* gameToTime = getSourceFileData();
-		int totalTime = gameToTime->getMetadata().getInt("gametime") + esSessionTime;
-		gameToTime->getMetadata().set("gametime", std::to_string(static_cast<long long>(totalTime)));
-		gameToTime->getMetadata().set("lastsession", std::to_string(static_cast<long long>(esSessionTime)));
-		saveToGamelistRecovery(gameToTime);
-	}
-
 	if (Settings::getInstance()->getBool("audio.bgmusic"))
 		AudioManager::getInstance()->playRandomMusic();
 }

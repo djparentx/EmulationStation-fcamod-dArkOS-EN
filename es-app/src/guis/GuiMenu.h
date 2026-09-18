@@ -42,13 +42,7 @@ private:
 	void activateConnection(const std::string& connName);
 	void deleteConnections();
 	void openNetworkSettings();
-	void openQuickStatusMenu();
 	void openBatterySettings();
-	void openSaveSyncSettings();
-	void openSaveSyncCredentials();
-	void openSaveSyncProtocol();
-	void openSaveSyncLog();
-	void manualSaveSync();
 	void openSoundSettings();
 	void openUISettings();
 
