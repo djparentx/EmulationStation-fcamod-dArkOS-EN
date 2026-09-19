@@ -1,19 +1,18 @@
-# EmulationStation fcamod — dArkOS EN Edition
+# EmulationStation fcamod — dArkOSen Edition
 
 ![Platform](https://img.shields.io/badge/Platform-R36S-blue)
-![OS](https://img.shields.io/badge/OS-dArkOS%20EN-green)
+![OS](https://img.shields.io/badge/OS-dArkOSen-green)
 ![Shell](https://img.shields.io/badge/Bash-Script-yellow)
 ![License](https://img.shields.io/badge/License-Free-lightgrey)
-![Build](https://img.shields.io/github/actions/workflow/status/Jason3x/EmulationStation-fcamod-dArkOS-EN/build.yml?branch=feature%2Fwifi-bt-icons-network-menu&label=Build)
 
-A custom fork of [christianhaitian/EmulationStation-fcamod](https://github.com/christianhaitian/EmulationStation-fcamod) (branch `351v`) targeting **dArkOS EN** on the **R36S** handheld.
+A custom fork of [christianhaitian/EmulationStation-fcamod](https://github.com/christianhaitian/EmulationStation-fcamod) (branch `351v`) targeting **dArkOSen** on the **R36S** handheld.
 Built automatically via GitHub Actions using the official Mali RK3326 libraries — no cross-compilation issues, no black screen.
 
 ---
 
 ## ✨ What's new compared to upstream
 
-### 🔋 Battery icon
+### 🔋 Battery icon (by Jason)
 
 - Battery level and charging state shown as a small icon in the status bar, with an optional percentage readout.
 - **Colored by charge level** (`Default` pack):
@@ -31,7 +30,7 @@ Built automatically via GitHub Actions using the official Mali RK3326 libraries 
 
 - Powered by [knubat/BatteryPlus](https://github.com/Mikhailzrick/knubat.components) — a voltage-based percentage daemon for RK3326 handhelds, with its own settings menu (see below).
 
-### 📶🔵 WiFi & Bluetooth icons
+### 📶🔵 WiFi & Bluetooth icons (by Jason)
 
 - Live status icons in the status bar, each with an **off / active / connected** state (WiFi also has **sharing** and **service** states for SSH/Samba/Filebrowser).
 - Icon appearance updates automatically every 5 seconds via a background daemon (`es-status-daemon`) — no polling from ES itself.
@@ -45,11 +44,11 @@ Built automatically via GitHub Actions using the official Mali RK3326 libraries 
 - Mipmap rendering fix for crisp status bar icons at any size.
 - **Distro Version** — click to check for dArkOS EN updates directly from the main menu.
 
-### 📅 Date & Time (by djparentx)
+### 📅 Date & Time
 - Real-time clock in **START > ADVANCED SETTINGS > DATE & TIME**.
 - Set date, time and timezone directly from ES.
 
-### ⚡ Performance Settings (by djparentx)
+### ⚡ Performance Settings
 New menu — **START > PERFORMANCE SETTINGS**:
 
 | Entry | Description |
@@ -60,7 +59,7 @@ New menu — **START > PERFORMANCE SETTINGS**:
 | **GPU Governor** | GPU frequency governor |
 | **Global Performance** | Quick preset for the whole device |
 
-### 🌐 Network Settings menu
+### 🌐 Network Settings menu (by Jason)
 New menu between **UI Settings** and **Sound Settings** — **START > NETWORK SETTINGS**:
 
 | Entry | Description |
@@ -72,7 +71,7 @@ New menu between **UI Settings** and **Sound Settings** — **START > NETWORK SE
 | **Samba Sharing** | Toggle Samba on/off instantly, plus "on boot" |
 | **SSH Sharing** | Toggle SSH on/off instantly, plus "on boot" |
 
-### ⚡ Quick Settings
+### ⚡ Quick Settings (by Jason)
 The status line at the bottom of the **Main Menu** (`BAT: | SND: | BRT: | WIFI:`) is now clickable and opens a shortcut menu:
 
 | Entry | Jumps to |
@@ -82,7 +81,7 @@ The status line at the bottom of the **Main Menu** (`BAT: | SND: | BRT: | WIFI:`
 | **Brightness** | Display Settings and Info |
 | **Wi-Fi** | Network Settings |
 
-### 🎮 Last 20 Played Games
+### 🎮 Last 20 Played Games (by Jason)
 New menu — **START > GAME COLLECTION SETTINGS > LAST 20 PLAYED GAMES**:
 
 - Lists the **20 most recently played games**, most recent first, across every system.
@@ -92,7 +91,7 @@ New menu — **START > GAME COLLECTION SETTINGS > LAST 20 PLAYED GAMES**:
 - A `*` marks entries that have a savestate available to resume from.
 - RetroArch launcher scripts are filtered out; slot injection is skipped for MAME cores and non-RetroArch emulators (PICO-8, PPSSPP standalone), which still launch normally.
 
-### 🔋 Battery Settings menu
+### 🔋 Battery Settings menu (by Jason)
 New menu — **START > BATTERY SETTINGS**:
 
 | Entry | Description |
@@ -104,14 +103,14 @@ New menu — **START > BATTERY SETTINGS**:
 | **BatteryPlus Mode** | `voltage` or `pmic` |
 | **Reset Calibration** | Delete learned voltage anchors |
 
-### 📡 Remote Services (by djparentx)
+### 📡 Remote Services
 One-click toggle that starts/stops **SSH**, **Samba** (with optional `/roms2` share) and **Filebrowser** (web file manager on port 80) together, plus:
 - **Samba Root Access** — default vs. root Samba config
 - **Auto-start at boot** for all remote services
 - **WiFi Monitor** — background service for connection stability
 - Tuned NetworkManager config (IPv6 off, background scan, buffer sizes) and a PSK fix for persistent WiFi connections
 
-### ☁️ SaveSync (by djparentx)
+### ☁️ SaveSync
 New menu — **START > ADVANCED SETTINGS > SAVESYNC SETTINGS**. Syncs your saves and savestates with a remote share:
 
 | Entry | Description |
@@ -125,11 +124,11 @@ New menu — **START > ADVANCED SETTINGS > SAVESYNC SETTINGS**. Syncs your saves
 
 Entries below the toggle appear only while SaveSync is enabled, and missing dependencies for the selected protocol are checked automatically.
 
-### 🌍 Translations
+### 🌍 Translations (by Jason)
 All new strings translated into **17 languages**:
 `br` `de` `el` `es` `fr` `it` `ja` `ko` `pl` `pt` `ru` `sv` `ua` `uk` `vi` `zh-CN` `zh-TW`
 
-### 🔄 Auto-build
+### 🔄 Auto-build (by Jason)
 Every push builds automatically via GitHub Actions:
 - `aarch64-linux-gnu-g++` cross-compiler
 - Official **Mali RK bifrost G31** libraries (not Mesa)
@@ -140,7 +139,7 @@ Every push builds automatically via GitHub Actions:
 
 ## 📋 Requirements
 
-- R36S running **dArkOS EN**
+- R36S running **dArkOSen**
 - No internet connection required — everything is included in the zip
 - `Wi-Fi Manager.sh` and `BT Manager.sh` in `/opt/system/` for the network manager entries
 
@@ -148,10 +147,10 @@ Every push builds automatically via GitHub Actions:
 
 ## 🚀 Installation
 
-1. Download the latest **`emulationstation-roms-tools`** zip from [GitHub Actions](https://github.com/Jason3x/EmulationStation-fcamod-dArkOS-EN/actions)
+1. Download the latest **`emulationstation-roms-tools`** zip from [GitHub Actions](https://github.com/djparentx/EmulationStation-fcamod-dArkOS-EN/actions)
 2. Extract and copy all contents to: `roms/tools/`
 3. Launch `install-es.sh` from the **Tools** section on your device
-4. Select **Install ES-dArkOS-EN** — the installer will:
+4. Select **Install ES-dArkOSen** — the installer will:
    - Back up the original ES binary
    - Install the new binary + all resources (icons, locales, battery/network packs, splash)
    - Install and start `es-status-daemon`
@@ -163,12 +162,14 @@ Every push builds automatically via GitHub Actions:
 ## 🙏 Thanks
 
 - [christianhaitian](https://github.com/christianhaitian) for the base EmulationStation fork
-- [djparentx](https://github.com/djparentx) for dArkOS EN, the R36S ecosystem and major contributions (gamma slider, WiFi helpers, Remote Services, Performance Settings, Date & Time, SaveSync)
+- [jason3x](https://github.com/jason3x) for created a branche EmulationStation dArkOSen and a lot of menu
 - [lcdyk0517](https://github.com/lcdyk0517) for key latency improvements
 - [Mikhailzrick](https://github.com/Mikhailzrick) for BatteryPlus
 
 ---
 
 ## ☕ Support the project
+
+[![Ko-fi](https://img.shields.io/badge/☕_Buy_me_a_coffee-djparentx-bleu?style=for-the-badge)](https://ko-fi.com/djparent)
 
 [![Ko-fi](https://img.shields.io/badge/☕_Buy_me_a_coffee-jason3x-red?style=for-the-badge)](https://ko-fi.com/jason3x)
