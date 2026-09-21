@@ -3757,20 +3757,25 @@ void GuiMenu::openOtherSettings()
 	});
 
 	// Clock time format (14:42 or 2:42 pm)
+	
 	auto tmFormat = std::make_shared<SwitchComponent>(mWindow);
 	tmFormat->setState(Settings::getInstance()->getBool("ClockMode12"));
 	s->addWithLabel(_("SHOW CLOCK IN 12-HOUR FORMAT"), tmFormat);
 	s->addSaveFunc([tmFormat] { Settings::getInstance()->setBool("ClockMode12", tmFormat->getState()); });
 
-    //Switch A and B buttons
-    
-	auto invertJoy = std::make_shared<SwitchComponent>(mWindow);
-	invertJoy->setState(Settings::getInstance()->getBool("InvertButtons"));
-	s->addWithLabel(_("SWITCH A/B BUTTONS IN EMULATIONSTATION"), invertJoy);
-	s->addSaveFunc([this, s, invertJoy]
+    //Switch A and B buttons globally
+
+	auto abSwitch = std::make_shared<OptionListComponent<std::string> >(mWindow, _("SWITCH A/B BUTTONS GLOBALLY"), false);
+	std::string currentAB = getShOutput("[ -f /var/cache/Switch_AB ] && echo US || echo JP");
+	abSwitch->add("JP", "JP", currentAB == "JP");
+	abSwitch->add("US", "US", currentAB == "US");
+	s->addWithLabel(_("SWITCH A/B BUTTONS GLOBALLY"), abSwitch);
+	s->addSaveFunc([this, abSwitch]
 	{
-		if (Settings::getInstance()->setBool("InvertButtons", invertJoy->getState()))
+		if (abSwitch->changed())
 		{
+			runSystemCommand("/usr/local/bin/b_swap.sh", "", nullptr);
+			Settings::getInstance()->setBool("InvertButtons", abSwitch->getSelected() == "US");
 			InputConfig::AssignActionButtons();
 			ViewController::get()->reloadAll(mWindow);
 		}
