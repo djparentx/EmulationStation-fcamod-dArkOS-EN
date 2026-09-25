@@ -1465,8 +1465,8 @@ void GuiMenu::openStorageSettings()
 	sd2Switch->setOnChangedCallback([this, sd2Switch, sd2Enabled] {
 		bool nowOn = sd2Switch->getState();
 		std::string script = nowOn
-			? "/usr/local/bin/Switch to SD2 for Roms.sh"
-			: "/usr/local/bin/Switch to Main SD for Roms.sh";
+			? "\"/usr/local/bin/Switch to SD2 for Roms.sh\""
+			: "\"/usr/local/bin/Switch to Main SD for Roms.sh\"";
 		mWindow->renderLoadingScreen(_("PLEASE WAIT..."));
 		system(script.c_str());
 	});
