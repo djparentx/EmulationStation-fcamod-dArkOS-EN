@@ -1454,6 +1454,27 @@ void GuiMenu::openSaveSyncSettings()
 	mWindow->pushGui(s);
 }
 
+void GuiMenu::openStorageSettings()
+{
+	auto s = new GuiSettings(mWindow, _("STORAGE SETTINGS"));
+
+	// --- Enable SD2 toggle ---
+	bool sd2Enabled = Utils::FileSystem::exists("/roms2");
+	auto sd2Switch = std::make_shared<SwitchComponent>(mWindow);
+	sd2Switch->setState(sd2Enabled);
+	sd2Switch->setOnChangedCallback([this, sd2Switch, sd2Enabled] {
+		bool nowOn = sd2Switch->getState();
+		std::string script = nowOn
+			? "\"/usr/local/bin/Switch to SD2 for Roms.sh\""
+			: "\"/usr/local/bin/Switch to Main SD for Roms.sh\"";
+		mWindow->renderLoadingScreen(_("PLEASE WAIT..."));
+		system(script.c_str());
+	});
+	s->addWithLabel(_("ENABLE SD2"), sd2Switch);
+
+	mWindow->pushGui(s);
+}
+
 void GuiMenu::openBatterySettings()
 {
 	auto s = new GuiSettings(mWindow, _("BATTERYPLUS SETTINGS"));
@@ -4075,6 +4096,9 @@ void GuiMenu::openOtherSettings()
 
 		// SaveSync Settings
 	s->addEntry(_("SAVESYNC SETTINGS"), true, [this] { openSaveSyncSettings(); }, "iconSaveSync");
+
+		// Storage Settings
+	s->addEntry(_("STORAGE SETTINGS"), true, [this] { openStorageSettings(); }, "iconStorage");
 
 #ifndef _RPI_
 	// full exit
