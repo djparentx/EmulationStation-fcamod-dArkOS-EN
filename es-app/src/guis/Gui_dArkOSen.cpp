@@ -18,7 +18,7 @@ static const std::string FSTAB = "/etc/fstab";
 static const std::string TOOLS_MOUNT = "/opt/system/Tools";
 
 Gui_dArkOSen::Gui_dArkOSen(Window* window)
-	: GuiSettings(window, _("MANAGE SYSTEMS").c_str())
+	: GuiSettings(window, _(”REASSIGN TO SD1").c_str())
 {
 	initializeMenu();
 }
