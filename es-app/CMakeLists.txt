@@ -39,7 +39,8 @@ set(ES_HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/src/guis/GuiThemeInstall.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/guis/GuiCollectionSystemsOptions.h    
     ${CMAKE_CURRENT_SOURCE_DIR}/src/guis/GuiTools.h    
-
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/guis/Gui_dArkOSen.h
+	
     # Scrapers
     ${CMAKE_CURRENT_SOURCE_DIR}/src/scrapers/Scraper.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/scrapers/GamesDBJSONScraper.h
@@ -102,6 +103,7 @@ set(ES_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/guis/GuiThemeInstall.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/guis/GuiCollectionSystemsOptions.cpp    
     ${CMAKE_CURRENT_SOURCE_DIR}/src/guis/GuiTools.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/guis/Gui_dArkOSen.cpp
 
     # Scrapers
     ${CMAKE_CURRENT_SOURCE_DIR}/src/scrapers/Scraper.cpp

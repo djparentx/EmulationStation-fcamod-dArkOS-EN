@@ -9,6 +9,7 @@
 #include "components/SliderComponent.h"
 #include "components/SwitchComponent.h"
 #include "guis/GuiCollectionSystemsOptions.h"
+#include "guis/Gui_dArkOSen.h"
 #include "guis/GuiDetectDevice.h"
 #include "guis/GuiGeneralScreensaverOptions.h"
 #include "guis/GuiMsgBox.h"
@@ -1462,15 +1463,26 @@ void GuiMenu::openStorageSettings()
 	bool sd2Enabled = Utils::FileSystem::exists("/roms2");
 	auto sd2Switch = std::make_shared<SwitchComponent>(mWindow);
 	sd2Switch->setState(sd2Enabled);
-	sd2Switch->setOnChangedCallback([this, sd2Switch, sd2Enabled] {
+	sd2Switch->setOnChangedCallback([this, s, sd2Switch, sd2Enabled] {
 		bool nowOn = sd2Switch->getState();
 		std::string script = nowOn
 			? "\"/usr/local/bin/Switch to SD2 for Roms.sh\""
 			: "\"/usr/local/bin/Switch to Main SD for Roms.sh\"";
 		mWindow->renderLoadingScreen(_("PLEASE WAIT..."));
 		system(script.c_str());
+		if (nowOn != sd2Enabled)
+			s->setVariable("reopenStorage", true);
 	});
 	s->addWithLabel(_("ENABLE SD2"), sd2Switch);
+
+	// --- SYSTEMS Manager, only while SD2 is enabled ---
+	if (sd2Enabled)
+		s->addEntry(_("MANAGE SYSTEMS"), true, [this] { mWindow->pushGui(new Gui_dArkOSen(mWindow)); });
+
+	s->onFinalize([s, this] {
+		if (s->getVariable("reopenStorage"))
+			openStorageSettings();
+	});
 
 	mWindow->pushGui(s);
 }
