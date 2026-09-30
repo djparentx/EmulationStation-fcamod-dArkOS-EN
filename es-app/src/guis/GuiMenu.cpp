@@ -2528,13 +2528,17 @@ void GuiMenu::openPerformanceSettings()
 	
 	// --- ZRAM Size ---
     auto sizeList = std::make_shared<OptionListComponent<std::string>>(mWindow, _("SIZE"), false);
-    std::vector<std::string> sizes = {"256M", "512M", "768M", "1024M"};
+    int ramMb = atoi(executeCommand("awk '/MemTotal/ {print int($2/1024)}' /proc/meminfo").c_str());
+    std::vector<std::string> sizes = {"256M"};
+    if (ramMb >= 608)  sizes.push_back("512M");
+    if (ramMb >= 864)  sizes.push_back("768M");
+    if (ramMb >= 1120) sizes.push_back("1024M");
     std::string currentSize = getZramSize();
     bool found = false;
     for (const auto& size : sizes) {
         if (size == currentSize) found = true;
     }
-    if (!found) currentSize = "512M";
+    if (!found) currentSize = "256M";
     for (const auto& size : sizes) {
         sizeList->add(size, size, size == currentSize);
     }
@@ -2560,7 +2564,7 @@ void GuiMenu::openPerformanceSettings()
     // Enable/Disable callback
     zramSwitch->setOnChangedCallback([this, zramSwitch, sizeList, algoList] {
         std::string selectedSize = sizeList->getSelected();
-        if (selectedSize.empty()) selectedSize = "512M";
+        if (selectedSize.empty()) selectedSize = "256M";
         std::string selectedAlgo = algoList->getSelected();
         if (selectedAlgo.empty()) selectedAlgo = "lz4";
         toggleZram(zramSwitch->getState(), selectedSize, selectedAlgo);
