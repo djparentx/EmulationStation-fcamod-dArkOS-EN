@@ -69,10 +69,10 @@ GuiMenu::GuiMenu(Window* window, bool animate) : GuiComponent(window), mMenu(win
 
 	addEntry(_("SOUND SETTINGS"), true, [this] { openSoundSettings(); }, "iconSound");
 
-	addEntry(_("PERFORMANCE SETTINGS"), true, [this] { openPerformanceSettings(); }, "iconGames");
-
 	if (isFullUI)
 	{
+		addEntry(_("PERFORMANCE SETTINGS"), true, [this] { openPerformanceSettings(); }, "iconGames");
+
 		addEntry(_("GAME COLLECTION SETTINGS"), true, [this] { openCollectionSystemSettings(); }, "iconGames");
 
 		// Emulator settings 
@@ -2300,6 +2300,7 @@ void GuiMenu::toggleZram(bool enable, const std::string& size,
                                          const std::string& compAlgo)
 {
     if (enable) {
+        executeCommand("sudo modprobe zram 2>/dev/null || true");
         // Disable first if already enabled
         executeCommand("sudo swapoff /dev/zram0 2>/dev/null || true");
         // Reset zram
@@ -2324,6 +2325,7 @@ void GuiMenu::toggleZram(bool enable, const std::string& size,
     } else {
         executeCommand("sudo swapoff /dev/zram0 2>/dev/null || true");
         executeCommand("echo 1 | sudo tee /sys/block/zram0/reset >/dev/null 2>&1 || true");
+        executeCommand("sudo rmmod zram 2>/dev/null || true");
     }
 }
 
@@ -2336,13 +2338,13 @@ void GuiMenu::saveZramConfig(const std::string& size, const std::string& compAlg
 	else if (size == "768M") bytes = 805306368;
     else if (size == "1024M") bytes = 1073741824;
 
-    std::string content = "ENABLED=1\nALGORITHM=" + compAlgo + "\nSIZE=" + std::to_string(bytes) + "\n";
+    std::string content = "ALGORITHM=" + compAlgo + "\nSIZE=" + std::to_string(bytes) + "\n";
     executeCommand("echo '" + content + "' | sudo tee /etc/zram.conf >/dev/null 2>&1");
 }
 
 bool GuiMenu::isZramAutoStart()
 {
-    std::string result = executeCommand("systemctl is-enabled zram-swap.service 2>/dev/null");
+    std::string result = executeCommand("systemctl is-enabled zram_autostart.service 2>/dev/null");
     result.erase(std::remove_if(result.begin(), result.end(), ::isspace), result.end());
     return result == "enabled";
 }
@@ -2352,9 +2354,10 @@ void GuiMenu::toggleZramAutoStart(bool enable, const std::string& size,
 {
     if (enable) {
         saveZramConfig(size, compAlgo);
-        executeCommand("sudo systemctl enable zram-swap.service 2>/dev/null || true");
+        executeCommand("sudo systemctl enable zram_autostart.service >/dev/null 2>&1 || true");
     } else {
-        executeCommand("sudo systemctl disable zram-swap.service 2>/dev/null || true");
+        executeCommand("sudo systemctl disable zram_autostart.service >/dev/null 2>&1 || true");
+        executeCommand("sudo systemctl stop zram_autostart.service >/dev/null 2>&1 || true");
     }
 }
 
