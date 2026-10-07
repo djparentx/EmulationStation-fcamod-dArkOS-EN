@@ -2593,10 +2593,63 @@ void GuiMenu::openPerformanceSettings()
         }
     });
 
+	// --- Benchmarking ---
+	s->addEntry(_("BENCHMARKING"), true, [this] { openBenchmarking(); });
+
 	s->addSaveFunc([this] {
 		writeCpuBootConfig();
 		writeGpuBootConfig();
 		writeDmcBootConfig();
+	});
+
+	mWindow->pushGui(s);
+}
+
+static void runBenchmark(Window* window, const std::string& title, const std::string& cmd)
+{
+	auto busy = new GuiComponent(window);
+	auto busyComp = new BusyComponent(window);
+	busy->addChild(busyComp);
+	busyComp->setText(title + " - " + _("RUNNING, PLEASE WAIT"));
+	busy->setSize((float)Renderer::getScreenWidth(), (float)Renderer::getScreenHeight());
+	window->pushGui(busy);
+
+	std::string failText = _("BENCHMARK FAILED");
+
+	std::thread([window, busy, title, cmd, failText] {
+		std::string result;
+		FILE* pipe = popen(cmd.c_str(), "r");
+		if (pipe) {
+			char buffer[256];
+			while (fgets(buffer, sizeof(buffer), pipe))
+				result += buffer;
+			pclose(pipe);
+		}
+		result = Utils::String::trim(result);
+		if (result.empty())
+			result = failText;
+
+		window->postToUiThread([busy, title, result](Window* w) {
+			w->removeGui(busy);
+			delete busy;
+			w->pushGui(new GuiMsgBox(w, title + "\n\n" + result, _("OK")));
+		});
+	}).detach();
+}
+
+void GuiMenu::openBenchmarking()
+{
+	auto s = new GuiSettings(mWindow, _("BENCHMARKING"));
+	Window* window = mWindow;
+
+	s->addEntry(_("GPU BENCHMARK"), false, [window] {
+		runBenchmark(window, _("GPU BENCHMARK"), "sudo -n /usr/local/bin/gpu_benchmark.sh 2>&1");
+	});
+	s->addEntry(_("CPU BENCHMARK"), false, [window] {
+		runBenchmark(window, _("CPU BENCHMARK"), "sudo -n /usr/local/bin/cpu_benchmark.sh 2>&1");
+	});
+	s->addEntry(_("RAM BENCHMARK"), false, [window] {
+		runBenchmark(window, _("RAM BENCHMARK"), "sudo -n /usr/local/bin/ram_benchmark.sh 2>&1");
 	});
 
 	mWindow->pushGui(s);
