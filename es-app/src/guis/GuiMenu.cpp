@@ -2697,7 +2697,7 @@ void GuiMenu::openBenchmarking()
 			if (getLastBenchmark(r.type, score, mhz)) {
 				if (r.type == "CPU")
 					score = score.substr(0, score.find(' ')) + " Mloops/s";
-				r.label->setText(r.type + " " + mhz + " MHz");
+				r.label->setText(r.type + " @ " + mhz + " MHz");
 				r.value->setValue(score);
 			} else {
 				r.label->setText(r.type);
