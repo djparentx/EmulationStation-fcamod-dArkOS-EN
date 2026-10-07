@@ -2645,10 +2645,7 @@ static void runBenchmark(Window* window, const std::string& title, const std::st
 	busyComp->setText(title + " - " + _("RUNNING, PLEASE WAIT"));
 	busy->setSize((float)Renderer::getScreenWidth(), (float)Renderer::getScreenHeight());
 
-	busyComp->setPosition(
-		(Renderer::getScreenWidth() - busyComp->getSize().x()) / 2.0f,
-		(Renderer::getScreenHeight() - busyComp->getSize().y()) / 2.0f
-	);	
+	busyComp->setSize((float)Renderer::getScreenWidth(), (float)Renderer::getScreenHeight());
 	
 	window->pushGui(busy);
 
