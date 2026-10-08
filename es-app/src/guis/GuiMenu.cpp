@@ -29,6 +29,7 @@
 #include <cctype>
 #include <vector>
 #include <thread>
+#include <chrono>
 #include <fstream>
 #include <mutex>
 #include <cstdlib>
@@ -2637,21 +2638,27 @@ static bool getLastBenchmark(const std::string& type, std::string& score, std::s
 	return found;
 }
 
-static void runBenchmark(Window* window, const std::string& title, const std::string& cmd, std::function<void()> onDone)
+static void runBenchmark(Window* window, const std::string& title, const std::string& cmd, bool pauseRender, std::function<void()> onDone)
 {
 	auto busy = new GuiComponent(window);
 	auto busyComp = new BusyComponent(window);
 	busy->addChild(busyComp);
 	busyComp->setText(title + " - " + _("RUNNING, PLEASE WAIT"));
 	busy->setSize((float)Renderer::getScreenWidth(), (float)Renderer::getScreenHeight());
-
 	busyComp->setSize((float)Renderer::getScreenWidth(), (float)Renderer::getScreenHeight());
-	
+
 	window->pushGui(busy);
 
 	std::string failText = _("BENCHMARK FAILED");
 
-	std::thread([window, busy, title, cmd, failText, onDone] {
+	std::thread([window, busy, title, cmd, failText, pauseRender, onDone] {
+		if (pauseRender) {
+			// let the busy box draw once, then stop ES from drawing
+			std::this_thread::sleep_for(std::chrono::milliseconds(300));
+			window->postToUiThread([](Window* w) { w->setRenderPaused(true); });
+			std::this_thread::sleep_for(std::chrono::milliseconds(200));
+		}
+
 		std::string result;
 		FILE* pipe = popen(cmd.c_str(), "r");
 		if (pipe) {
@@ -2664,7 +2671,9 @@ static void runBenchmark(Window* window, const std::string& title, const std::st
 		if (result.empty())
 			result = failText;
 
-		window->postToUiThread([busy, title, result, onDone](Window* w) {
+		window->postToUiThread([busy, title, result, pauseRender, onDone](Window* w) {
+			if (pauseRender)
+				w->setRenderPaused(false);
 			w->removeGui(busy);
 			delete busy;
 			w->pushGui(new GuiMsgBox(w, title + "\n\n" + result, _("OK")));
@@ -2693,7 +2702,7 @@ void GuiMenu::openBenchmarking()
 			std::string score, mhz;
 			if (getLastBenchmark(r.type, score, mhz)) {
 				if (r.type == "CPU")
-					score = score.substr(0, score.find(' ')) + " Mloops/s";
+					score = score.substr(0, score.find(' ')) + " Mops/30s";
 				r.label->setText(r.type + " @ " + mhz + " MHz");
 				r.value->setValue(score);
 			} else {
@@ -2713,7 +2722,7 @@ void GuiMenu::openBenchmarking()
 		row.addElement(r.label, true);
 		row.addElement(r.value, true);
 		row.makeAcceptInputHandler([window, type, script, refresh] {
-			runBenchmark(window, type + " " + _("BENCHMARK"), "sudo -n /usr/local/bin/" + script + " 2>&1", refresh);
+			runBenchmark(window, type + " " + _("BENCHMARK"), "sudo -n /usr/local/bin/" + script + " 2>&1", type == "GPU", refresh);
 		});
 		s->addRow(row);
 		rows->push_back(r);
