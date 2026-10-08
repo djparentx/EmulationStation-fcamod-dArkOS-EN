@@ -29,6 +29,7 @@
 #include <cctype>
 #include <vector>
 #include <thread>
+#include <fstream>
 #include <mutex>
 #include <cstdlib>
 #include <ctime>
@@ -2593,12 +2594,158 @@ void GuiMenu::openPerformanceSettings()
         }
     });
 
+	// --- Benchmarking ---
+	s->addEntry(_("BENCHMARKING"), true, [this] { openBenchmarking(); });
+
 	s->addSaveFunc([this] {
 		writeCpuBootConfig();
 		writeGpuBootConfig();
 		writeDmcBootConfig();
 	});
 
+	mWindow->pushGui(s);
+}
+
+static const std::string BENCH_LOG = "/home/ark/.benchmark_data/scores.log";
+
+// Most recent log entry of the given TYPE (CPU/GPU/RAM).
+// Log columns: DATE TIME TYPE <score tokens...> MHZ START AVG PEAK
+static bool getLastBenchmark(const std::string& type, std::string& score, std::string& mhz)
+{
+	std::ifstream f(BENCH_LOG);
+	if (!f)
+		return false;
+
+	bool found = false;
+	std::string line;
+	while (std::getline(f, line)) {
+		std::istringstream iss(line);
+		std::vector<std::string> t;
+		std::string w;
+		while (iss >> w)
+			t.push_back(w);
+
+		if (t.size() < 8 || t[2] != type)
+			continue;
+
+		score.clear();
+		for (size_t i = 3; i + 4 < t.size(); i++)
+			score += (score.empty() ? "" : " ") + t[i];
+		mhz = t[t.size() - 4];
+		found = true;
+	}
+	return found;
+}
+
+static void runBenchmark(Window* window, const std::string& title, const std::string& cmd, std::function<void()> onDone)
+{
+	auto busy = new GuiComponent(window);
+	auto busyComp = new BusyComponent(window);
+	busy->addChild(busyComp);
+	busyComp->setText(title + " - " + _("RUNNING, PLEASE WAIT"));
+	busy->setSize((float)Renderer::getScreenWidth(), (float)Renderer::getScreenHeight());
+
+	busyComp->setSize((float)Renderer::getScreenWidth(), (float)Renderer::getScreenHeight());
+	
+	window->pushGui(busy);
+
+	std::string failText = _("BENCHMARK FAILED");
+
+	std::thread([window, busy, title, cmd, failText, onDone] {
+		std::string result;
+		FILE* pipe = popen(cmd.c_str(), "r");
+		if (pipe) {
+			char buffer[256];
+			while (fgets(buffer, sizeof(buffer), pipe))
+				result += buffer;
+			pclose(pipe);
+		}
+		result = Utils::String::trim(result);
+		if (result.empty())
+			result = failText;
+
+		window->postToUiThread([busy, title, result, onDone](Window* w) {
+			w->removeGui(busy);
+			delete busy;
+			w->pushGui(new GuiMsgBox(w, title + "\n\n" + result, _("OK")));
+			if (onDone)
+				onDone();
+		});
+	}).detach();
+}
+
+void GuiMenu::openBenchmarking()
+{
+	auto s = new GuiSettings(mWindow, _("BENCHMARKING"));
+	Window* window = mWindow;
+	auto theme = ThemeData::getMenuTheme();
+
+	struct BenchRow
+	{
+		std::string type;
+		std::shared_ptr<TextComponent> label;
+		std::shared_ptr<TextComponent> value;
+	};
+	auto rows = std::make_shared<std::vector<BenchRow>>();
+
+	auto refresh = [rows] {
+		for (auto& r : *rows) {
+			std::string score, mhz;
+			if (getLastBenchmark(r.type, score, mhz)) {
+				if (r.type == "CPU")
+					score = score.substr(0, score.find(' ')) + " Mloops/s";
+				r.label->setText(r.type + " @ " + mhz + " MHz");
+				r.value->setValue(score);
+			} else {
+				r.label->setText(r.type);
+				r.value->setValue("-");
+			}
+		}
+	};
+
+	auto addBenchRow = [&](const std::string& type, const std::string& script) {
+		BenchRow r;
+		r.type = type;
+		r.label = std::make_shared<TextComponent>(window, type, theme->Text.font, theme->Text.color);
+		r.value = std::make_shared<TextComponent>(window, "-", theme->Text.font, theme->Text.color, ALIGN_RIGHT);
+
+		ComponentListRow row;
+		row.addElement(r.label, true);
+		row.addElement(r.value, true);
+		row.makeAcceptInputHandler([window, type, script, refresh] {
+			runBenchmark(window, type + " " + _("BENCHMARK"), "sudo -n /usr/local/bin/" + script + " 2>&1", refresh);
+		});
+		s->addRow(row);
+		rows->push_back(r);
+	};
+
+	addBenchRow("CPU", "cpu_benchmark.sh");
+	addBenchRow("GPU", "gpu_benchmark.sh");
+	addBenchRow("RAM", "ram_benchmark.sh");
+
+	s->addEntry(_("VIEW LOG"), true, [window] {
+		if (!Utils::FileSystem::exists(BENCH_LOG)) {
+			window->pushGui(new GuiMsgBox(window, _("NO LOG FILE FOUND.")));
+			return;
+		}
+		// GuiMsgBox has no scroll, so keep it bounded
+		std::string tail = executeCommand("tail -n 12 " + BENCH_LOG + " 2>/dev/null");
+		if (tail.empty())
+			tail = _("LOG IS EMPTY.");
+		window->pushGui(new GuiMsgBox(window, tail, _("OK")));
+	}, "");
+
+	s->addEntry(_("CLEAR LOG"), true, [window, refresh] {
+		if (!Utils::FileSystem::exists(BENCH_LOG)) {
+			window->pushGui(new GuiMsgBox(window, _("NO LOG FILE FOUND.")));
+			return;
+		}
+		executeCommand("sudo truncate -s 0 " + BENCH_LOG);
+		refresh();
+		window->pushGui(new GuiMsgBox(window, _("LOG CLEARED.")));
+	}, "");
+
+	refresh();
 	mWindow->pushGui(s);
 }
 
