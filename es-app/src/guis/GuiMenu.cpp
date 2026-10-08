@@ -1248,8 +1248,8 @@ void GuiMenu::openNetworkSettings()
 	s->addWithLabel(_("ROOT SAMBA ACCESS"), sambaRootSwitch);
 
 	// --- WiFi Monitor Service toggle ---
-	std::string wifiMonitorState = executeCommand("systemctl is-enabled wifi_monitor.service 2>/dev/null");
-	bool wifiMonitorEnabled = wifiMonitorState.find("masked") == std::string::npos;
+	std::string wifiMonitorState = executeCommand("systemctl is-active wifi_monitor.service 2>/dev/null");
+	bool wifiMonitorEnabled = wifiMonitorState.find("active") != std::string::npos;
 
 	auto wifiMonitorSwitch = std::make_shared<SwitchComponent>(mWindow);
 	wifiMonitorSwitch->setState(wifiMonitorEnabled);
