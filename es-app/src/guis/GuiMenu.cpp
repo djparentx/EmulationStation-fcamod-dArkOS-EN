@@ -2702,7 +2702,7 @@ void GuiMenu::openBenchmarking()
 			std::string score, mhz;
 			if (getLastBenchmark(r.type, score, mhz)) {
 				if (r.type == "CPU")
-					score = score.substr(0, score.find(' ')) + " Mloops/s";
+					score = score.substr(0, score.find(' ')) + " Mops/30s";
 				r.label->setText(r.type + " @ " + mhz + " MHz");
 				r.value->setValue(score);
 			} else {
