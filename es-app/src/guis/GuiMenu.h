@@ -66,6 +66,7 @@ private:
 	void openManualDateTimeSettings(std::function<void()> onApplied = nullptr);
 
 	void openPerformanceSettings();
+	void openBenchmarking();
 	std::string getCpuBinning();
 	std::string getCpuTemp();
 	int getCpuCoreCount();
