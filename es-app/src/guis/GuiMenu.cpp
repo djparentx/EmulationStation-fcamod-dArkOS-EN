@@ -3329,10 +3329,8 @@ void GuiMenu::openUISettings()
 	ledColor->add(_("RED"), "red", ledInitialRed);
 	ledColor->add(_("DEFAULT"), "blue", !ledInitialRed);
 	s->addWithLabel(_("LED COLOR"), ledColor);
-	s->addSaveFunc([ledColor, ledInitialRed] {
-		bool selectRed = ledColor->getSelected() == "red";
-		if (selectRed == ledInitialRed)
-			return;
+	ledColor->setSelectedChangedCallback([](const std::string& value) {
+		bool selectRed = value == "red";
 
 		if (selectRed)
 		{
