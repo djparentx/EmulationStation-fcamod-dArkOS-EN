@@ -3,7 +3,6 @@
 #include "renderers/Renderer.h"
 #include "math/Vector2i.h"
 #include "math/Misc.h"
-#include "Log.h"
 
 StackPanelComponent::StackPanelComponent(Window* window) : GuiComponent(window), mHorizontal(true), mReverse(false), mClipChildren(true), mSeparator(0.0f)
 {
@@ -81,9 +80,6 @@ void StackPanelComponent::performLayout()
 
 		if (mHorizontal)
 		{
-			LOG(LogInfo) << "[ThemeDebug] performLayout tag=" << child->getTag() << " before=(" << child->getSize().x() << "," << child->getSize().y() << ")"
-				<< " forcingTo=(" << child->getSize().x() << "," << mSize.y() << ") panelSize=(" << mSize.x() << "," << mSize.y() << ")";
-
 			child->setSize(child->getSize().x(), mSize.y());
 
 			if (mReverse)
@@ -133,12 +129,7 @@ void StackPanelComponent::update(int deltaTime)
 		if (child->isVisible())
 			szAfter = szAfter + child->getSize();
 
-	bool willLayout = (szBefore != szAfter || (mLastSize != Vector2f::Zero() && mLastSize != szAfter));
-	if (willLayout)
-		LOG(LogInfo) << "[ThemeDebug] StackPanel::update tag=" << getTag() << " szBefore=(" << szBefore.x() << "," << szBefore.y() << ")"
-			<< " szAfter=(" << szAfter.x() << "," << szAfter.y() << ") mLastSize=(" << mLastSize.x() << "," << mLastSize.y() << ")";
-
-	if (willLayout)
+	if (szBefore != szAfter || (mLastSize != Vector2f::Zero() && mLastSize != szAfter))
 		performLayout();
 
 	mLastSize = szAfter;
