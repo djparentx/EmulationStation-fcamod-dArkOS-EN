@@ -43,6 +43,13 @@ private:
 	void deleteConnections();
 	void openNetworkSettings();
 	void openBatterySettings();
+	void openSaveSyncSettings();
+	void openStorageSettings();
+	void openScanAndRepairSettings();
+	void openSaveSyncCredentials();
+	void openSaveSyncProtocol();
+	void openSaveSyncLog();
+	void manualSaveSync();
 	void openSoundSettings();
 	void openUISettings();
 
@@ -58,6 +65,7 @@ private:
 	void openManualDateTimeSettings(std::function<void()> onApplied = nullptr);
 
 	void openPerformanceSettings();
+	void openBenchmarking();
 	std::string getCpuBinning();
 	std::string getCpuTemp();
 	int getCpuCoreCount();

@@ -2022,3 +2022,177 @@ msgid "VERTICAL"
 msgstr "세로"
 msgid "RAM APPLY ON BOOT"
 msgstr "부팅 시 RAM 설정 적용"
+
+msgid "SAVESYNC SETTINGS"
+msgstr "SAVESYNC 설정"
+
+msgid "ENABLE SAVESYNC"
+msgstr "SAVESYNC 활성화"
+
+msgid "SYNCHRONIZE NOW"
+msgstr "지금 동기화"
+
+msgid "REBUILD FOLDER CACHE"
+msgstr "폴더 캐시 재구성"
+
+msgid "CREDENTIALS"
+msgstr "자격 증명"
+
+msgid "PROTOCOL"
+msgstr "프로토콜"
+
+msgid "LOG"
+msgstr "로그"
+
+msgid "SYNCING"
+msgstr "동기화 중"
+
+msgid "SUCCESS!"
+msgstr "성공!"
+
+msgid "FAILED."
+msgstr "실패."
+
+msgid "NO ERROR DETAILS WERE RECORDED."
+msgstr "기록된 오류 세부 정보가 없습니다."
+
+msgid "HOST"
+msgstr "호스트"
+
+msgid "PATH"
+msgstr "경로"
+
+msgid "SMB (WINDOWS / SAMBA SHARE)"
+msgstr "SMB (Windows / Samba 공유)"
+
+msgid "NFS (LINUX / NAS EXPORT)"
+msgstr "NFS (Linux / NAS 내보내기)"
+
+msgid "SSHFS (SSH / SFTP SERVER)"
+msgstr "SSHFS (SSH / SFTP 서버)"
+
+msgid "WEBDAV (NEXTCLOUD / OWNCLOUD / DAV)"
+msgstr "WebDAV (Nextcloud / ownCloud / DAV)"
+
+msgid "INSTALLING DEPENDENCIES"
+msgstr "종속성 설치 중"
+
+msgid "UNABLE TO INSTALL REQUIRED NETWORK SUPPORT."
+msgstr "필요한 네트워크 지원을 설치할 수 없습니다."
+
+msgid "VIEW LOG"
+msgstr "로그 보기"
+
+msgid "CLEAR LOG"
+msgstr "로그 지우기"
+
+msgid "NO LOG FILE FOUND."
+msgstr "로그 파일을 찾을 수 없습니다."
+
+msgid "LOG CLEARED."
+msgstr "로그가 지워졌습니다."
+
+msgid "ENABLE FAST SYNC"
+msgstr "빠른 동기화 활성화"
+
+msgid "SWITCH A/B BUTTONS GLOBALLY"
+msgstr "A/B 버튼 전체 교체"
+
+msgid "STORAGE SETTINGS"
+msgstr "저장소 설정"
+
+msgid "ENABLE SD2"
+msgstr "SD2 활성화"
+
+msgid "REASSIGN SYSTEMS TO SD1"
+msgstr "시스템을 SD1에 재할당"
+
+msgid "SCAN AND REPAIR"
+msgstr "검사 및 복구"
+
+msgid "BOOT"
+msgstr "부트"
+
+msgid "ROOTFS"
+msgstr "루트FS"
+
+msgid "SD1 GAMES"
+msgstr "SD1 게임"
+
+msgid "SD2"
+msgstr "SD2"
+
+msgid "MANUAL SELECTION"
+msgstr "수동 선택"
+
+msgid "AUTOMATED SCAN"
+msgstr "자동 검사"
+
+msgid "UNDO ALL CHANGES"
+msgstr "모든 변경 사항 취소"
+
+msgid "SCAN /roms/ FOR CHANGES?"
+msgstr "/roms/ 변경 사항 검사?"
+
+msgid "REVERT ALL SYSTEMS TO SD2?"
+msgstr "모든 시스템을 SD2로 되돌리시겠습니까?"
+
+msgid "PLEASE WAIT..."
+msgstr "잠시만 기다려 주세요..."
+
+msgid "SYSTEMS"
+msgstr "시스템"
+
+msgid "NOTHING WAS MODIFIED."
+msgstr "변경된 내용이 없습니다."
+
+msgid "RESTORING ALL SYSTEMS TO /roms2/."
+msgstr "모든 시스템을 /roms2/로 복원 중입니다."
+
+msgid "MOVED TO SD1:"
+msgstr "SD1로 이동됨:"
+
+msgid "REVERTED TO SD2:"
+msgstr "SD2로 되돌림:"
+
+msgid "Scan failed. Repairs were not successful."
+msgstr "검사 실패. 복구가 성공하지 못했습니다."
+
+msgid "Scan failed. Repairs were successful."
+msgstr "검사 실패. 복구는 성공했습니다."
+
+msgid "Scan passed. No repairs were needed."
+msgstr "검사 완료. 복구가 필요하지 않았습니다."
+
+msgid "Wi-fi has been turned off to ensure the disk is not busy."
+msgstr "디스크가 사용 중이지 않도록 Wi-Fi가 꺼졌습니다."
+
+msgid "Could not unmount /boot"
+msgstr "/boot를 마운트 해제할 수 없습니다"
+
+msgid "Dirty bit cleared"
+msgstr "다티 비트 초기화됨"
+
+msgid "Boot sector mismatch noted"
+msgstr "부트 섹터 불일치 감지됨"
+
+msgid "Bad file entries fixed"
+msgstr "잘못된 파일 항목 수정됨"
+
+msgid "Uncorrectable errors found on system partition"
+msgstr "시스템 파티션에서 수정 불가능한 오류 발견됨"
+
+msgid "Partition 2 (system) could not be fully repaired while running. Eject the card and run 'sudo btrfs check --repair /dev/mmcblk0p2' from a Linux PC."
+msgstr "파티션 2(시스템)를 실행 중에 완전히 복구할 수 없었습니다. 카드를 꺼내고 Linux PC에서 'sudo btrfs check --repair /dev/mmcblk0p2'를 실행하세요."
+
+msgid "HELPER SCRIPT NOT FOUND"
+msgstr "헬퍼 스크립트를 찾을 수 없습니다"
+
+msgid "FAILED TO PREPARE RECOVERY SCRIPT"
+msgstr "복구 스크립트 준비 실패"
+
+msgid "SCAN SD1 GAMES?\nTHE CONSOLE WILL REBOOT TO COMPLETE THE SCAN."
+msgstr "SD1 게임을 검사하시겠습니까?\n검사를 완료하기 위해 콘솔이 재부팅됩니다."
+
+msgid "SCAN SD2?\nTHE CONSOLE WILL REBOOT TO COMPLETE THE SCAN."
+msgstr "SD2를 검사하시겠습니까?\n검사를 완료하기 위해 콘솔이 재부팅됩니다."

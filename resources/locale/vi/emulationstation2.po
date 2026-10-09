@@ -2232,3 +2232,177 @@ msgid "VERTICAL"
 msgstr "DỌC"
 msgid "RAM APPLY ON BOOT"
 msgstr "ÁP DỤNG RAM KHI KHỞI ĐỘNG"
+
+msgid "SAVESYNC SETTINGS"
+msgstr "CÀI ĐẶT SAVESYNC"
+
+msgid "ENABLE SAVESYNC"
+msgstr "BẬT SAVESYNC"
+
+msgid "SYNCHRONIZE NOW"
+msgstr "ĐỒNG BỘ NGAY"
+
+msgid "REBUILD FOLDER CACHE"
+msgstr "XÂY DỰNG LẠI BỘ NHỚ ĐỆM THƯ MỤC"
+
+msgid "CREDENTIALS"
+msgstr "THÔNG TIN ĐĂNG NHẬP"
+
+msgid "PROTOCOL"
+msgstr "GIAO THỨC"
+
+msgid "LOG"
+msgstr "NHẬT KÝ"
+
+msgid "SYNCING"
+msgstr "ĐANG ĐỒNG BỘ"
+
+msgid "SUCCESS!"
+msgstr "THÀNH CÔNG!"
+
+msgid "FAILED."
+msgstr "THẤT BẠI."
+
+msgid "NO ERROR DETAILS WERE RECORDED."
+msgstr "KHÔNG CÓ CHI TIẾT LỖI NÀO ĐƯỢC GHI LẠI."
+
+msgid "HOST"
+msgstr "MÁY CHỦ"
+
+msgid "PATH"
+msgstr "ĐƯỜNG DẪN"
+
+msgid "SMB (WINDOWS / SAMBA SHARE)"
+msgstr "SMB (CHIA SẺ WINDOWS / SAMBA)"
+
+msgid "NFS (LINUX / NAS EXPORT)"
+msgstr "NFS (XUẤT LINUX / NAS)"
+
+msgid "SSHFS (SSH / SFTP SERVER)"
+msgstr "SSHFS (MÁY CHỦ SSH / SFTP)"
+
+msgid "WEBDAV (NEXTCLOUD / OWNCLOUD / DAV)"
+msgstr "WEBDAV (NEXTCLOUD / OWNCLOUD / DAV)"
+
+msgid "INSTALLING DEPENDENCIES"
+msgstr "ĐANG CÀI ĐẶT CÁC GÓI PHỤ THUỘC"
+
+msgid "UNABLE TO INSTALL REQUIRED NETWORK SUPPORT."
+msgstr "KHÔNG THỂ CÀI ĐẶT HỖ TRỢ MẠNG CẦN THIẾT."
+
+msgid "VIEW LOG"
+msgstr "XEM NHẬT KÝ"
+
+msgid "CLEAR LOG"
+msgstr "XÓA NHẬT KÝ"
+
+msgid "NO LOG FILE FOUND."
+msgstr "KHÔNG TÌM THẤY TỆP NHẬT KÝ."
+
+msgid "LOG CLEARED."
+msgstr "ĐÃ XÓA NHẬT KÝ."
+
+msgid "ENABLE FAST SYNC"
+msgstr "BẬT ĐỒNG BỘ NHANH"
+
+msgid "SWITCH A/B BUTTONS GLOBALLY"
+msgstr "HOÁN ĐỔI NÚT A/B TOÀN CỤC"
+
+msgid "STORAGE SETTINGS"
+msgstr "CÀI ĐẶT LƯU TRỮ"
+
+msgid "ENABLE SD2"
+msgstr "BẬT SD2"
+
+msgid "REASSIGN SYSTEMS TO SD1"
+msgstr "GÁN LẠI HỆ THỐNG VÀO SD1"
+
+msgid "SCAN AND REPAIR"
+msgstr "QUÉT VÀ SỬA CHỮA"
+
+msgid "BOOT"
+msgstr "KHỞI ĐỘNG"
+
+msgid "ROOTFS"
+msgstr "HỆ THỐNG TỆP GỐC"
+
+msgid "SD1 GAMES"
+msgstr "TRÒ CHƠI SD1"
+
+msgid "SD2"
+msgstr "SD2"
+
+msgid "MANUAL SELECTION"
+msgstr "CHỌN THỦ CÔNG"
+
+msgid "AUTOMATED SCAN"
+msgstr "QUÉT TỰ ĐỘNG"
+
+msgid "UNDO ALL CHANGES"
+msgstr "HOÀN TÁC TẤT CẢ THAY ĐỔI"
+
+msgid "SCAN /roms/ FOR CHANGES?"
+msgstr "QUÉT /roms/ ĐỂ TÌM THAY ĐỔI?"
+
+msgid "REVERT ALL SYSTEMS TO SD2?"
+msgstr "KHÔI PHỤC TẤT CẢ HỆ THỐNG VỀ SD2?"
+
+msgid "PLEASE WAIT..."
+msgstr "VUI LÒNG CHỜ..."
+
+msgid "SYSTEMS"
+msgstr "HỆ THỐNG"
+
+msgid "NOTHING WAS MODIFIED."
+msgstr "KHÔNG CÓ GÌ ĐƯỢC THAY ĐỔI."
+
+msgid "RESTORING ALL SYSTEMS TO /roms2/."
+msgstr "ĐANG KHÔI PHỤC TẤT CẢ HỆ THỐNG VỀ /roms2/."
+
+msgid "MOVED TO SD1:"
+msgstr "ĐÃ CHUYỂN VÀO SD1:"
+
+msgid "REVERTED TO SD2:"
+msgstr "ĐÃ HOÀN NGUYÊN VỀ SD2:"
+
+msgid "Scan failed. Repairs were not successful."
+msgstr "Quét thất bại. Các sửa chữa không thành công."
+
+msgid "Scan failed. Repairs were successful."
+msgstr "Quét thất bại. Các sửa chữa đã thành công."
+
+msgid "Scan passed. No repairs were needed."
+msgstr "Quét hoàn tất. Không cần sửa chữa."
+
+msgid "Wi-fi has been turned off to ensure the disk is not busy."
+msgstr "Wi-Fi đã được tắt để đảm bảo ổ đĩa không bận."
+
+msgid "Could not unmount /boot"
+msgstr "Không thể gỡ kết nối /boot"
+
+msgid "Dirty bit cleared"
+msgstr "Đã xóa dirty bit"
+
+msgid "Boot sector mismatch noted"
+msgstr "Phát hiện sự không khớp của boot sector"
+
+msgid "Bad file entries fixed"
+msgstr "Đã sửa các mục tệp bị hỏng"
+
+msgid "Uncorrectable errors found on system partition"
+msgstr "Tìm thấy lỗi không thể sửa trên phân vùng hệ thống"
+
+msgid "Partition 2 (system) could not be fully repaired while running. Eject the card and run 'sudo btrfs check --repair /dev/mmcblk0p2' from a Linux PC."
+msgstr "Phân vùng 2 (hệ thống) không thể sửa chữa hoàn toàn khi đang chạy. Rút thẻ ra và chạy 'sudo btrfs check --repair /dev/mmcblk0p2' từ máy tính Linux."
+
+msgid "HELPER SCRIPT NOT FOUND"
+msgstr "KHÔNG TÌM THẤY SCRIPT HỖ TRỢ"
+
+msgid "FAILED TO PREPARE RECOVERY SCRIPT"
+msgstr "KHÔNG THỂ CHUẨN BỊ SCRIPT KHÔI PHỤC"
+
+msgid "SCAN SD1 GAMES?\nTHE CONSOLE WILL REBOOT TO COMPLETE THE SCAN."
+msgstr "QUÉT TRÒ CHƠI SD1?\nMÁY SẼ KHỞI ĐỘNG LẠI ĐỂ HOÀN TẤT VIỆC QUÉT."
+
+msgid "SCAN SD2?\nTHE CONSOLE WILL REBOOT TO COMPLETE THE SCAN."
+msgstr "QUÉT SD2?\nMÁY SẼ KHỞI ĐỘNG LẠI ĐỂ HOÀN TẤT VIỆC QUÉT."

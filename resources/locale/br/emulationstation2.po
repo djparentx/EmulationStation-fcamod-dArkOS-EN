@@ -2841,3 +2841,177 @@ msgid "VERTICAL"
 msgstr "VERTICAL"
 msgid "RAM APPLY ON BOOT"
 msgstr "APLICAR RAM NA INICIALIZAÇÃO"
+
+msgid "SAVESYNC SETTINGS"
+msgstr "CONFIGURAÇÕES SAVESYNC"
+
+msgid "ENABLE SAVESYNC"
+msgstr "ATIVAR SAVESYNC"
+
+msgid "SYNCHRONIZE NOW"
+msgstr "SINCRONIZAR AGORA"
+
+msgid "REBUILD FOLDER CACHE"
+msgstr "RECONSTRUIR CACHE DE PASTAS"
+
+msgid "CREDENTIALS"
+msgstr "CREDENCIAIS"
+
+msgid "PROTOCOL"
+msgstr "PROTOCOLO"
+
+msgid "LOG"
+msgstr "REGISTRO"
+
+msgid "SYNCING"
+msgstr "SINCRONIZANDO"
+
+msgid "SUCCESS!"
+msgstr "SUCESSO!"
+
+msgid "FAILED."
+msgstr "FALHOU."
+
+msgid "NO ERROR DETAILS WERE RECORDED."
+msgstr "NENHUM DETALHE DE ERRO FOI REGISTRADO."
+
+msgid "HOST"
+msgstr "HOST"
+
+msgid "PATH"
+msgstr "CAMINHO"
+
+msgid "SMB (WINDOWS / SAMBA SHARE)"
+msgstr "SMB (COMPARTILHAMENTO WINDOWS / SAMBA)"
+
+msgid "NFS (LINUX / NAS EXPORT)"
+msgstr "NFS (EXPORTAÇÃO LINUX / NAS)"
+
+msgid "SSHFS (SSH / SFTP SERVER)"
+msgstr "SSHFS (SERVIDOR SSH / SFTP)"
+
+msgid "WEBDAV (NEXTCLOUD / OWNCLOUD / DAV)"
+msgstr "WEBDAV (NEXTCLOUD / OWNCLOUD / DAV)"
+
+msgid "INSTALLING DEPENDENCIES"
+msgstr "INSTALANDO DEPENDÊNCIAS"
+
+msgid "UNABLE TO INSTALL REQUIRED NETWORK SUPPORT."
+msgstr "NÃO FOI POSSÍVEL INSTALAR O SUPORTE DE REDE NECESSÁRIO."
+
+msgid "VIEW LOG"
+msgstr "VER REGISTRO"
+
+msgid "CLEAR LOG"
+msgstr "LIMPAR REGISTRO"
+
+msgid "NO LOG FILE FOUND."
+msgstr "NENHUM ARQUIVO DE REGISTRO ENCONTRADO."
+
+msgid "LOG CLEARED."
+msgstr "REGISTRO LIMPO."
+
+msgid "ENABLE FAST SYNC"
+msgstr "ATIVAR SINCRONIZAÇÃO RÁPIDA"
+
+msgid "SWITCH A/B BUTTONS GLOBALLY"
+msgstr "ALTERNAR BOTÕES A/B GLOBALMENTE"
+
+msgid "STORAGE SETTINGS"
+msgstr "CONFIGURAÇÕES DE ARMAZENAMENTO"
+
+msgid "ENABLE SD2"
+msgstr "ATIVAR SD2"
+
+msgid "REASSIGN SYSTEMS TO SD1"
+msgstr "REATRIBUIR SISTEMAS PARA SD1"
+
+msgid "SCAN AND REPAIR"
+msgstr "VERIFICAR E REPARAR"
+
+msgid "BOOT"
+msgstr "INICIALIZAÇÃO"
+
+msgid "ROOTFS"
+msgstr "SISTEMA DE ARQUIVOS"
+
+msgid "SD1 GAMES"
+msgstr "JOGOS SD1"
+
+msgid "SD2"
+msgstr "SD2"
+
+msgid "MANUAL SELECTION"
+msgstr "SELEÇÃO MANUAL"
+
+msgid "AUTOMATED SCAN"
+msgstr "VERIFICAÇÃO AUTOMÁTICA"
+
+msgid "UNDO ALL CHANGES"
+msgstr "DESFAZER TODAS AS ALTERAÇÕES"
+
+msgid "SCAN /roms/ FOR CHANGES?"
+msgstr "VERIFICAR /roms/ POR ALTERAÇÕES?"
+
+msgid "REVERT ALL SYSTEMS TO SD2?"
+msgstr "REVERTER TODOS OS SISTEMAS PARA SD2?"
+
+msgid "PLEASE WAIT..."
+msgstr "AGUARDE..."
+
+msgid "SYSTEMS"
+msgstr "SISTEMAS"
+
+msgid "NOTHING WAS MODIFIED."
+msgstr "NADA FOI MODIFICADO."
+
+msgid "RESTORING ALL SYSTEMS TO /roms2/."
+msgstr "RESTAURANDO TODOS OS SISTEMAS PARA /roms2/."
+
+msgid "MOVED TO SD1:"
+msgstr "MOVIDO PARA SD1:"
+
+msgid "REVERTED TO SD2:"
+msgstr "REVERTIDO PARA SD2:"
+
+msgid "Scan failed. Repairs were not successful."
+msgstr "Verificação falhou. Os reparos não foram bem-sucedidos."
+
+msgid "Scan failed. Repairs were successful."
+msgstr "Verificação falhou. Os reparos foram bem-sucedidos."
+
+msgid "Scan passed. No repairs were needed."
+msgstr "Verificação concluída. Nenhum reparo foi necessário."
+
+msgid "Wi-fi has been turned off to ensure the disk is not busy."
+msgstr "O Wi-Fi foi desativado para garantir que o disco não esteja ocupado."
+
+msgid "Could not unmount /boot"
+msgstr "Não foi possível desmontar /boot"
+
+msgid "Dirty bit cleared"
+msgstr "Bit sujo limpo"
+
+msgid "Boot sector mismatch noted"
+msgstr "Incompatibilidade no setor de inicialização detectada"
+
+msgid "Bad file entries fixed"
+msgstr "Entradas de arquivo corrompidas corrigidas"
+
+msgid "Uncorrectable errors found on system partition"
+msgstr "Erros incorregíveis encontrados na partição do sistema"
+
+msgid "Partition 2 (system) could not be fully repaired while running. Eject the card and run 'sudo btrfs check --repair /dev/mmcblk0p2' from a Linux PC."
+msgstr "A partição 2 (sistema) não pôde ser totalmente reparada em execução. Ejete o cartão e execute 'sudo btrfs check --repair /dev/mmcblk0p2' em um PC Linux."
+
+msgid "HELPER SCRIPT NOT FOUND"
+msgstr "SCRIPT AUXILIAR NÃO ENCONTRADO"
+
+msgid "FAILED TO PREPARE RECOVERY SCRIPT"
+msgstr "FALHA AO PREPARAR SCRIPT DE RECUPERAÇÃO"
+
+msgid "SCAN SD1 GAMES?\nTHE CONSOLE WILL REBOOT TO COMPLETE THE SCAN."
+msgstr "VERIFICAR JOGOS SD1?\nO CONSOLE SERÁ REINICIADO PARA CONCLUIR A VERIFICAÇÃO."
+
+msgid "SCAN SD2?\nTHE CONSOLE WILL REBOOT TO COMPLETE THE SCAN."
+msgstr "VERIFICAR SD2?\nO CONSOLE SERÁ REINICIADO PARA CONCLUIR A VERIFICAÇÃO."

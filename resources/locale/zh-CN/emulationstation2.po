@@ -3925,3 +3925,177 @@ msgid "  Game Loading Image delay (secs)"
 msgstr "  加载图片延迟(秒)"
 msgid "RAM APPLY ON BOOT"
 msgstr "启动时应用RAM设置"
+
+msgid "SAVESYNC SETTINGS"
+msgstr "SAVESYNC 设置"
+
+msgid "ENABLE SAVESYNC"
+msgstr "启用 SAVESYNC"
+
+msgid "SYNCHRONIZE NOW"
+msgstr "立即同步"
+
+msgid "REBUILD FOLDER CACHE"
+msgstr "重建文件夹缓存"
+
+msgid "CREDENTIALS"
+msgstr "凭据"
+
+msgid "PROTOCOL"
+msgstr "协议"
+
+msgid "LOG"
+msgstr "日志"
+
+msgid "SYNCING"
+msgstr "正在同步"
+
+msgid "SUCCESS!"
+msgstr "成功！"
+
+msgid "FAILED."
+msgstr "失败。"
+
+msgid "NO ERROR DETAILS WERE RECORDED."
+msgstr "未记录错误详情。"
+
+msgid "HOST"
+msgstr "主机"
+
+msgid "PATH"
+msgstr "路径"
+
+msgid "SMB (WINDOWS / SAMBA SHARE)"
+msgstr "SMB（WINDOWS / SAMBA 共享）"
+
+msgid "NFS (LINUX / NAS EXPORT)"
+msgstr "NFS（LINUX / NAS 导出）"
+
+msgid "SSHFS (SSH / SFTP SERVER)"
+msgstr "SSHFS（SSH / SFTP 服务器）"
+
+msgid "WEBDAV (NEXTCLOUD / OWNCLOUD / DAV)"
+msgstr "WEBDAV（NEXTCLOUD / OWNCLOUD / DAV）"
+
+msgid "INSTALLING DEPENDENCIES"
+msgstr "正在安装依赖项"
+
+msgid "UNABLE TO INSTALL REQUIRED NETWORK SUPPORT."
+msgstr "无法安装所需的网络支持。"
+
+msgid "VIEW LOG"
+msgstr "查看日志"
+
+msgid "CLEAR LOG"
+msgstr "清除日志"
+
+msgid "NO LOG FILE FOUND."
+msgstr "未找到日志文件。"
+
+msgid "LOG CLEARED."
+msgstr "日志已清除。"
+
+msgid "ENABLE FAST SYNC"
+msgstr "启用快速同步"
+
+msgid "SWITCH A/B BUTTONS GLOBALLY"
+msgstr "全局交换A/B按键"
+
+msgid "STORAGE SETTINGS"
+msgstr "存储设置"
+
+msgid "ENABLE SD2"
+msgstr "启用SD2"
+
+msgid "REASSIGN SYSTEMS TO SD1"
+msgstr "将系统重新分配到SD1"
+
+msgid "SCAN AND REPAIR"
+msgstr "扫描并修复"
+
+msgid "BOOT"
+msgstr "启动分区"
+
+msgid "ROOTFS"
+msgstr "根文件系统"
+
+msgid "SD1 GAMES"
+msgstr "SD1游戏"
+
+msgid "SD2"
+msgstr "SD2"
+
+msgid "MANUAL SELECTION"
+msgstr "手动选择"
+
+msgid "AUTOMATED SCAN"
+msgstr "自动扫描"
+
+msgid "UNDO ALL CHANGES"
+msgstr "撤销所有更改"
+
+msgid "SCAN /roms/ FOR CHANGES?"
+msgstr "扫描/roms/以查找更改？"
+
+msgid "REVERT ALL SYSTEMS TO SD2?"
+msgstr "将所有系统还原到SD2？"
+
+msgid "PLEASE WAIT..."
+msgstr "请稍候..."
+
+msgid "SYSTEMS"
+msgstr "系统"
+
+msgid "NOTHING WAS MODIFIED."
+msgstr "没有任何修改。"
+
+msgid "RESTORING ALL SYSTEMS TO /roms2/."
+msgstr "正在将所有系统还原到/roms2/。"
+
+msgid "MOVED TO SD1:"
+msgstr "已移至SD1："
+
+msgid "REVERTED TO SD2:"
+msgstr "已还原至SD2："
+
+msgid "Scan failed. Repairs were not successful."
+msgstr "扫描失败。修复未成功。"
+
+msgid "Scan failed. Repairs were successful."
+msgstr "扫描失败。修复已成功。"
+
+msgid "Scan passed. No repairs were needed."
+msgstr "扫描通过。无需修复。"
+
+msgid "Wi-fi has been turned off to ensure the disk is not busy."
+msgstr "已关闭Wi-Fi以确保磁盘未被占用。"
+
+msgid "Could not unmount /boot"
+msgstr "无法卸载/boot"
+
+msgid "Dirty bit cleared"
+msgstr "脏位已清除"
+
+msgid "Boot sector mismatch noted"
+msgstr "检测到引导扇区不一致"
+
+msgid "Bad file entries fixed"
+msgstr "已修复损坏的文件条目"
+
+msgid "Uncorrectable errors found on system partition"
+msgstr "在系统分区上发现无法纠正的错误"
+
+msgid "Partition 2 (system) could not be fully repaired while running. Eject the card and run 'sudo btrfs check --repair /dev/mmcblk0p2' from a Linux PC."
+msgstr "分区2（系统）在运行时无法完全修复。请取出存储卡，并在Linux PC上运行 'sudo btrfs check --repair /dev/mmcblk0p2'。"
+
+msgid "HELPER SCRIPT NOT FOUND"
+msgstr "未找到辅助脚本"
+
+msgid "FAILED TO PREPARE RECOVERY SCRIPT"
+msgstr "准备恢复脚本失败"
+
+msgid "SCAN SD1 GAMES?\nTHE CONSOLE WILL REBOOT TO COMPLETE THE SCAN."
+msgstr "扫描SD1游戏？\n主机将重新启动以完成扫描。"
+
+msgid "SCAN SD2?\nTHE CONSOLE WILL REBOOT TO COMPLETE THE SCAN."
+msgstr "扫描SD2？\n主机将重新启动以完成扫描。"

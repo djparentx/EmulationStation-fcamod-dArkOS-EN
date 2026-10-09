@@ -1767,3 +1767,177 @@ msgid "VERTICAL"
 msgstr "縦向き"
 msgid "RAM APPLY ON BOOT"
 msgstr "起動時にRAM設定を適用"
+
+msgid "SAVESYNC SETTINGS"
+msgstr "SAVESYNC設定"
+
+msgid "ENABLE SAVESYNC"
+msgstr "SAVESYNCを有効にする"
+
+msgid "SYNCHRONIZE NOW"
+msgstr "今すぐ同期"
+
+msgid "REBUILD FOLDER CACHE"
+msgstr "フォルダキャッシュを再構築"
+
+msgid "CREDENTIALS"
+msgstr "認証情報"
+
+msgid "PROTOCOL"
+msgstr "プロトコル"
+
+msgid "LOG"
+msgstr "ログ"
+
+msgid "SYNCING"
+msgstr "同期中"
+
+msgid "SUCCESS!"
+msgstr "成功しました！"
+
+msgid "FAILED."
+msgstr "失敗しました。"
+
+msgid "NO ERROR DETAILS WERE RECORDED."
+msgstr "エラーの詳細は記録されていません。"
+
+msgid "HOST"
+msgstr "ホスト"
+
+msgid "PATH"
+msgstr "パス"
+
+msgid "SMB (WINDOWS / SAMBA SHARE)"
+msgstr "SMB（Windows / Sambaの共有）"
+
+msgid "NFS (LINUX / NAS EXPORT)"
+msgstr "NFS（Linux / NASエクスポート）"
+
+msgid "SSHFS (SSH / SFTP SERVER)"
+msgstr "SSHFS（SSH / SFTPサーバー）"
+
+msgid "WEBDAV (NEXTCLOUD / OWNCLOUD / DAV)"
+msgstr "WebDAV（Nextcloud / ownCloud / DAV）"
+
+msgid "INSTALLING DEPENDENCIES"
+msgstr "依存関係をインストール中"
+
+msgid "UNABLE TO INSTALL REQUIRED NETWORK SUPPORT."
+msgstr "必要なネットワークサポートをインストールできませんでした。"
+
+msgid "VIEW LOG"
+msgstr "ログを表示"
+
+msgid "CLEAR LOG"
+msgstr "ログを消去"
+
+msgid "NO LOG FILE FOUND."
+msgstr "ログファイルが見つかりません。"
+
+msgid "LOG CLEARED."
+msgstr "ログを消去しました。"
+
+msgid "ENABLE FAST SYNC"
+msgstr "高速同期を有効にする"
+
+msgid "SWITCH A/B BUTTONS GLOBALLY"
+msgstr "A/Bボタンをグローバルに入れ替え"
+
+msgid "STORAGE SETTINGS"
+msgstr "ストレージ設定"
+
+msgid "ENABLE SD2"
+msgstr "SD2を有効にする"
+
+msgid "REASSIGN SYSTEMS TO SD1"
+msgstr "システムをSD1に再割り当て"
+
+msgid "SCAN AND REPAIR"
+msgstr "スキャンと修復"
+
+msgid "BOOT"
+msgstr "ブート"
+
+msgid "ROOTFS"
+msgstr "ルートFS"
+
+msgid "SD1 GAMES"
+msgstr "SD1ゲーム"
+
+msgid "SD2"
+msgstr "SD2"
+
+msgid "MANUAL SELECTION"
+msgstr "手動選択"
+
+msgid "AUTOMATED SCAN"
+msgstr "自動スキャン"
+
+msgid "UNDO ALL CHANGES"
+msgstr "すべての変更を元に戻す"
+
+msgid "SCAN /roms/ FOR CHANGES?"
+msgstr "/roms/ の変更をスキャンしますか?"
+
+msgid "REVERT ALL SYSTEMS TO SD2?"
+msgstr "すべてのシステムをSD2に戻しますか?"
+
+msgid "PLEASE WAIT..."
+msgstr "しばらくお待ちください..."
+
+msgid "SYSTEMS"
+msgstr "システム"
+
+msgid "NOTHING WAS MODIFIED."
+msgstr "何も変更されませんでした。"
+
+msgid "RESTORING ALL SYSTEMS TO /roms2/."
+msgstr "すべてのシステムを /roms2/ に復元しています。"
+
+msgid "MOVED TO SD1:"
+msgstr "SD1に移動済み:"
+
+msgid "REVERTED TO SD2:"
+msgstr "SD2に戻しました:"
+
+msgid "Scan failed. Repairs were not successful."
+msgstr "スキャン失敗。修復は成功しませんでした。"
+
+msgid "Scan failed. Repairs were successful."
+msgstr "スキャン失敗。修復は成功しました。"
+
+msgid "Scan passed. No repairs were needed."
+msgstr "スキャン完了。修復は必要ありませんでした。"
+
+msgid "Wi-fi has been turned off to ensure the disk is not busy."
+msgstr "ディスクがビジー状態でないことを確認するためWi-Fiをオフにしました。"
+
+msgid "Could not unmount /boot"
+msgstr "/boot をアンマウントできませんでした"
+
+msgid "Dirty bit cleared"
+msgstr "ダーティビットをクリアしました"
+
+msgid "Boot sector mismatch noted"
+msgstr "ブートセクタの不一致を検出しました"
+
+msgid "Bad file entries fixed"
+msgstr "不正なファイルエントリを修正しました"
+
+msgid "Uncorrectable errors found on system partition"
+msgstr "システムパーティションに修正不可能なエラーが見つかりました"
+
+msgid "Partition 2 (system) could not be fully repaired while running. Eject the card and run 'sudo btrfs check --repair /dev/mmcblk0p2' from a Linux PC."
+msgstr "パーティション2（システム）は実行中に完全に修復できませんでした。カードを取り出し、LinuxPCで 'sudo btrfs check --repair /dev/mmcblk0p2' を実行してください。"
+
+msgid "HELPER SCRIPT NOT FOUND"
+msgstr "ヘルパースクリプトが見つかりません"
+
+msgid "FAILED TO PREPARE RECOVERY SCRIPT"
+msgstr "リカバリスクリプトの準備に失敗しました"
+
+msgid "SCAN SD1 GAMES?\nTHE CONSOLE WILL REBOOT TO COMPLETE THE SCAN."
+msgstr "SD1ゲームをスキャンしますか?\nスキャンを完了するためにコンソールが再起動します。"
+
+msgid "SCAN SD2?\nTHE CONSOLE WILL REBOOT TO COMPLETE THE SCAN."
+msgstr "SD2をスキャンしますか?\nスキャンを完了するためにコンソールが再起動します。"

@@ -72,6 +72,8 @@ public:
 	void normalizeNextUpdate();
 
 	inline bool isSleeping() const { return mSleeping; }
+	inline bool isRenderPaused() const { return mRenderPaused; }
+	inline void setRenderPaused(bool paused) { mRenderPaused = paused; }	
 	bool getAllowSleep();
 	void setAllowSleep(bool sleep);
 
@@ -153,6 +155,7 @@ private:
 
 	bool mAllowSleep;
 	bool mSleeping;
+	bool mRenderPaused = false;	
 	unsigned int mTimeSinceLastInput;
 
 	bool mRenderedHelpPrompts;

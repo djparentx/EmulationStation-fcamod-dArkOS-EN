@@ -3675,3 +3675,177 @@ msgid "VERTICAL"
 msgstr "VERTIKAL"
 msgid "RAM APPLY ON BOOT"
 msgstr "TILLÄMPA RAM VID START"
+
+msgid "SAVESYNC SETTINGS"
+msgstr "SAVESYNC-INSTÄLLNINGAR"
+
+msgid "ENABLE SAVESYNC"
+msgstr "AKTIVERA SAVESYNC"
+
+msgid "SYNCHRONIZE NOW"
+msgstr "SYNKRONISERA NU"
+
+msgid "REBUILD FOLDER CACHE"
+msgstr "ÅTERSKAPA MAPPCACHE"
+
+msgid "CREDENTIALS"
+msgstr "INLOGGNINGSUPPGIFTER"
+
+msgid "PROTOCOL"
+msgstr "PROTOKOLL"
+
+msgid "LOG"
+msgstr "LOGG"
+
+msgid "SYNCING"
+msgstr "SYNKRONISERAR"
+
+msgid "SUCCESS!"
+msgstr "LYCKADES!"
+
+msgid "FAILED."
+msgstr "MISSLYCKADES."
+
+msgid "NO ERROR DETAILS WERE RECORDED."
+msgstr "INGA FELDETALJER REGISTRERADES."
+
+msgid "HOST"
+msgstr "VÄRD"
+
+msgid "PATH"
+msgstr "SÖKVÄG"
+
+msgid "SMB (WINDOWS / SAMBA SHARE)"
+msgstr "SMB (WINDOWS-/SAMBA-DELNING)"
+
+msgid "NFS (LINUX / NAS EXPORT)"
+msgstr "NFS (LINUX-/NAS-EXPORT)"
+
+msgid "SSHFS (SSH / SFTP SERVER)"
+msgstr "SSHFS (SSH-/SFTP-SERVER)"
+
+msgid "WEBDAV (NEXTCLOUD / OWNCLOUD / DAV)"
+msgstr "WEBDAV (NEXTCLOUD / OWNCLOUD / DAV)"
+
+msgid "INSTALLING DEPENDENCIES"
+msgstr "INSTALLERAR BEROENDEN"
+
+msgid "UNABLE TO INSTALL REQUIRED NETWORK SUPPORT."
+msgstr "KUNDE INTE INSTALLERA NÖDVÄNDIGT NÄTVERKSSTÖD."
+
+msgid "VIEW LOG"
+msgstr "VISA LOGG"
+
+msgid "CLEAR LOG"
+msgstr "RENSA LOGG"
+
+msgid "NO LOG FILE FOUND."
+msgstr "INGEN LOGGFIL HITTADES."
+
+msgid "LOG CLEARED."
+msgstr "LOGGEN RENSAD."
+
+msgid "ENABLE FAST SYNC"
+msgstr "AKTIVERA SNABB SYNKRONISERING"
+
+msgid "SWITCH A/B BUTTONS GLOBALLY"
+msgstr "BYTA A/B-KNAPPAR GLOBALT"
+
+msgid "STORAGE SETTINGS"
+msgstr "LAGRINGSINSTÄLLNINGAR"
+
+msgid "ENABLE SD2"
+msgstr "AKTIVERA SD2"
+
+msgid "REASSIGN SYSTEMS TO SD1"
+msgstr "TILLDELA SYSTEM TILL SD1"
+
+msgid "SCAN AND REPAIR"
+msgstr "SKANNA OCH REPARERA"
+
+msgid "BOOT"
+msgstr "UPPSTART"
+
+msgid "ROOTFS"
+msgstr "ROOTFS"
+
+msgid "SD1 GAMES"
+msgstr "SD1-SPEL"
+
+msgid "SD2"
+msgstr "SD2"
+
+msgid "MANUAL SELECTION"
+msgstr "MANUELLT VAL"
+
+msgid "AUTOMATED SCAN"
+msgstr "AUTOMATISK SKANNING"
+
+msgid "UNDO ALL CHANGES"
+msgstr "ÅNGRA ALLA ÄNDRINGAR"
+
+msgid "SCAN /roms/ FOR CHANGES?"
+msgstr "SKANNA /roms/ EFTER ÄNDRINGAR?"
+
+msgid "REVERT ALL SYSTEMS TO SD2?"
+msgstr "ÅTERSTÄLLA ALLA SYSTEM TILL SD2?"
+
+msgid "PLEASE WAIT..."
+msgstr "VÄNTA..."
+
+msgid "SYSTEMS"
+msgstr "SYSTEM"
+
+msgid "NOTHING WAS MODIFIED."
+msgstr "INGET ÄNDRADES."
+
+msgid "RESTORING ALL SYSTEMS TO /roms2/."
+msgstr "ÅTERSTÄLLER ALLA SYSTEM TILL /roms2/."
+
+msgid "MOVED TO SD1:"
+msgstr "FLYTTAD TILL SD1:"
+
+msgid "REVERTED TO SD2:"
+msgstr "ÅTERSTÄLLD TILL SD2:"
+
+msgid "Scan failed. Repairs were not successful."
+msgstr "Skanning misslyckades. Reparationer var inte framgångsrika."
+
+msgid "Scan failed. Repairs were successful."
+msgstr "Skanning misslyckades. Reparationer lyckades."
+
+msgid "Scan passed. No repairs were needed."
+msgstr "Skanning klar. Inga reparationer behövdes."
+
+msgid "Wi-fi has been turned off to ensure the disk is not busy."
+msgstr "Wi-Fi har stängts av för att säkerställa att disken inte är upptagen."
+
+msgid "Could not unmount /boot"
+msgstr "Kunde inte avmontera /boot"
+
+msgid "Dirty bit cleared"
+msgstr "Dirty-bit rensad"
+
+msgid "Boot sector mismatch noted"
+msgstr "Avvikelse i uppstartssektor noterad"
+
+msgid "Bad file entries fixed"
+msgstr "Felaktiga filposter åtgärdade"
+
+msgid "Uncorrectable errors found on system partition"
+msgstr "Okorrigerbara fel hittades på systempartitionen"
+
+msgid "Partition 2 (system) could not be fully repaired while running. Eject the card and run 'sudo btrfs check --repair /dev/mmcblk0p2' from a Linux PC."
+msgstr "Partition 2 (system) kunde inte repareras helt under körning. Ta ut kortet och kör 'sudo btrfs check --repair /dev/mmcblk0p2' från en Linux-dator."
+
+msgid "HELPER SCRIPT NOT FOUND"
+msgstr "HJÄLPSKRIPT HITTADES INTE"
+
+msgid "FAILED TO PREPARE RECOVERY SCRIPT"
+msgstr "MISSLYCKADES MED ATT FÖRBEREDA ÅTERSTÄLLNINGSSKRIPT"
+
+msgid "SCAN SD1 GAMES?\nTHE CONSOLE WILL REBOOT TO COMPLETE THE SCAN."
+msgstr "SKANNA SD1-SPEL?\nKONSOLEN STARTAR OM FÖR ATT SLUTFÖRA SKANNINGEN."
+
+msgid "SCAN SD2?\nTHE CONSOLE WILL REBOOT TO COMPLETE THE SCAN."
+msgstr "SKANNA SD2?\nKONSOLEN STARTAR OM FÖR ATT SLUTFÖRA SKANNINGEN."

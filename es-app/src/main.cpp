@@ -642,6 +642,14 @@ int main(int argc, char* argv[])
 		processAudioTitles(&window);
 
 		window.update(deltaTime);
+
+		// Benchmark pause: skip draw/swap, but posted functions above still run
+		if (window.isRenderPaused())
+		{
+			SDL_Delay(100);
+			continue;
+		}
+
 		window.render();
 		
 		Log::flush();

@@ -1,12 +1,14 @@
 #include <string>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 #include "guis/GuiMenu.h"
 #include "guis/GuiTools.h"
 #include "components/OptionListComponent.h"
 #include "components/SliderComponent.h"
 #include "components/SwitchComponent.h"
 #include "guis/GuiCollectionSystemsOptions.h"
+#include "guis/Gui_dArkOSen.h"
 #include "guis/GuiDetectDevice.h"
 #include "guis/GuiGeneralScreensaverOptions.h"
 #include "guis/GuiMsgBox.h"
@@ -25,6 +27,8 @@
 #include <cctype>
 #include <vector>
 #include <thread>
+#include <chrono>
+#include <fstream>
 #include <mutex>
 #include <cstdlib>
 #include <ctime>
@@ -65,10 +69,10 @@ GuiMenu::GuiMenu(Window* window, bool animate) : GuiComponent(window), mMenu(win
 
 	addEntry(_("SOUND SETTINGS"), true, [this] { openSoundSettings(); }, "iconSound");
 
-	addEntry(_("PERFORMANCE SETTINGS"), true, [this] { openPerformanceSettings(); }, "iconGames");
-
 	if (isFullUI)
 	{
+		addEntry(_("PERFORMANCE SETTINGS"), true, [this] { openPerformanceSettings(); }, "iconGames");
+
 		addEntry(_("GAME COLLECTION SETTINGS"), true, [this] { openCollectionSystemSettings(); }, "iconGames");
 
 		// Emulator settings 
@@ -97,7 +101,7 @@ GuiMenu::GuiMenu(Window* window, bool animate) : GuiComponent(window), mMenu(win
 	
 	addEntry(_("QUIT"), !Settings::getInstance()->getBool("ShowOnlyExit"), [this] {openQuitMenu(); }, "iconQuit");
 
-	addEntry(_("BAT") + ": " + std::string(getShOutput(R"(cat /sys/class/power_supply/battery/capacity)")) + "%" + " | " + _("SND") + ": " + std::string(getShOutput(R"(current_volume)")) + " | " + _("BRT") + ": " + std::to_string(ApiSystem::getInstance()->getBrightnessLevel()) + "% | " + _("WIFI") + ": " + std::string(getShOutput(R"(if [ -z $(cat /sys/class/net/wlan0/operstate) ]; then echo "Off"; else cat /sys/class/net/wlan0/operstate; fi)")), true, [this] {  });
+	addEntry(_("BAT") + ": " + std::string(getShOutput(R"(cat /sys/class/power_supply/battery/capacity)")) + "%" + " | " + _("SND") + ": " + std::string(getShOutput(R"(current_volume)")) + " | " + _("BRT") + ": " + std::to_string(ApiSystem::getInstance()->getBrightnessLevel()) + "% | " + _("WIFI") + ": " + std::string(getShOutput(R"(if [ -z $(cat /sys/class/net/wlan0/operstate) ]; then echo "Off"; else cat /sys/class/net/wlan0/operstate; fi)")), true, [this] { openQuickStatusMenu(); });
 
 	addEntry(_("Distro Version") + ": " + std::string(getShOutput(R"(cat /usr/share/plymouth/themes/text.plymouth | grep title | cut -c 7-50)")), false, [this] {
 		if (access("/usr/local/bin/Update.sh", F_OK) == 0)
@@ -145,6 +149,65 @@ static std::string executeCommand(const std::string& cmd)
 		result += buffer;
 	}
 	pclose(pipe);
+	return Utils::String::trim(result);
+}
+
+// Executes a command via fork/execvp with an argv array instead of a shell —
+// externally-controlled arguments (e.g. an SSID) are passed as separate argv
+// entries, so no shell quoting/escaping is needed or possible to break out of.
+// captureStderr merges stderr into the returned output (like "2>&1"); pass
+// false to discard stderr (like "2>/dev/null").
+static std::string executeCommandArgv(const std::vector<std::string>& args, bool captureStderr = true)
+{
+	std::lock_guard<std::mutex> lock(g_execCommandMutex);
+
+	if (args.empty()) return "";
+
+	int pipefd[2];
+	if (pipe(pipefd) != 0) return "";
+
+	pid_t pid = fork();
+	if (pid < 0) {
+		close(pipefd[0]);
+		close(pipefd[1]);
+		return "";
+	}
+
+	if (pid == 0) {
+		close(pipefd[0]);
+		dup2(pipefd[1], STDOUT_FILENO);
+		if (captureStderr) {
+			dup2(pipefd[1], STDERR_FILENO);
+		} else {
+			int devNull = open("/dev/null", O_WRONLY);
+			if (devNull >= 0) {
+				dup2(devNull, STDERR_FILENO);
+				close(devNull);
+			}
+		}
+		close(pipefd[1]);
+
+		std::vector<char*> argv;
+		for (auto& a : args)
+			argv.push_back(const_cast<char*>(a.c_str()));
+		argv.push_back(nullptr);
+
+		execvp(argv[0], argv.data());
+		_exit(127); // execvp failed
+	}
+
+	close(pipefd[1]);
+
+	std::string result;
+	char buffer[256];
+	ssize_t n;
+	while ((n = read(pipefd[0], buffer, sizeof(buffer))) > 0)
+		result.append(buffer, n);
+	close(pipefd[0]);
+
+	int status = 0;
+	waitpid(pid, &status, 0);
+
 	return Utils::String::trim(result);
 }
 
@@ -855,13 +918,13 @@ void GuiMenu::connectWifi(const std::string& ssid, const std::string& password)
 	mWindow->pushGui(busy);
 
 	executeCommand("systemctl disable --now wifi_monitor.service 2>/dev/null || true");
-	executeCommand("nmcli con delete \"" + ssid + "\" 2>/dev/null");
+	executeCommandArgv({"nmcli", "con", "delete", ssid}, false);
 
 	std::string result;
 	if (password.empty())
-		result = executeCommand("nmcli device wifi connect \"" + ssid + "\" 2>&1");
+		result = executeCommandArgv({"nmcli", "device", "wifi", "connect", ssid});
 	else
-		result = executeCommand("nmcli device wifi connect \"" + ssid + "\" password \"" + password + "\" 2>&1");
+		result = executeCommandArgv({"nmcli", "device", "wifi", "connect", ssid, "password", password});
 
 	std::this_thread::sleep_for(std::chrono::seconds(3));
 
@@ -873,12 +936,12 @@ void GuiMenu::connectWifi(const std::string& ssid, const std::string& password)
 
 	if (connected) {
 		if (mWifiStatusText) mWifiStatusText->setText(connectedSSID);
-		executeCommand("nmcli con modify \"" + ssid + "\" wifi-sec.psk-flags 0 2>/dev/null || true");
-		executeCommand("nmcli con modify \"" + ssid + "\" 802-11-wireless.bgscan \"\" 2>/dev/null || true");
+		executeCommandArgv({"nmcli", "con", "modify", ssid, "wifi-sec.psk-flags", "0"}, false);
+		executeCommandArgv({"nmcli", "con", "modify", ssid, "802-11-wireless.bgscan", ""}, false);
 		executeCommand("systemctl enable --now wifi_monitor.service 2>/dev/null || true");
 		mWindow->pushGui(new GuiMsgBox(mWindow, _("CONNECTED TO") + "\n" + ssid, _("OK")));
 	} else {
-		executeCommand("sudo rm -f \"/etc/NetworkManager/system-connections/" + ssid + ".nmconnection\" 2>/dev/null");
+		executeCommandArgv({"sudo", "rm", "-f", "/etc/NetworkManager/system-connections/" + ssid + ".nmconnection"}, false);
 		if (mWifiStatusText) mWifiStatusText->setText(connectedSSID.empty() ? _("NOT CONNECTED") : connectedSSID);
 
 		std::string errorMsg = _("CONNECTION FAILED");
@@ -960,11 +1023,11 @@ void GuiMenu::activateConnection(const std::string& connName)
 	std::string curSsid = getCurrentWifiSSID();
 	executeCommand("systemctl disable --now wifi_monitor.service 2>/dev/null || true");
 	if (!curSsid.empty() && curSsid != connName) {
-		executeCommand("nmcli con down \"" + curSsid + "\" 2>/dev/null");
+		executeCommandArgv({"nmcli", "con", "down", curSsid}, false);
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
 
-	std::string result = executeCommand("nmcli con up \"" + connName + "\" 2>&1");
+	std::string result = executeCommandArgv({"nmcli", "con", "up", connName});
 	std::this_thread::sleep_for(std::chrono::seconds(2));
 
 	mWindow->removeGui(busy);
@@ -973,7 +1036,7 @@ void GuiMenu::activateConnection(const std::string& connName)
 	std::string newSsid = getCurrentWifiSSID();
 	if (newSsid == connName) {
 		if (mWifiStatusText) mWifiStatusText->setText(newSsid);
-		executeCommand("nmcli con modify \"" + connName + "\" wifi-sec.psk-flags 0 2>/dev/null || true");
+		executeCommandArgv({"nmcli", "con", "modify", connName, "wifi-sec.psk-flags", "0"}, false);
 		executeCommand("systemctl enable --now wifi_monitor.service 2>/dev/null || true");
 		mWindow->pushGui(new GuiMsgBox(mWindow, _("CONNECTED TO") + "\n" + connName, _("OK")));
 	} else {
@@ -1014,12 +1077,12 @@ void GuiMenu::deleteConnections()
 					// if deleting the currently connected network, disconnect first
 					if (connName == curSsid) {
 						executeCommand("systemctl disable --now wifi_monitor.service 2>/dev/null || true");
-						executeCommand("nmcli con down \"" + connName + "\" >/dev/null 2>&1 || true");
+						executeCommandArgv({"nmcli", "con", "down", connName}, false);
 						toggleRemoteServices(false);
 					}
 
-					executeCommand("nmcli connection delete \"" + connName + "\" >/dev/null 2>&1 || true");
-					executeCommand("rm -f \"/etc/NetworkManager/system-connections/" + connName + ".nmconnection\"");
+					executeCommandArgv({"nmcli", "connection", "delete", connName}, false);
+					executeCommandArgv({"rm", "-f", "/etc/NetworkManager/system-connections/" + connName + ".nmconnection"}, false);
 
 					std::string newSsid = getCurrentWifiSSID();
 					if (mWifiStatusText) mWifiStatusText->setText(newSsid.empty() ? _("NOT CONNECTED") : newSsid);
@@ -1184,17 +1247,17 @@ void GuiMenu::openNetworkSettings()
 	s->addWithLabel(_("ROOT SAMBA ACCESS"), sambaRootSwitch);
 
 	// --- WiFi Monitor Service toggle ---
-	std::string wifiMonitorState = executeCommand("systemctl is-enabled wifi_monitor.service 2>/dev/null");
-	bool wifiMonitorEnabled = wifiMonitorState.find("masked") == std::string::npos;
+	std::string wifiMonitorState = executeCommand("systemctl is-active --quiet wifi_monitor.service && echo 1 || echo 0");
+	bool wifiMonitorEnabled = wifiMonitorState.find("1") != std::string::npos;
 
 	auto wifiMonitorSwitch = std::make_shared<SwitchComponent>(mWindow);
 	wifiMonitorSwitch->setState(wifiMonitorEnabled);
 
 	wifiMonitorSwitch->setOnChangedCallback([wifiMonitorSwitch] {
 		if (wifiMonitorSwitch->getState())
-			executeCommand("sudo systemctl unmask wifi_monitor.service && sudo systemctl start wifi_monitor.service");
+			executeCommand("sudo systemctl enable --now wifi_monitor.service");
 		else
-			executeCommand("sudo systemctl stop wifi_monitor.service && sudo systemctl mask wifi_monitor.service");
+			executeCommand("sudo systemctl disable --now wifi_monitor.service");
 	});
 
 	s->addWithLabel(_("WIFI MONITOR SERVICE"), wifiMonitorSwitch);
@@ -1219,6 +1282,284 @@ void GuiMenu::openNetworkSettings()
 		if (s->getVariable("reloadAll"))
 			ViewController::get()->reloadAll(mWindow);
 	});
+
+	mWindow->pushGui(s);
+}
+
+void GuiMenu::manualSaveSync()
+{
+	auto busy = new GuiComponent(mWindow);
+	auto busyComp = new BusyComponent(mWindow);
+	busy->addChild(busyComp);
+	busyComp->setText(_("SYNCING") + "...");
+	busy->setSize((float)Renderer::getScreenWidth(), (float)Renderer::getScreenHeight());
+	mWindow->pushGui(busy);
+
+	const std::string logFile = "/home/ark/.config/savesync.log";
+	long logStart = 0;
+	std::string sizeStr = executeCommand("wc -c < " + logFile + " 2>/dev/null");
+	if (!sizeStr.empty())
+		logStart = std::stol(sizeStr);
+
+	int status = system("sudo /usr/local/bin/savesync.sh --bg");
+	bool success = WIFEXITED(status) && WEXITSTATUS(status) == 0;
+
+	std::string errorMsg;
+	if (!success)
+		errorMsg = executeCommand("tail -c +" + std::to_string(logStart + 1) + " " + logFile +
+			" 2>/dev/null | grep 'ERROR:' | tail -n 1");
+
+	mWindow->removeGui(busy);
+	delete busy;
+
+	if (success)
+		mWindow->pushGui(new GuiMsgBox(mWindow, _("SUCCESS!"), _("OK")));
+	else if (!errorMsg.empty())
+		mWindow->pushGui(new GuiMsgBox(mWindow, _("FAILED.") + "\n\n" + errorMsg, _("OK")));
+	else
+		mWindow->pushGui(new GuiMsgBox(mWindow, _("FAILED.") + "\n\n" + _("NO ERROR DETAILS WERE RECORDED."), _("OK")));
+}
+
+static std::string ssCrdGet(const std::string& key)
+{
+	return executeCommand("sudo sed -n 's/^" + key + "=//p' /home/ark/.config/savesync.crd 2>/dev/null");
+}
+
+static void ssCrdSet(const std::string& key, const std::string& value)
+{
+	executeCommand(
+		"sudo awk -v key=\"" + key + "\" -v value=\"" + value + "\" '"
+		"$0 ~ \"^\" key \"=\" { print key \"=\" value; found=1; next } "
+		"{ print } "
+		"END { if (!found) print key \"=\" value }"
+		"' /home/ark/.config/savesync.crd > /home/ark/.config/savesync.crd.tmp && "
+		"sudo chmod 600 /home/ark/.config/savesync.crd.tmp && "
+		"sudo mv -f /home/ark/.config/savesync.crd.tmp /home/ark/.config/savesync.crd");
+}
+
+static void ssCheckDependencies(Window* window, const std::string& protocol)
+{
+	std::string needPkgs;
+	if (protocol == "smb")
+		needPkgs = executeCommand("command -v mount.cifs >/dev/null 2>&1 || echo cifs-utils");
+	else if (protocol == "nfs")
+		needPkgs = executeCommand("command -v mount.nfs >/dev/null 2>&1 || echo nfs-common");
+	else if (protocol == "sshfs")
+		needPkgs = executeCommand("{ command -v sshfs >/dev/null 2>&1 && command -v sshpass >/dev/null 2>&1; } || echo 'sshfs sshpass'");
+	else if (protocol == "webdav")
+		needPkgs = executeCommand("command -v mount.davfs >/dev/null 2>&1 || echo davfs2");
+
+	if (needPkgs.empty())
+		return;
+
+	auto busy = new GuiComponent(window);
+	auto busyComp = new BusyComponent(window);
+	busy->addChild(busyComp);
+	busyComp->setText(_("INSTALLING DEPENDENCIES") + "...");
+	busy->setSize((float)Renderer::getScreenWidth(), (float)Renderer::getScreenHeight());
+	window->pushGui(busy);
+
+	int status = system(("sudo apt update >/tmp/savesync_apt.log 2>&1 && sudo apt -y install " + needPkgs + " >>/tmp/savesync_apt.log 2>&1").c_str());
+	bool ok = WIFEXITED(status) && WEXITSTATUS(status) == 0;
+
+	window->removeGui(busy);
+	delete busy;
+
+	if (!ok)
+		window->pushGui(new GuiMsgBox(window, _("UNABLE TO INSTALL REQUIRED NETWORK SUPPORT."), _("OK")));
+}
+
+void GuiMenu::openSaveSyncProtocol()
+{
+	std::string current = ssCrdGet("PROTOCOL");
+	if (current.empty())
+		current = "smb";
+
+	auto s = new GuiSettings(mWindow, _("PROTOCOL") + " (" + current + ")");
+
+	auto addProtoEntry = [this, s](const std::string& value, const std::string& label) {
+		s->addEntry(label, true, [this, s, value] {
+			ssCrdSet("PROTOCOL", value);
+			ssCheckDependencies(mWindow, value);
+			s->close();
+		}, "");
+	};
+
+	addProtoEntry("smb",    _("SMB (WINDOWS / SAMBA SHARE)"));
+	addProtoEntry("nfs",    _("NFS (LINUX / NAS EXPORT)"));
+	addProtoEntry("sshfs",  _("SSHFS (SSH / SFTP SERVER)"));
+	addProtoEntry("webdav", _("WEBDAV (NEXTCLOUD / OWNCLOUD / DAV)"));
+
+	mWindow->pushGui(s);
+}
+
+void GuiMenu::openSaveSyncLog()
+{
+	auto s = new GuiSettings(mWindow, _("LOG"));
+
+	s->addEntry(_("VIEW LOG"), true, [this] {
+		const std::string logFile = "/home/ark/.config/savesync.log";
+		if (!Utils::FileSystem::exists(logFile))
+		{
+			mWindow->pushGui(new GuiMsgBox(mWindow, _("NO LOG FILE FOUND.")));
+			return;
+		}
+		// last 40 lines — GuiMsgBox has no scroll, so keep it bounded
+		std::string tail = executeCommand("tail -n 40 " + logFile + " 2>/dev/null");
+		if (tail.empty())
+			tail = _("NO LOG FILE FOUND.");
+		mWindow->pushGui(new GuiMsgBox(mWindow, tail, _("OK")));
+	}, "");
+
+	s->addEntry(_("CLEAR LOG"), true, [this] {
+		const std::string logFile = "/home/ark/.config/savesync.log";
+		if (!Utils::FileSystem::exists(logFile))
+		{
+			mWindow->pushGui(new GuiMsgBox(mWindow, _("NO LOG FILE FOUND.")));
+			return;
+		}
+		executeCommand("sudo truncate -s 0 " + logFile);
+		mWindow->pushGui(new GuiMsgBox(mWindow, _("LOG CLEARED.")));
+	}, "");
+
+	mWindow->pushGui(s);
+}
+
+void GuiMenu::openSaveSyncCredentials()
+{
+	auto s = new GuiSettings(mWindow, _("CREDENTIALS"));
+
+	auto addCrdRow = [this, s](const std::string& key, const std::string& label, bool masked) {
+		std::string current = ssCrdGet(key);
+		std::string display = masked && !current.empty() ? std::string(current.size(), '*') : current;
+
+		auto valueText = std::make_shared<TextComponent>(mWindow, display,
+			ThemeData::getMenuTheme()->Text.font, ThemeData::getMenuTheme()->Text.color, ALIGN_RIGHT);
+
+		ComponentListRow row;
+		auto lbl = std::make_shared<TextComponent>(mWindow, label,
+			ThemeData::getMenuTheme()->Text.font, ThemeData::getMenuTheme()->Text.color);
+		row.addElement(lbl, true);
+		row.addElement(valueText, true);
+
+		row.makeAcceptInputHandler([this, key, valueText, masked] {
+			mWindow->pushGui(new GuiTextEditPopupKeyboard(mWindow, _(key.c_str()), "",
+				[key, valueText, masked](const std::string& newVal) {
+					if (newVal.empty())
+						return;
+					ssCrdSet(key, newVal);
+					valueText->setValue(masked ? std::string(newVal.size(), '*') : newVal);
+				},
+				false, _("SAVE")));
+		});
+
+		s->addRow(row);
+	};
+
+	addCrdRow("HOST", _("HOST"), false);
+	addCrdRow("USERNAME", _("USERNAME"), false);
+	addCrdRow("PASSWORD", _("PASSWORD"), true);
+	addCrdRow("NETWORKPATH", _("PATH"), false);
+
+	mWindow->pushGui(s);
+}
+
+void GuiMenu::openSaveSyncSettings()
+{
+	auto s = new GuiSettings(mWindow, _("SAVESYNC SETTINGS"));
+
+	// --- Enable SaveSync toggle ---
+	std::string ssState = executeCommand("systemctl is-enabled savesync.service 2>/dev/null");
+	bool ssEnabled = ssState.find("enabled") != std::string::npos;
+	auto ssSwitch = std::make_shared<SwitchComponent>(mWindow);
+	ssSwitch->setState(ssEnabled);
+	s->addWithLabel(_("ENABLE SAVESYNC"), ssSwitch);
+	s->addSaveFunc([s, ssSwitch, ssEnabled] {
+		if (ssSwitch->getState() != ssEnabled) {
+			if (ssSwitch->getState())
+				executeCommand("sudo systemctl enable savesync.service 2>/dev/null");
+			else {
+				executeCommand("sudo systemctl disable savesync.service 2>/dev/null");
+				executeCommand("sudo sed -i '\\#^/mnt/savesync #d' /etc/davfs2/secrets 2>/dev/null");
+			}
+			s->setVariable("reopenSaveSync", true);
+		}
+	});
+
+	// --- Remaining entries only shown while SaveSync is enabled ---
+	if (ssEnabled)
+	{
+		// --- Enable Fast Sync toggle ---
+		bool fsEnabled = Utils::FileSystem::exists("/home/ark/.config/.fastsync");
+		auto fsSwitch = std::make_shared<SwitchComponent>(mWindow);
+		fsSwitch->setState(fsEnabled);
+		s->addWithLabel(_("ENABLE FAST SYNC"), fsSwitch);
+		fsSwitch->setOnChangedCallback([fsSwitch] {
+			if (fsSwitch->getState())
+				executeCommand("sudo touch /home/ark/.config/.fastsync");
+			else
+				executeCommand("sudo rm -f /home/ark/.config/.fastsync");
+		});
+		s->addEntry(_("SYNCHRONIZE NOW"), true, [this] { manualSaveSync(); }, "");
+		s->addEntry(_("REBUILD FOLDER CACHE"), true, [this] { executeCommand("sudo /usr/local/bin/savesync.sh --scan"); }, "");
+		s->addEntry(_("CREDENTIALS"), true, [this] { openSaveSyncCredentials(); }, "");
+		s->addEntry(_("PROTOCOL"), true, [this] { openSaveSyncProtocol(); }, "");
+		s->addEntry(_("LOG"), true, [this] { openSaveSyncLog(); }, "");
+	}
+
+	s->onFinalize([s, this] {
+		if (s->getVariable("reopenSaveSync"))
+			openSaveSyncSettings();
+	});
+
+	mWindow->pushGui(s);
+}
+
+void GuiMenu::openStorageSettings()
+{
+	auto s = new GuiSettings(mWindow, _("STORAGE SETTINGS"));
+
+	// --- Enable SD2 toggle ---
+	bool sd2Enabled = Utils::FileSystem::exists("/roms2");
+	auto sd2Switch = std::make_shared<SwitchComponent>(mWindow);
+	sd2Switch->setState(sd2Enabled);
+	sd2Switch->setOnChangedCallback([this, s, sd2Switch, sd2Enabled] {
+		bool nowOn = sd2Switch->getState();
+		std::string script = nowOn
+			? "\"/usr/local/bin/Switch to SD2 for Roms.sh\""
+			: "\"/usr/local/bin/Switch to Main SD for Roms.sh\"";
+		mWindow->renderLoadingScreen(_("PLEASE WAIT..."));
+		system(script.c_str());
+		if (nowOn != sd2Enabled)
+			s->setVariable("reopenStorage", true);
+	});
+	s->addWithLabel(_("ENABLE SD2"), sd2Switch);
+
+	// --- Reassign to SD1, only while SD2 is enabled ---
+	if (sd2Enabled)
+		s->addEntry(_("REASSIGN SYSTEMS TO SD1"), true, [this] { mWindow->pushGui(new Gui_dArkOSen(mWindow)); });
+
+	// --- Scan and Repair ---
+	s->addEntry(_("SCAN AND REPAIR"), true, [this] { openScanAndRepairSettings(); });
+
+	s->onFinalize([s, this] {
+		if (s->getVariable("reopenStorage"))
+			openStorageSettings();
+	});
+
+	mWindow->pushGui(s);
+}
+
+void GuiMenu::openScanAndRepairSettings()
+{
+	auto s = new GuiSettings(mWindow, _("SCAN AND REPAIR"));
+
+	s->addEntry(_("BOOT"), false, [this] { ScanRepairBoot(mWindow); });
+	s->addEntry(_("ROOTFS"), false, [this] { ScanRepairRootfs(mWindow); });
+	s->addEntry(_("SD1 GAMES"), false, [this] { ScanRepairSD1Games(mWindow); });
+
+	if (Utils::FileSystem::exists("/roms2"))
+		s->addEntry(_("SD2"), false, [this] { ScanRepairSD2(mWindow); });
 
 	mWindow->pushGui(s);
 }
@@ -1639,8 +1980,8 @@ std::string GuiMenu::getCpuBinning()
         // negative value: N/A - not detected
         
         if (voltVal < 0) return "N/A";
-        if (voltVal == 0) return "L0 (" + std::string(_("AVERAGE")) + ")";
-        if (voltVal == 1) return "L1 (" + std::string(_("POOR")) + ")";
+        if (voltVal == 0) return "L0 (" + std::string(_("POOR")) + ")";
+        if (voltVal == 1) return "L1 (" + std::string(_("AVERAGE")) + ")";
         if (voltVal == 2) return "L2 (" + std::string(_("STANDARD")) + ")";
         if (voltVal == 3) return "L3 (" + std::string(_("BEST")) + ")";
         
@@ -1959,6 +2300,7 @@ void GuiMenu::toggleZram(bool enable, const std::string& size,
                                          const std::string& compAlgo)
 {
     if (enable) {
+        executeCommand("sudo modprobe zram 2>/dev/null || true");
         // Disable first if already enabled
         executeCommand("sudo swapoff /dev/zram0 2>/dev/null || true");
         // Reset zram
@@ -1982,6 +2324,7 @@ void GuiMenu::toggleZram(bool enable, const std::string& size,
     } else {
         executeCommand("sudo swapoff /dev/zram0 2>/dev/null || true");
         executeCommand("echo 1 | sudo tee /sys/block/zram0/reset >/dev/null 2>&1 || true");
+        executeCommand("sudo rmmod zram 2>/dev/null || true");
     }
 }
 
@@ -1993,13 +2336,13 @@ void GuiMenu::saveZramConfig(const std::string& size, const std::string& compAlg
     else if (size == "512M") bytes = 536870912;
     else if (size == "1024M") bytes = 1073741824;
 
-    std::string content = "ENABLED=1\nALGORITHM=" + compAlgo + "\nSIZE=" + std::to_string(bytes) + "\n";
+    std::string content = "ALGORITHM=" + compAlgo + "\nSIZE=" + std::to_string(bytes) + "\n";
     executeCommand("echo '" + content + "' | sudo tee /etc/zram.conf >/dev/null 2>&1");
 }
 
 bool GuiMenu::isZramAutoStart()
 {
-    std::string result = executeCommand("systemctl is-enabled zram-swap.service 2>/dev/null");
+    std::string result = executeCommand("systemctl is-enabled zram_autostart.service 2>/dev/null");
     result.erase(std::remove_if(result.begin(), result.end(), ::isspace), result.end());
     return result == "enabled";
 }
@@ -2009,9 +2352,10 @@ void GuiMenu::toggleZramAutoStart(bool enable, const std::string& size,
 {
     if (enable) {
         saveZramConfig(size, compAlgo);
-        executeCommand("sudo systemctl enable zram-swap.service 2>/dev/null || true");
+        executeCommand("sudo systemctl enable zram_autostart.service >/dev/null 2>&1 || true");
     } else {
-        executeCommand("sudo systemctl disable zram-swap.service 2>/dev/null || true");
+        executeCommand("sudo systemctl disable zram_autostart.service >/dev/null 2>&1 || true");
+        executeCommand("sudo systemctl stop zram_autostart.service >/dev/null 2>&1 || true");
     }
 }
 
@@ -2179,13 +2523,17 @@ void GuiMenu::openPerformanceSettings()
 	
 	// --- ZRAM Size ---
     auto sizeList = std::make_shared<OptionListComponent<std::string>>(mWindow, _("SIZE"), false);
-    std::vector<std::string> sizes = {"256M", "512M", "768M"};
+    int ramMb = atoi(executeCommand("awk '/MemTotal/ {print int($2/1024)}' /proc/meminfo").c_str());
+    std::vector<std::string> sizes = {"256M"};
+    if (ramMb >= 608)  sizes.push_back("512M");
+    if (ramMb >= 864)  sizes.push_back("768M");
+    if (ramMb >= 1120) sizes.push_back("1024M");
     std::string currentSize = getZramSize();
     bool found = false;
     for (const auto& size : sizes) {
         if (size == currentSize) found = true;
     }
-    if (!found) currentSize = "512M";
+    if (!found) currentSize = "256M";
     for (const auto& size : sizes) {
         sizeList->add(size, size, size == currentSize);
     }
@@ -2211,7 +2559,7 @@ void GuiMenu::openPerformanceSettings()
     // Enable/Disable callback
     zramSwitch->setOnChangedCallback([this, zramSwitch, sizeList, algoList] {
         std::string selectedSize = sizeList->getSelected();
-        if (selectedSize.empty()) selectedSize = "512M";
+        if (selectedSize.empty()) selectedSize = "256M";
         std::string selectedAlgo = algoList->getSelected();
         if (selectedAlgo.empty()) selectedAlgo = "lz4";
         toggleZram(zramSwitch->getState(), selectedSize, selectedAlgo);
@@ -2240,12 +2588,166 @@ void GuiMenu::openPerformanceSettings()
         }
     });
 
+	// --- Benchmarking ---
+	s->addEntry(_("BENCHMARKING"), true, [this] { openBenchmarking(); });
+
 	s->addSaveFunc([this] {
 		writeCpuBootConfig();
 		writeGpuBootConfig();
 		writeDmcBootConfig();
 	});
 
+	mWindow->pushGui(s);
+}
+
+static const std::string BENCH_LOG = "/home/ark/.benchmark_data/scores.log";
+
+// Most recent log entry of the given TYPE (CPU/GPU/RAM).
+// Log columns: DATE TIME TYPE <score tokens...> MHZ START AVG PEAK
+static bool getLastBenchmark(const std::string& type, std::string& score, std::string& mhz)
+{
+	std::ifstream f(BENCH_LOG);
+	if (!f)
+		return false;
+
+	bool found = false;
+	std::string line;
+	while (std::getline(f, line)) {
+		std::istringstream iss(line);
+		std::vector<std::string> t;
+		std::string w;
+		while (iss >> w)
+			t.push_back(w);
+
+		if (t.size() < 8 || t[2] != type)
+			continue;
+
+		score.clear();
+		for (size_t i = 3; i + 4 < t.size(); i++)
+			score += (score.empty() ? "" : " ") + t[i];
+		mhz = t[t.size() - 4];
+		found = true;
+	}
+	return found;
+}
+
+static void runBenchmark(Window* window, const std::string& title, const std::string& cmd, bool pauseRender, std::function<void()> onDone)
+{
+	auto busy = new GuiComponent(window);
+	auto busyComp = new BusyComponent(window);
+	busy->addChild(busyComp);
+	busyComp->setText(title + " - " + _("RUNNING, PLEASE WAIT"));
+	busy->setSize((float)Renderer::getScreenWidth(), (float)Renderer::getScreenHeight());
+	busyComp->setSize((float)Renderer::getScreenWidth(), (float)Renderer::getScreenHeight());
+
+	window->pushGui(busy);
+
+	std::string failText = _("BENCHMARK FAILED");
+
+	std::thread([window, busy, title, cmd, failText, pauseRender, onDone] {
+		if (pauseRender) {
+			// let the busy box draw once, then stop ES from drawing
+			std::this_thread::sleep_for(std::chrono::milliseconds(300));
+			window->postToUiThread([](Window* w) { w->setRenderPaused(true); });
+			std::this_thread::sleep_for(std::chrono::milliseconds(200));
+		}
+
+		std::string result;
+		FILE* pipe = popen(cmd.c_str(), "r");
+		if (pipe) {
+			char buffer[256];
+			while (fgets(buffer, sizeof(buffer), pipe))
+				result += buffer;
+			pclose(pipe);
+		}
+		result = Utils::String::trim(result);
+		if (result.empty())
+			result = failText;
+
+		window->postToUiThread([busy, title, result, pauseRender, onDone](Window* w) {
+			if (pauseRender)
+				w->setRenderPaused(false);
+			w->removeGui(busy);
+			delete busy;
+			w->pushGui(new GuiMsgBox(w, title + "\n\n" + result, _("OK")));
+			if (onDone)
+				onDone();
+		});
+	}).detach();
+}
+
+void GuiMenu::openBenchmarking()
+{
+	auto s = new GuiSettings(mWindow, _("BENCHMARKING"));
+	Window* window = mWindow;
+	auto theme = ThemeData::getMenuTheme();
+
+	struct BenchRow
+	{
+		std::string type;
+		std::shared_ptr<TextComponent> label;
+		std::shared_ptr<TextComponent> value;
+	};
+	auto rows = std::make_shared<std::vector<BenchRow>>();
+
+	auto refresh = [rows] {
+		for (auto& r : *rows) {
+			std::string score, mhz;
+			if (getLastBenchmark(r.type, score, mhz)) {
+				if (r.type == "CPU")
+					score = score.substr(0, score.find(' ')) + " Mops/30s";
+				r.label->setText(r.type + " @ " + mhz + " MHz");
+				r.value->setValue(score);
+			} else {
+				r.label->setText(r.type);
+				r.value->setValue("-");
+			}
+		}
+	};
+
+	auto addBenchRow = [&](const std::string& type, const std::string& script) {
+		BenchRow r;
+		r.type = type;
+		r.label = std::make_shared<TextComponent>(window, type, theme->Text.font, theme->Text.color);
+		r.value = std::make_shared<TextComponent>(window, "-", theme->Text.font, theme->Text.color, ALIGN_RIGHT);
+
+		ComponentListRow row;
+		row.addElement(r.label, true);
+		row.addElement(r.value, true);
+		row.makeAcceptInputHandler([window, type, script, refresh] {
+			runBenchmark(window, type + " " + _("BENCHMARK"), "sudo -n /usr/local/bin/" + script + " 2>&1", type == "GPU", refresh);
+		});
+		s->addRow(row);
+		rows->push_back(r);
+	};
+
+	addBenchRow("CPU", "cpu_benchmark.sh");
+	addBenchRow("GPU", "gpu_benchmark.sh");
+	addBenchRow("RAM", "ram_benchmark.sh");
+
+	s->addEntry(_("VIEW LOG"), true, [window] {
+		if (!Utils::FileSystem::exists(BENCH_LOG)) {
+			window->pushGui(new GuiMsgBox(window, _("NO LOG FILE FOUND.")));
+			return;
+		}
+		// GuiMsgBox has no scroll, so keep it bounded
+		std::string tail = executeCommand("tail -n 12 " + BENCH_LOG + " 2>/dev/null");
+		if (tail.empty())
+			tail = _("LOG IS EMPTY.");
+		window->pushGui(new GuiMsgBox(window, tail, _("OK")));
+	}, "");
+
+	s->addEntry(_("CLEAR LOG"), true, [window, refresh] {
+		if (!Utils::FileSystem::exists(BENCH_LOG)) {
+			window->pushGui(new GuiMsgBox(window, _("NO LOG FILE FOUND.")));
+			return;
+		}
+		executeCommand("sudo truncate -s 0 " + BENCH_LOG);
+		refresh();
+		window->pushGui(new GuiMsgBox(window, _("LOG CLEARED.")));
+	}, "");
+
+	refresh();
 	mWindow->pushGui(s);
 }
 
@@ -2976,10 +3478,8 @@ void GuiMenu::openUISettings()
 	ledColor->add(_("RED"), "red", ledInitialRed);
 	ledColor->add(_("DEFAULT"), "blue", !ledInitialRed);
 	s->addWithLabel(_("LED COLOR"), ledColor);
-	s->addSaveFunc([ledColor, ledInitialRed] {
-		bool selectRed = ledColor->getSelected() == "red";
-		if (selectRed == ledInitialRed)
-			return;
+	ledColor->setSelectedChangedCallback([](const std::string& value) {
+		bool selectRed = value == "red";
 
 		if (selectRed)
 		{
@@ -3521,20 +4021,25 @@ void GuiMenu::openOtherSettings()
 	});
 
 	// Clock time format (14:42 or 2:42 pm)
+	
 	auto tmFormat = std::make_shared<SwitchComponent>(mWindow);
 	tmFormat->setState(Settings::getInstance()->getBool("ClockMode12"));
 	s->addWithLabel(_("SHOW CLOCK IN 12-HOUR FORMAT"), tmFormat);
 	s->addSaveFunc([tmFormat] { Settings::getInstance()->setBool("ClockMode12", tmFormat->getState()); });
 
-    //Switch A and B buttons
-    
-	auto invertJoy = std::make_shared<SwitchComponent>(mWindow);
-	invertJoy->setState(Settings::getInstance()->getBool("InvertButtons"));
-	s->addWithLabel(_("SWITCH A/B BUTTONS IN EMULATIONSTATION"), invertJoy);
-	s->addSaveFunc([this, s, invertJoy]
+    //Switch A and B buttons globally
+
+	auto abSwitch = std::make_shared<OptionListComponent<std::string> >(mWindow, _("SWITCH A/B BUTTONS GLOBALLY"), false);
+	std::string currentAB = getShOutput("[ -f /var/cache/Switch_AB ] && echo US || echo JP");
+	abSwitch->add("JP", "JP", currentAB == "JP");
+	abSwitch->add("US", "US", currentAB == "US");
+	s->addWithLabel(_("SWITCH A/B BUTTONS GLOBALLY"), abSwitch);
+	s->addSaveFunc([this, abSwitch]
 	{
-		if (Settings::getInstance()->setBool("InvertButtons", invertJoy->getState()))
+		if (abSwitch->changed())
 		{
+			runSystemCommand("/usr/local/bin/b_swap.sh", "", nullptr);
+			Settings::getInstance()->setBool("InvertButtons", abSwitch->getSelected() == "US");
 			InputConfig::AssignActionButtons();
 			ViewController::get()->reloadAll(mWindow);
 		}
@@ -3831,6 +4336,12 @@ void GuiMenu::openOtherSettings()
 
         // Battery Settings
 	s->addEntry(_("BATTERYPLUS SETTINGS"), true, [this] { openBatterySettings(); }, "iconBattery");
+
+		// SaveSync Settings
+	s->addEntry(_("SAVESYNC SETTINGS"), true, [this] { openSaveSyncSettings(); }, "iconSaveSync");
+
+		// Storage Settings
+	s->addEntry(_("STORAGE SETTINGS"), true, [this] { openStorageSettings(); }, "iconStorage");
 
 #ifndef _RPI_
 	// full exit
