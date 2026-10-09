@@ -1982,8 +1982,8 @@ std::string GuiMenu::getCpuBinning()
         // negative value: N/A - not detected
         
         if (voltVal < 0) return "N/A";
-        if (voltVal == 0) return "L0 (" + std::string(_("AVERAGE")) + ")";
-        if (voltVal == 1) return "L1 (" + std::string(_("POOR")) + ")";
+        if (voltVal == 0) return "L0 (" + std::string(_("POOR")) + ")";
+        if (voltVal == 1) return "L1 (" + std::string(_("AVERAGE")) + ")";
         if (voltVal == 2) return "L2 (" + std::string(_("STANDARD")) + ")";
         if (voltVal == 3) return "L3 (" + std::string(_("BEST")) + ")";
         
