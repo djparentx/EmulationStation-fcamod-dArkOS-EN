@@ -4,6 +4,7 @@
 #include "renderers/Renderer.h"
 #include "math/Misc.h"
 #include "utils/StringUtil.h"
+#include "Log.h"
 #include <cmath>
 #include <cstdlib>
 
@@ -134,6 +135,10 @@ void StoryboardAnimator::processTrack(Track& t)
 
 		if (a.hasFrom) parseValue(a.from, dims, t.from); else { t.from[0] = cur[0]; t.from[1] = cur[1]; }
 		if (a.hasTo)   parseValue(a.to, dims, t.to);     else { t.to[0] = cur[0];   t.to[1] = cur[1]; }
+
+		LOG(LogInfo) << "[SBDebug] track tag=" << mComponent->getTag() << " prop=" << a.property
+			<< " begin=" << a.begin << " dur=" << a.duration << " t=" << mTime
+			<< " from=" << t.from[0] << " to=" << t.to[0];
 	}
 
 	const int local = mTime - a.begin;
@@ -203,6 +208,7 @@ void StoryboardAnimator::update(int deltaTime)
 			return;
 
 		mLoop++;
+		LOG(LogInfo) << "[SBDebug] cycle-end tag=" << mComponent->getTag() << " t=" << mTime << " end=" << end << " loop=" << mLoop;
 		if (end <= 0 || (mStoryboard->repeat != 0 && mLoop >= mStoryboard->repeat))
 		{
 			mFinished = true;
