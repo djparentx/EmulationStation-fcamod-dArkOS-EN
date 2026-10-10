@@ -76,7 +76,12 @@ static void setProperty(GuiComponent* comp, const std::string& prop, const float
 
 static void parseValue(const std::string& str, int dims, float out[2])
 {
-	auto parts = Utils::String::split(Utils::String::trim(str), ' ', true);
+	// split on spaces, skipping empty parts ("0.975  0.775")
+	std::vector<std::string> parts;
+	for (const auto& p : Utils::String::split(Utils::String::trim(str), ' '))
+		if (!p.empty())
+			parts.push_back(p);
+
 	out[0] = parts.size() > 0 ? (float)atof(parts[0].c_str()) : 0.0f;
 	out[1] = (dims == 2 && parts.size() > 1) ? (float)atof(parts[1].c_str()) : out[0];
 }
