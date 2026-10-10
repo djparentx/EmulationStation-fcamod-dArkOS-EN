@@ -259,6 +259,7 @@ void DetailedGameListView::onThemeChanged(const std::shared_ptr<ThemeData>& them
 	mDescription.applyTheme(theme, getName(), "md_description", ALL ^ (POSITION | ThemeFlags::SIZE | ThemeFlags::ORIGIN | TEXT | ROTATION));
 
 	sortChildren();
+	mStoryboardFile = nullptr; // extras were rebuilt - start their storyboards
 	updateInfoPanel();
 }
 
@@ -341,6 +342,11 @@ std::string DetailedGameListView::getMetadata(FileData* file, std::string name)
 void DetailedGameListView::updateInfoPanel()
 {
 	FileData* file = (mList.size() == 0 || mList.isScrolling()) ? NULL : mList.getSelected();
+
+	// IList fires CURSOR_STOPPED on key press and again on release - only replay
+	// activate storyboards when the selected game actually changes
+	const bool restartStoryboards = (file != nullptr && file != mStoryboardFile);
+	mStoryboardFile = file;
 
 	bool fadingOut;
 	if (file == NULL)
@@ -438,7 +444,7 @@ void DetailedGameListView::updateInfoPanel()
 				}
 			}
 
-			if (extra->hasStoryboard("activate"))
+			if (restartStoryboards && extra->hasStoryboard("activate"))
 				extra->startStoryboard("activate", [file](const std::string& expr) { return ThemeGameBindings::evaluateCondition(expr, file, file->getSystem()); });
 		}
 		
@@ -475,7 +481,7 @@ void DetailedGameListView::updateInfoPanel()
 		// theme activate storyboard drives this component instead of the generic fade
 		if (comp->hasStoryboard("activate"))
 		{
-			if (!fadingOut && file != nullptr)
+			if (restartStoryboards)
 				comp->startStoryboard("activate", [file](const std::string& expr) { return ThemeGameBindings::evaluateCondition(expr, file, file->getSystem()); });
 			continue;
 		}
@@ -552,5 +558,6 @@ std::vector<GuiComponent*> DetailedGameListView::getMDValues()
 void DetailedGameListView::onShow()
 {
 	BasicGameListView::onShow();
+	mStoryboardFile = nullptr; // replay storyboards when the view is shown again
 	updateInfoPanel();
 }

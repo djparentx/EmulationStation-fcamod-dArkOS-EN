@@ -121,18 +121,16 @@ void RatingComponent::render(const Transform4x4f& parentTrans)
 
 	if (mUnfilledTexture->bind())
 	{
-		if (mUnfilledColor != mColorShift)
-		{
-			const unsigned int color = Renderer::convertColor(mUnfilledColor);
-			for (int i = 0; i < 8; ++i)
-				mVertices[i].col = color;
-		}
+		// unfilled stars must follow the component opacity too (storyboard / fade), not just the filled ones
+		const unsigned int unfilled = (mUnfilledColor & 0xFFFFFF00) | (unsigned char)((mUnfilledColor & 0xFF) * (mOpacity / 255.0f));
+		const unsigned int color = Renderer::convertColor(unfilled);
+		for (int i = 0; i < 8; ++i)
+			mVertices[i].col = color;
 
 		Renderer::drawTriangleStrips(&mVertices[4], 4);
 		Renderer::bindTexture(0);
 
-		if (mUnfilledColor != mColorShift)
-			updateColors();
+		updateColors();
 	}
 
 	if (mFilledTexture->bind())

@@ -46,6 +46,8 @@ private:
 	ImageComponent* mMarquee;
 	VideoComponent* mVideo;
 
+	FileData* mStoryboardFile = nullptr; // game whose activate storyboards are currently running
+
 	TextComponent mLblRating, mLblReleaseDate, mLblDeveloper, mLblPublisher, mLblGenre, mLblPlayers, mLblLastPlayed, mLblPlayCount;
 
 	RatingComponent mRating;
