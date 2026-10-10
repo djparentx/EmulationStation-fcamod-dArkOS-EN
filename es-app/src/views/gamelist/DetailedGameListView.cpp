@@ -1,6 +1,7 @@
 #include <string>
 #include "views/gamelist/DetailedGameListView.h"
 #include "ThemeGameBindings.h"
+#include "Log.h"
 #include "animations/LambdaAnimation.h"
 
 #ifdef _RPI_
@@ -412,7 +413,11 @@ void DetailedGameListView::updateInfoPanel()
 				continue;
 
 			if (elem->has("visible:expr"))
-				extra->setVisible(ThemeGameBindings::evaluateCondition(elem->get<std::string>("visible:expr"), file, file->getSystem()));
+			{
+				const bool vis = ThemeGameBindings::evaluateCondition(elem->get<std::string>("visible:expr"), file, file->getSystem());
+				extra->setVisible(vis);
+				LOG(LogInfo) << "[SBDebug] visible tag=" << tag << " expr=" << elem->get<std::string>("visible:expr") << " -> " << vis << " video=" << file->getVideoPath();
+			}
 
 			if (elem->has("path"))
 			{
