@@ -857,8 +857,9 @@ void ThemeData::parseVariables(const pugi::xml_node& root)
     
 	for (pugi::xml_node variables = root.child("variables"); variables; variables = variables.next_sibling("variables"))
 	{
+		// skip only this block - later <variables> blocks may still match (e.g. one block per color scheme)
 		if (!parseFilterAttributes(variables))
-			return;
+			continue;
 
 		for (pugi::xml_node_iterator it = variables.begin(); it != variables.end(); ++it)
 			parseVariable(*it);
