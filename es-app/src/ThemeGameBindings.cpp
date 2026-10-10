@@ -2,8 +2,9 @@
 #include "FileData.h"
 #include "SystemData.h"
 #include "utils/StringUtil.h"
-#include "utils/ThemeExpr.h"
+#include "utils/MathExpr.h"
 #include "utils/TimeUtil.h"
+#include <algorithm>
 #include <map>
 #include <stdexcept>
 
@@ -28,7 +29,7 @@ namespace ThemeGameBindings
 		if (t <= 0)
 			return "";
 
-		return Utils::Time::timeToString(t, "%m/%d/%Y");
+		return Utils::Time::timeToString(t, Utils::Time::getSystemDateFormat());
 	}
 
 	static std::string getGameToken(const std::string& key, FileData* file)
@@ -119,30 +120,35 @@ namespace ThemeGameBindings
 		return vars;
 	}
 
-	// Plain in-place substitution, for strings that aren't expressions (e.g. "Players: {game:players}").
-	static std::string substituteTokens(const std::string& raw, const std::map<std::string, std::string>& vars)
+	// numeric tokens are passed to MathExpr unquoted (AmberELEC: Int/Float bindable properties)
+	static bool isNumericToken(const std::string& token)
 	{
-		std::string result = raw;
-		size_t pos = 0;
+		return token == "game:playcount" || token == "game:gametime" || token == "system:total";
+	}
 
-		while ((pos = result.find('{', pos)) != std::string::npos)
+	// AmberELEC BindingManager::bindValues: each token is substituted twice - as display text,
+	// and as an evaluable MathExpr operand (strings quoted, numbers raw)
+	static void substitute(std::string& display, std::string& evaluable, const std::map<std::string, std::string>& vars)
+	{
+		for (const auto& v : vars)
 		{
-			size_t end = result.find('}', pos);
-			if (end == std::string::npos)
-				break;
+			const std::string token = "{" + v.first + "}";
 
-			auto it = vars.find(result.substr(pos + 1, end - pos - 1));
-			if (it == vars.cend())
-			{
-				pos = end + 1;
-				continue;
-			}
+			std::string operand;
+			if (isNumericToken(v.first))
+				operand = v.second.empty() ? "0" : v.second;
+			else
+				operand = "\"" + Utils::String::replace(v.second, "\"", "") + "\"";
 
-			result = result.substr(0, pos) + it->second + result.substr(end + 1);
-			pos += it->second.size();
+			display = Utils::String::replace(display, token, v.second);
+			evaluable = Utils::String::replace(evaluable, token, operand);
 		}
+	}
 
-		return result;
+	// "{game:image}" alone is plain substitution, never evaluated (AmberELEC uniqueVariable)
+	static bool isUniqueVariable(const std::string& xp)
+	{
+		return !xp.empty() && xp.front() == '{' && xp.back() == '}' && std::count(xp.cbegin(), xp.cend(), '{') == 1;
 	}
 
 	std::string resolve(const std::string& raw, FileData* file, SystemData* system)
@@ -152,27 +158,48 @@ namespace ThemeGameBindings
 
 		auto vars = collectVars(raw, file, system);
 
+		std::string display = raw;
+		std::string evaluable = raw;
+		substitute(display, evaluable, vars);
+
+		if (isUniqueVariable(raw))
+			return Utils::String::trim(display);
+
 		try
 		{
-			return Utils::ThemeExpr::evaluateToString(raw, vars);
+			auto ret = Utils::MathExpr::evaluate(evaluable.c_str());
+			if (ret.type == Utils::MathExpr::STRING)
+				return Utils::String::trim(ret.string);
+			if (ret.type == Utils::MathExpr::NUMBER)
+				return std::to_string((int)ret.number);
 		}
-		catch (const std::exception&)
-		{
-			return substituteTokens(raw, vars);
-		}
+		catch (...) { }
+
+		// not an expression (e.g. "Players: {game:players}") - plain substitution
+		return Utils::String::trim(display);
 	}
 
 	bool evaluateCondition(const std::string& raw, FileData* file, SystemData* system)
 	{
 		auto vars = collectVars(raw, file, system);
 
+		std::string display = raw;
+		std::string evaluable = raw;
+		substitute(display, evaluable, vars);
+
+		if (evaluable == "1")
+			return true;
+		if (evaluable == "0" || isUniqueVariable(raw))
+			return false;
+
 		try
 		{
-			return Utils::ThemeExpr::evaluate(raw, vars);
+			auto ret = Utils::MathExpr::evaluate(evaluable.c_str());
+			if (ret.type == Utils::MathExpr::NUMBER)
+				return ret.number != 0;
 		}
-		catch (const std::exception&)
-		{
-			return true;
-		}
+		catch (...) { }
+
+		return false;
 	}
 }

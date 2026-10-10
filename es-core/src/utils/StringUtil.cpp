@@ -1069,6 +1069,139 @@ namespace Utils
         // =================== End pinyin matching =================
 
 
+		// ===== ported from AmberELEC ES - used by MathExpr / theme bindings =====
+
+		std::string proper(const std::string& _string)
+		{
+			if (_string.length() <= 1)
+				return Utils::String::toUpper(_string);
+
+			return Utils::String::toUpper(_string.substr(0, 1)) + Utils::String::toLower(_string.substr(1));
+		}
+
+		unsigned int fromHexString(const std::string& string)
+		{
+			if (string.empty())
+				return 0;
+
+			unsigned int value = 0;
+
+			int dec = 0;
+			for (int i = string.length() - 1; i >= 0; i--)
+			{
+				char c = string[i];
+				if (c == ' ')
+					continue;
+
+				if (c == 'x' || c == 'X')
+					return value;
+
+				if (c >= '0' && c <= '9')
+					value += (c - '0') << dec;
+				else if (c >= 'A' && c <= 'F')
+					value += (c - 'A' + 10) << dec;
+				else if (c >= 'a' && c <= 'f')
+					value += (c - 'a' + 10) << dec;
+				else
+					return 0;
+
+				dec += 4;
+			}
+
+			return value;
+		}
+
+		int	toInteger(const std::string& string)
+		{
+			if (string.empty())
+				return 0;
+
+			const char* str = string.c_str();
+			while (*str == ' ')
+				str++;
+
+			bool neg = false;
+			if (*str == '-')
+			{
+				neg = true;
+				++str;
+			}
+			else if (*str == '+')
+				++str;
+
+			int64_t value = 0;
+			for (; *str && *str != '.' && *str != ' ' && *str != '\r' && *str != '\n'; str++)
+			{
+				if (*str < '0' || *str > '9')
+					return 0;
+
+				value *= 10;
+				value += *str - '0';
+			}
+
+			return neg ? -value : value;
+		}
+
+		bool toBoolean(const std::string& string)
+		{
+			// only look at first char
+			char first = string[0];
+
+			// 1*, t* (true), T* (True), y* (yes), Y* (YES)
+			return (first == '1' || first == 't' || first == 'T' || first == 'y' || first == 'Y');
+		}
+
+		float toFloat(const std::string& string)
+		{
+			if (string.empty())
+				return 0.0f;
+
+			const char* str = string.c_str();
+			while (*str == ' ')
+				str++;
+
+			bool neg = false;
+			if (*str == '-')
+			{
+				neg = true;
+				++str;
+			}
+			else if (*str == '+')
+				++str;
+
+			int64_t value = 0;
+			for (; *str && *str != '.' && *str != ' '; str++)
+			{
+				if (*str < '0' || *str > '9')
+					return 0;
+
+				value *= 10;
+				value += *str - '0';
+			}
+
+			if (*str == '.')
+			{
+				str++;
+
+				int64_t decimal = 0, weight = 1;
+
+				for (; *str && *str != ' '; str++)
+				{
+					if (*str < '0' || *str > '9')
+						return 0;
+
+					decimal *= 10;
+					decimal += *str - '0';
+					weight *= 10;
+				}
+
+				float ret = value + (decimal / (float)weight);
+				return neg ? -ret : ret;
+			}
+
+			return neg ? -value : value;
+		}
+
 	} // String::
 
 } // Utils::

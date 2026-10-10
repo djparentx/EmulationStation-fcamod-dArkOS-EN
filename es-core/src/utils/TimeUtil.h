@@ -72,6 +72,11 @@ namespace Utils
 		int         daysInMonth (const int _year, const int _month);
 		int         daysInYear  (const int _year);
 
+		// ported from AmberELEC ES - used by MathExpr / theme bindings
+		std::string getSystemDateFormat  (bool includeHours = false);
+		std::string secondsToString      (const long seconds, bool asTime = false);
+		std::string getElapsedSinceString(const time_t& _time);
+
 	} // Time::
 
 } // Utils::

@@ -15,7 +15,7 @@ namespace ThemeGameBindings
 	std::string resolve(const std::string& raw, FileData* file, SystemData* system);
 
 	// Evaluates a binding expression as a condition (e.g. <visible>!exists({game:video})</visible>).
-	// Invalid expressions evaluate to true (element stays visible).
+	// Invalid expressions evaluate to false (AmberELEC behaviour).
 	bool evaluateCondition(const std::string& raw, FileData* file, SystemData* system);
 }
 

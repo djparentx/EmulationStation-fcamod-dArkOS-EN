@@ -7,7 +7,7 @@
 #include "components/VideoVlcComponent.h"
 #include "utils/FileSystemUtil.h"
 #include "utils/StringUtil.h"
-#include "utils/ThemeExpr.h"
+#include "utils/MathExpr.h"
 #include "renderers/Renderer.h"
 #include <cmath>
 #include "Log.h"
@@ -912,13 +912,25 @@ bool ThemeData::parseFilterAttributes(const pugi::xml_node& node)
 
 	if (node.attribute("if"))
 	{
-		// Batocera: <x if="{screen.ratio} == '4/3'">, false -> node dropped
-		const std::string ifAttr = resolvePlaceholders(node.attribute("if").as_string());
+		// AmberELEC/Batocera: <x if="{screen.ratio} == '4/3'">, false -> node dropped.
+		// MathExpr resolves ${var} and {var} itself from the theme variables.
+		const std::string ifAttr = node.attribute("if").as_string();
 		if (!ifAttr.empty())
 		{
 			try
 			{
-				if (!Utils::ThemeExpr::evaluate(ifAttr, mVariables))
+				Utils::MathExpr::ValueMap vars;
+				for (const auto& v : mVariables)
+				{
+					if (v.first == "screen.width" || v.first == "screen.height")
+						vars[v.first] = Utils::String::toFloat(v.second);
+					else if (v.second == "true" || v.second == "false")
+						vars[v.first] = (v.second == "true") ? 1.0f : 0.0f;
+					else
+						vars[v.first] = v.second;
+				}
+
+				if (Utils::MathExpr::evaluate(ifAttr.c_str(), &vars).toNumber() == 0)
 					return false;
 			}
 			catch (const std::exception& e)

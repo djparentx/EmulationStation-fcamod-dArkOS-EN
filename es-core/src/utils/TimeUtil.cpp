@@ -1,5 +1,8 @@
 #include <string>
 #include "utils/TimeUtil.h"
+#include "utils/StringUtil.h"
+#include "EsLocale.h"
+#include "Settings.h"
 
 #include <time.h>
 
@@ -191,73 +194,13 @@ namespace Utils
 
 		std::string timeToString(const time_t& _time, const std::string& _format)
 		{
-			const char* f = _format.c_str();
+			// strftime: superset of the old hand-rolled %Y %m %d %H %M %S formatter
+			// (which silently dropped %I %p %y %b ... - see ClockComponent 12h bug)
 			const tm timeStruct = *localtime(&_time);
 			char buf[256] = { '\0' };
-			char* s = buf;
 
-			while(*f)
-			{
-				if(*f == '%')
-				{
-					++f;
-
-					switch(*f++)
-					{
-						case 'Y': // The year, including the century (1900)
-						{
-							const int year = timeStruct.tm_year + 1900;
-							*s++ = (char)((year - (year % 1000)) / 1000) + '0';
-							*s++ = (char)(((year % 1000) - (year % 100)) / 100) + '0';
-							*s++ = (char)(((year % 100) - (year % 10)) / 10) + '0';
-							*s++ = (char)(year % 10) + '0';
-						}
-						break;
-
-						case 'm': // The month number [00,11]
-						{
-							const int mon = timeStruct.tm_mon + 1;
-							*s++ = (char)(mon / 10) + '0';
-							*s++ = (char)(mon % 10) + '0';
-						}
-						break;
-
-						case 'd': // The day of the month [01,31]
-						{
-							*s++ = (char)(timeStruct.tm_mday / 10) + '0';
-							*s++ = (char)(timeStruct.tm_mday % 10) + '0';
-						}
-						break;
-
-						case 'H': // The hour (24-hour clock) [00,23]
-						{
-							*s++ = (char)(timeStruct.tm_hour / 10) + '0';
-							*s++ = (char)(timeStruct.tm_hour % 10) + '0';
-						}
-						break;
-
-						case 'M': // The minute [00,59]
-						{
-							*s++ = (char)(timeStruct.tm_min / 10) + '0';
-							*s++ = (char)(timeStruct.tm_min % 10) + '0';
-						}
-						break;
-
-						case 'S': // The second [00,59]
-						{
-							*s++ = (char)(timeStruct.tm_sec / 10) + '0';
-							*s++ = (char)(timeStruct.tm_sec % 10) + '0';
-						}
-						break;
-					}
-				}
-				else
-				{
-					*s++ = *f++;
-				}
-
-				*s = '\0';
-			}
+			if (strftime(buf, sizeof(buf), _format.c_str(), &timeStruct) == 0)
+				return "";
 
 			return std::string(buf);
 
@@ -280,6 +223,117 @@ namespace Utils
 			return timeStruct.tm_yday + 1;
 
 		} // daysInYear
+
+		// ===== ported from AmberELEC ES - used by MathExpr / theme bindings =====
+
+		// AmberELEC asks the OS locale (nl_langinfo); fixed here so that theme-bound dates
+		// ({game:releasedate}, {game:lastplayed}) and the date()/year()/... expression
+		// functions always agree on one format
+		std::string getSystemDateFormat(bool includeHours)
+		{
+			if (!includeHours)
+				return "%m/%d/%Y";
+
+			return Settings::getInstance()->getBool("ClockMode12") ? "%m/%d/%Y %I:%M %p" : "%m/%d/%Y %H:%M";
+		}
+
+		// transforms a number of seconds into a human readable string
+		std::string secondsToString(const long seconds, bool asTime)
+		{
+			if (seconds == 0)
+				return _("never");
+
+			if (asTime)
+			{
+				int d = 0, h = 0, m = 0, s = 0;
+				d = seconds / 86400;
+				h = (seconds / 3600) % 24;
+				m = (seconds / 60) % 60;
+				s = seconds % 60;
+
+				if (d > 0)
+					return Utils::String::format("%02d %02d:%02d:%02d", d, h, m, s);
+				else if (h > 0)
+					return Utils::String::format("%02d:%02d:%02d", h, m, s);
+
+				return Utils::String::format("%02d:%02d", m, s);
+			}
+
+			char buf[256];
+
+			int d = 0, h = 0, m = 0, s = 0;
+			d = seconds / 86400;
+			h = (seconds / 3600) % 24;
+			m = (seconds / 60) % 60;
+			s = seconds % 60;
+			if (d > 1)
+			{
+				snprintf(buf, 256, _("%d d").c_str(), d);
+				if (h > 0)
+				{
+					std::string days(buf);
+					snprintf(buf, 256, _("%d h").c_str(), h);
+					if (m > 0)
+					{
+						std::string hours(buf);
+						snprintf(buf, 256, _("%d mn").c_str(), m);
+						return days + " " + hours + " " + std::string(buf);
+					}
+					return days + " " + std::string(buf);
+				}
+				else if (m > 0)
+				{
+					std::string days(buf);
+					snprintf(buf, 256, _("%d mn").c_str(), m);
+					return days + " " + std::string(buf);
+				}
+			}
+			else if (h > 0 || d > 0)
+			{
+				if (d > 0)
+					h += d * 24;
+
+				snprintf(buf, 256, _("%d h").c_str(), h);
+				if (m > 0)
+				{
+					std::string hours(buf);
+					snprintf(buf, 256, _("%d mn").c_str(), m);
+					return hours + " " + std::string(buf);
+				}
+			}
+			else if (m > 0)
+				snprintf(buf, 256, _("%d mn").c_str(), m);
+			else
+				snprintf(buf, 256, _("%d sec").c_str(), s);
+
+			return std::string(buf);
+		}
+
+		std::string getElapsedSinceString(const time_t& _time)
+		{
+			if (_time == 0 || _time == -1)
+				return _("never");
+
+			Utils::Time::Duration dur(Utils::Time::now() - _time);
+
+			char buf[256];
+
+			if (dur.getDays() > 365)
+			{
+				unsigned int years = dur.getDays() / 365;
+				snprintf(buf, 256, EsLocale::nGetText("%d year ago", "%d years ago", years).c_str(), years);
+			}
+			else if (dur.getDays() > 0)
+				snprintf(buf, 256, EsLocale::nGetText("%d day ago", "%d days ago", dur.getDays()).c_str(), dur.getDays());
+			else if (dur.getHours() > 0)
+				snprintf(buf, 256, EsLocale::nGetText("%d hour ago", "%d hours ago", dur.getHours()).c_str(), dur.getHours());
+			else if (dur.getMinutes() > 0)
+				snprintf(buf, 256, EsLocale::nGetText("%d minute ago", "%d minutes ago", dur.getMinutes()).c_str(), dur.getMinutes());
+			else
+				snprintf(buf, 256, EsLocale::nGetText("%d second ago", "%d seconds ago", dur.getSeconds()).c_str(), dur.getSeconds());
+
+			return std::string(buf);
+		}
 
 	} // Time::
 

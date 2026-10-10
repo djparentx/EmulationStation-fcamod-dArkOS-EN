@@ -33,6 +33,13 @@ namespace Utils
         int			compareIgnoreCase(const std::string& name1, const std::string& name2);
 		const std::string boolToString(bool value, bool uppercase = false);
 
+		// ported from AmberELEC ES - used by MathExpr / theme bindings
+		std::string  proper             (const std::string& _string);
+		bool         toBoolean          (const std::string& string);
+		int          toInteger          (const std::string& string);
+		float        toFloat            (const std::string& string);
+		unsigned int fromHexString      (const std::string& string);
+
 		// for Korean text input
 		const std::vector<const char*> KOREAN_CHOSUNG_LIST = { "ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ", "ㅂ", "ㅃ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ" };
 		const std::vector<const char*> KOREAN_JOONGSUNG_LIST = { "ㅏ", "ㅐ", "ㅑ", "ㅒ", "ㅓ", "ㅔ", "ㅕ", "ㅖ", "ㅗ", "ㅘ", "ㅙ", "ㅚ", "ㅛ", "ㅜ", "ㅝ", "ㅞ", "ㅟ", "ㅠ", "ㅡ", "ㅢ", "ㅣ" };

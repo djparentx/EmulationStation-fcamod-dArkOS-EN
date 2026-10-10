@@ -69,7 +69,11 @@ namespace Utils
 		private:
 			static int mReferenceCount;
 		};
-		
+
+		// ported from AmberELEC ES - used by MathExpr
+		std::string megaBytesToString(unsigned long size);
+		std::string kiloBytesToString(unsigned long size);
+
 	} // FileSystem::
 
 

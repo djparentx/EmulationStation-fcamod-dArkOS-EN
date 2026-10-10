@@ -99,7 +99,8 @@ set(CORE_HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/src/utils/ThreadPool.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/utils/TimeUtil.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/utils/AsyncUtil.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/utils/ThemeExpr.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/utils/MathExpr.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/utils/HtmlColor.h
 )
 
 set(CORE_SOURCES
@@ -197,7 +198,8 @@ set(CORE_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/utils/ThreadPool.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/utils/TimeUtil.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/utils/AsyncUtil.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/utils/ThemeExpr.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/utils/MathExpr.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/utils/HtmlColor.cpp
 )
 
 include_directories(${COMMON_INCLUDE_DIRS})
