@@ -4,6 +4,8 @@
 #include "animations/Animation.h"
 #include "animations/AnimationController.h"
 #include "animations/LambdaAnimation.h"
+#include "animations/StoryboardAnimator.h"
+#include "animations/ThemeStoryboard.h"
 #include "Log.h"
 #include "renderers/Renderer.h"
 #include "ThemeData.h"
@@ -24,6 +26,12 @@ GuiComponent::GuiComponent(Window* window) : mWindow(window), mParent(NULL), mOp
 GuiComponent::~GuiComponent()
 {
 	mWindow->removeGui(this);
+
+	if (mStoryboardAnimator != nullptr)
+	{
+		delete mStoryboardAnimator;
+		mStoryboardAnimator = nullptr;
+	}
 
 	cancelAllAnimations();
 
@@ -61,8 +69,80 @@ void GuiComponent::updateChildren(int deltaTime)
 
 void GuiComponent::update(int deltaTime)
 {
+	if (mStoryboardAnimator != nullptr)
+	{
+		mStoryboardAnimator->update(deltaTime);
+		if (mStoryboardAnimator->isFinished())
+		{
+			delete mStoryboardAnimator;
+			mStoryboardAnimator = nullptr;
+		}
+	}
+
 	updateSelf(deltaTime);
 	updateChildren(deltaTime);
+}
+
+void GuiComponent::setStoryboards(const std::map<std::string, std::shared_ptr<ThemeStoryboard>>& storyboards)
+{
+	if (mStoryboards.empty() && storyboards.empty())
+		return;
+
+	stopStoryboard();
+
+	mStoryboards = storyboards;
+	mStoryboardBaseCaptured = false;
+
+	// no-event storyboard plays once when the theme is applied
+	if (hasStoryboard(""))
+		startStoryboard("");
+}
+
+bool GuiComponent::startStoryboard(const std::string& event, const std::function<bool(const std::string&)>& enabledFn)
+{
+	auto it = mStoryboards.find(event);
+	if (it == mStoryboards.cend())
+		return false;
+
+	if (!mStoryboardBaseCaptured)
+	{
+		mBaseOpacity = mOpacity;
+		mBasePosition = mPosition;
+		mBaseScale = mScale;
+		mBaseRotation = mRotation;
+		mStoryboardBaseCaptured = true;
+	}
+
+	if (mStoryboardAnimator != nullptr)
+		delete mStoryboardAnimator;
+
+	restoreStoryboardBase();
+
+	mStoryboardAnimator = new StoryboardAnimator(this, it->second, enabledFn);
+	mStoryboardAnimator->update(0); // apply begin=0 values now, avoids a 1-frame flash of the base state
+	return true;
+}
+
+void GuiComponent::stopStoryboard()
+{
+	if (mStoryboardAnimator == nullptr)
+		return;
+
+	delete mStoryboardAnimator;
+	mStoryboardAnimator = nullptr;
+
+	restoreStoryboardBase();
+}
+
+void GuiComponent::restoreStoryboardBase()
+{
+	if (!mStoryboardBaseCaptured)
+		return;
+
+	setOpacity(mBaseOpacity);
+	setPosition(mBasePosition);
+	setScale(mBaseScale);
+	setRotation(mBaseRotation);
 }
 
 void GuiComponent::render(const Transform4x4f& parentTrans)
@@ -434,6 +514,8 @@ void GuiComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const std
 	const ThemeData::ThemeElement* elem = theme->getElement(view, element, "");
 	if(!elem)
 		return;
+
+	setStoryboards(elem->storyboards);
 
 	using namespace ThemeFlags;
 	if(properties & POSITION && elem->has("pos"))

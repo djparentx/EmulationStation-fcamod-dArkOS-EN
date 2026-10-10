@@ -10,10 +10,13 @@
 #include "InputConfig.h"
 #include "EsLocale.h"
 #include <functional>
+#include <map>
 #include <memory>
 
 class Animation;
 class AnimationController;
+class StoryboardAnimator;
+struct ThemeStoryboard;
 class Font;
 class InputConfig;
 class ThemeData;
@@ -168,6 +171,13 @@ public:
 	bool isStaticExtra() const { return mStaticExtra; }
 	void setIsStaticExtra(bool value) { mStaticExtra = value; }
 
+	// theme storyboards (Batocera <storyboard event="...">)
+	void setStoryboards(const std::map<std::string, std::shared_ptr<ThemeStoryboard>>& storyboards);
+	bool hasStoryboard(const std::string& event) const { return mStoryboards.find(event) != mStoryboards.cend(); }
+	bool startStoryboard(const std::string& event, const std::function<bool(const std::string&)>& enabledFn = nullptr);
+	void stopStoryboard();
+	void restoreStoryboardBase();
+
 protected:
 	void renderChildren(const Transform4x4f& transform) const;
 	void updateSelf(int deltaTime); // updates animations
@@ -203,6 +213,15 @@ public:
 private:
 	Transform4x4f mTransform; //Don't access this directly! Use getTransform()!
 	AnimationController* mAnimationMap[MAX_ANIMATIONS];
+
+	// theme storyboards
+	std::map<std::string, std::shared_ptr<ThemeStoryboard>> mStoryboards;
+	StoryboardAnimator* mStoryboardAnimator = nullptr;
+	bool          mStoryboardBaseCaptured = false;
+	unsigned char mBaseOpacity = 255;
+	Vector3f      mBasePosition;
+	Vector3f      mBaseScale = Vector3f(1.0, 1.0, 1.0);
+	float         mBaseRotation = 0;
 };
 
 #endif // ES_CORE_GUI_COMPONENT_H

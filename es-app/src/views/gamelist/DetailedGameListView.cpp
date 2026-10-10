@@ -437,6 +437,9 @@ void DetailedGameListView::updateInfoPanel()
 						txt->setText(resolved);
 				}
 			}
+
+			if (extra->hasStoryboard("activate"))
+				extra->startStoryboard("activate", [file](const std::string& expr) { return ThemeGameBindings::evaluateCondition(expr, file, file->getSystem()); });
 		}
 		
 		fadingOut = false;
@@ -468,6 +471,15 @@ void DetailedGameListView::updateInfoPanel()
 	for(auto it = comps.cbegin(); it != comps.cend(); it++)
 	{
 		GuiComponent* comp = *it;
+
+		// theme activate storyboard drives this component instead of the generic fade
+		if (comp->hasStoryboard("activate"))
+		{
+			if (!fadingOut && file != nullptr)
+				comp->startStoryboard("activate", [file](const std::string& expr) { return ThemeGameBindings::evaluateCondition(expr, file, file->getSystem()); });
+			continue;
+		}
+
 		// an animation is playing
 		//   then animate if reverse != fadingOut
 		// an animation is not playing

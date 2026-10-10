@@ -561,6 +561,8 @@ void ImageComponent::applyThemeWithType(const std::shared_ptr<ThemeData>& theme,
 		return;
 	}
 
+	setStoryboards(elem->storyboards);
+
 	if (elem->has("linearSmooth"))
 		mLinear = elem->get<bool>("linearSmooth");
 

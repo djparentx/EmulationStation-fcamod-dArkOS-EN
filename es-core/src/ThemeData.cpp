@@ -20,6 +20,7 @@
 #include "components/BatteryIconComponent.h"
 #include "components/BatteryTextComponent.h"
 #include "components/StackPanelComponent.h"
+#include "animations/ThemeStoryboard.h"
 
 std::vector<std::string> ThemeData::sSupportedViews { { "system" }, { "basic" }, { "detailed" }, { "grid" }, { "video" }, { "menu" }, { "screen" } };
 std::vector<std::string> ThemeData::sSupportedFeatures { { "video" }, { "carousel" }, { "z-index" }, { "visible" } };
@@ -1343,6 +1344,18 @@ void ThemeData::parseElement(const pugi::xml_node& root, const std::map<std::str
 	{
 		if (!parseFilterAttributes(node))
 			continue;
+
+		if (std::string(node.name()) == "storyboard")
+		{
+			// later storyboard for the same event replaces the earlier one; an empty one removes it
+			const std::string eventName = node.attribute("event").as_string();
+			auto storyboard = ThemeStoryboard::fromXml(node);
+			if (storyboard != nullptr)
+				element.storyboards[eventName] = storyboard;
+			else
+				element.storyboards.erase(eventName);
+			continue;
+		}
 
 		ElementPropertyType type = STRING;
 

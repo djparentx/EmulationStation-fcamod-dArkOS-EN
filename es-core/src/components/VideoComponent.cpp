@@ -213,6 +213,8 @@ void VideoComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const s
 		return;
 	}
 
+	setStoryboards(elem->storyboards);
+
 	Vector2f scale = getParent() ? getParent()->getSize() : Vector2f((float)Renderer::getScreenWidth(), (float)Renderer::getScreenHeight());
 
 	if ((properties & POSITION) && elem->has("pos"))

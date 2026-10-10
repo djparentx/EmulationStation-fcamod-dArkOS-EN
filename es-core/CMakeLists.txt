@@ -27,6 +27,8 @@ set(CORE_HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/src/animations/Animation.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/animations/AnimationController.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/animations/LambdaAnimation.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/animations/ThemeStoryboard.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/animations/StoryboardAnimator.h
 
 	# GuiComponents
 	${CMAKE_CURRENT_SOURCE_DIR}/src/components/AnimatedImageComponent.h
@@ -125,6 +127,8 @@ set(CORE_SOURCES
 
 	# Animations
 	${CMAKE_CURRENT_SOURCE_DIR}/src/animations/AnimationController.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/animations/ThemeStoryboard.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/animations/StoryboardAnimator.cpp
 
 	# GuiComponents
 	${CMAKE_CURRENT_SOURCE_DIR}/src/components/AnimatedImageComponent.cpp

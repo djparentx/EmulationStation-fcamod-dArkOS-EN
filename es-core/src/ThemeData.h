@@ -21,6 +21,7 @@ class TextListComponent;
 
 class GuiComponent;
 class ImageComponent;
+struct ThemeStoryboard;
 class NinePatchComponent;
 class Sound;
 class TextComponent;
@@ -182,6 +183,9 @@ public:
 		// Name (view element key) of the container element (e.g. a stackpanel) this
 		// element is nested under in the theme XML. Empty if this is a top-level element.
 		std::string parent;
+
+		// <storyboard event="..."> blocks, keyed by event name ("" = no event)
+		std::map<std::string, std::shared_ptr<ThemeStoryboard>> storyboards;
 
 		struct Property
 		{
