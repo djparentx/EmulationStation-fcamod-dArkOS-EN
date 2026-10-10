@@ -7,6 +7,9 @@
 #include "components/VideoVlcComponent.h"
 #include "utils/FileSystemUtil.h"
 #include "utils/StringUtil.h"
+#include "utils/ThemeExpr.h"
+#include "renderers/Renderer.h"
+#include <cmath>
 #include "Log.h"
 #include "platform.h"
 #include "Settings.h"
@@ -563,6 +566,41 @@ void ThemeData::loadFile(const std::string system, std::map<std::string, std::st
 	mVariables.insert(sysDataMap.cbegin(), sysDataMap.cend());
 	mVariables["lang"] = mLanguage;
 
+	// Batocera screen.* variables (used by "if" expressions, e.g. aspect-ratio auto detection)
+	{
+		const int w = Renderer::getScreenWidth();
+		const int h = Renderer::getScreenHeight();
+
+		static const std::pair<const char*, float> ratios[] =
+		{
+			{ "4/3",   4.0f / 3.0f },  { "16/9",  16.0f / 9.0f },  { "16/10", 16.0f / 10.0f },
+			{ "16/15", 16.0f / 15.0f },{ "21/9",  21.0f / 9.0f },  { "1/1",   1.0f },
+			{ "2/1",   2.0f },         { "3/2",   3.0f / 2.0f },   { "3/4",   3.0f / 4.0f },
+			{ "4/1",   4.0f },         { "9/16",  9.0f / 16.0f },  { "5/4",   5.0f / 4.0f },
+			{ "6/5",   6.0f / 5.0f },  { "7/9",   7.0f / 9.0f },   { "8/3",   8.0f / 3.0f },
+			{ "8/7",   8.0f / 7.0f },  { "19/12", 19.0f / 12.0f }, { "19/14", 19.0f / 14.0f },
+			{ "30/17", 30.0f / 17.0f },{ "32/9",  32.0f / 9.0f }
+		};
+
+		const float prop = (h == 0) ? 1.0f : (float)w / (float)h;
+		float nearDist = 9999999.0f;
+		std::string nearName;
+		for (const auto& r : ratios)
+		{
+			const float dist = std::abs(prop - r.second);
+			if (dist < nearDist)
+			{
+				nearDist = dist;
+				nearName = r.first;
+			}
+		}
+
+		mVariables["screen.width"] = std::to_string(w);
+		mVariables["screen.height"] = std::to_string(h);
+		mVariables["screen.ratio"] = nearName;
+		mVariables["screen.vertical"] = (h > w) ? "true" : "false";
+	}
+
 	pugi::xml_document doc;
 	pugi::xml_parse_result res = doc.load_file(path.c_str());
 	if(!res)
@@ -869,6 +907,25 @@ bool ThemeData::parseFilterAttributes(const pugi::xml_node& node)
 
 	if (!parseLanguage(node))
 		return false;
+
+	if (node.attribute("if"))
+	{
+		// Batocera: <x if="{screen.ratio} == '4/3'">, false -> node dropped
+		const std::string ifAttr = resolvePlaceholders(node.attribute("if").as_string());
+		if (!ifAttr.empty())
+		{
+			try
+			{
+				if (!Utils::ThemeExpr::evaluate(ifAttr, mVariables))
+					return false;
+			}
+			catch (const std::exception& e)
+			{
+				LOG(LogWarning) << "if \"" << ifAttr << "\" expression is invalid : " << e.what();
+				return false;
+			}
+		}
+	}
 
 	if (node.attribute("tinyScreen"))
 	{
