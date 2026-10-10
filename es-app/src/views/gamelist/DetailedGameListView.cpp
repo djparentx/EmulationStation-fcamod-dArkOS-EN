@@ -405,6 +405,9 @@ void DetailedGameListView::updateInfoPanel()
 			if (elem == nullptr)
 				continue;
 
+			if (elem->has("visible:expr"))
+				extra->setVisible(ThemeGameBindings::evaluateCondition(elem->get<std::string>("visible:expr"), file, file->getSystem()));
+
 			if (elem->has("path"))
 			{
 				std::string resolved = ThemeGameBindings::resolve(elem->get<std::string>("path"), file, file->getSystem());

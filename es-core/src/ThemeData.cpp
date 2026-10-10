@@ -1361,7 +1361,8 @@ void ThemeData::parseElement(const pugi::xml_node& root, const std::map<std::str
 		else
 			type = typeIt->second;
 		
-		if (!overwrite && element.properties.find(node.name()) != element.properties.cend())
+		if (!overwrite && (element.properties.find(node.name()) != element.properties.cend() ||
+			element.properties.find(std::string(node.name()) + ":expr") != element.properties.cend()))
 			continue;
 
 		std::string str = resolveSystemVariable(mSystemThemeFolder, resolvePlaceholders(node.text().as_string()));
@@ -1489,6 +1490,18 @@ void ThemeData::parseElement(const pugi::xml_node& root, const std::map<std::str
 
 		case BOOLEAN:
 		{
+			// Batocera binding expression, e.g. <visible>!exists({game:video})</visible> -
+			// evaluated per game at runtime (DetailedGameListView), so keep it as a string
+			// under "<name>:expr". Last definition wins between plain and expression forms.
+			const std::string exprKey = std::string(node.name()) + ":expr";
+			if (str.find("{game:") != std::string::npos || str.find("{system:") != std::string::npos || str.find('(') != std::string::npos)
+			{
+				element.properties.erase(node.name());
+				element.properties[exprKey] = str;
+				break;
+			}
+			element.properties.erase(exprKey);
+
 			// only look at first char
 			char first = str[0];
 			// 1*, t* (true), T* (True), y* (yes), Y* (YES)

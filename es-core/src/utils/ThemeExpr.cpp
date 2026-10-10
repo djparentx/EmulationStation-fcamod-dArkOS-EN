@@ -1,9 +1,13 @@
 #include "utils/ThemeExpr.h"
+#include "utils/FileSystemUtil.h"
+#include "EsLocale.h"
 
 #include <cctype>
 #include <cstdlib>
 #include <cstring>
+#include <sstream>
 #include <stdexcept>
+#include <vector>
 
 namespace Utils
 {
@@ -50,6 +54,45 @@ namespace Utils
 			return !v.str.empty() && v.str != "false";
 		}
 
+		static std::string formatSeconds(int totalSeconds)
+		{
+			if (totalSeconds < 0)
+				totalSeconds = 0;
+
+			int hours = totalSeconds / 3600;
+			int minutes = (totalSeconds % 3600) / 60;
+
+			std::ostringstream ss;
+			if (hours > 0)
+				ss << hours << "h ";
+			ss << minutes << "m";
+			return ss.str();
+		}
+
+		static Value callFunction(const std::string& name, const std::vector<Value>& args)
+		{
+			auto arg = [&](size_t i) -> const Value&
+			{
+				if (i >= args.size())
+					throw std::runtime_error(name + "() missing argument");
+				return args[i];
+			};
+
+			if (name == "empty")
+				return makeBool(arg(0).str.empty());
+
+			if (name == "exists")
+				return makeBool(!arg(0).str.empty() && Utils::FileSystem::exists(arg(0).str));
+
+			if (name == "translate")
+				return makeValue(EsLocale::getText(arg(0).str));
+
+			if (name == "formatseconds" || name == "expandseconds")
+				return makeValue(formatSeconds((int)atof(arg(0).str.c_str())));
+
+			throw std::runtime_error("unknown function " + name + "()");
+		}
+
 		class Parser
 		{
 		public:
@@ -57,7 +100,7 @@ namespace Utils
 
 			Value parse()
 			{
-				Value v = parseOr();
+				Value v = parseTernary();
 				skipSpaces();
 				if (mPos != mExpr.size())
 					throw std::runtime_error("unexpected character at position " + std::to_string(mPos));
@@ -85,6 +128,20 @@ namespace Utils
 					return true;
 				}
 				return false;
+			}
+
+			Value parseTernary()
+			{
+				Value cond = parseOr();
+				if (!match("?"))
+					return cond;
+
+				Value a = parseTernary();
+				if (!match(":"))
+					throw std::runtime_error("missing ':' in ternary");
+				Value b = parseTernary();
+
+				return truthy(cond) ? a : b;
 			}
 
 			Value parseOr()
@@ -167,7 +224,7 @@ namespace Utils
 				if (c == '(')
 				{
 					mPos++;
-					Value v = parseOr();
+					Value v = parseTernary();
 					if (!match(")"))
 						throw std::runtime_error("missing ')'");
 					return v;
@@ -194,7 +251,7 @@ namespace Utils
 					return makeValue(it != mVars.cend() ? it->second : "");
 				}
 
-				// bare token: number, true/false, or unquoted word
+				// bare token: number, true/false, function call, or unquoted word
 				size_t start = mPos;
 				while (mPos < mExpr.size() && (isalnum((unsigned char)mExpr[mPos]) || mExpr[mPos] == '.' || mExpr[mPos] == '-' || mExpr[mPos] == '_'))
 					mPos++;
@@ -203,6 +260,25 @@ namespace Utils
 					throw std::runtime_error(std::string("unexpected character '") + c + "'");
 
 				std::string tok = mExpr.substr(start, mPos - start);
+
+				skipSpaces();
+				if (mPos < mExpr.size() && mExpr[mPos] == '(')
+				{
+					mPos++;
+					std::vector<Value> args;
+					if (!match(")"))
+					{
+						do
+						{
+							args.push_back(parseTernary());
+						} while (match(","));
+
+						if (!match(")"))
+							throw std::runtime_error("missing ')' after " + tok + "(");
+					}
+					return callFunction(tok, args);
+				}
+
 				if (tok == "true")  return makeBool(true);
 				if (tok == "false") return makeBool(false);
 				return makeValue(tok);
@@ -213,6 +289,12 @@ namespace Utils
 		{
 			Parser parser(expr, vars);
 			return truthy(parser.parse());
+		}
+
+		std::string evaluateToString(const std::string& expr, const std::map<std::string, std::string>& vars)
+		{
+			Parser parser(expr, vars);
+			return parser.parse().str;
 		}
 	}
 }
