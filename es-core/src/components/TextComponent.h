@@ -63,6 +63,8 @@ public:
 	bool getAutoScroll() { return mAutoScroll; }
 	void setAutoScroll(bool value);
 
+	void onShow() override;
+
 protected:
 	virtual void onTextChanged();
 
@@ -101,6 +103,15 @@ private:
 	int mMarqueeTime;
 
 	bool mAutoScroll;
+
+	// theme <autoScroll>vertical</autoScroll> - Batocera semantics
+	void resetVerticalScroll();
+	bool  mVerticalScroll;
+	int   mAutoScrollDelay;   // ms before scrolling starts
+	int   mAutoScrollSpeed;   // ms per 1px step
+	float mVScrollOffset;     // px scrolled
+	int   mVScrollTime;       // accumulator, starts at -delay
+	int   mVScrollHold;       // ms held at bottom before reset
 };
 
 #endif // ES_CORE_COMPONENTS_TEXT_COMPONENT_H

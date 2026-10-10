@@ -5,6 +5,11 @@
 #include "Log.h"
 #include "Settings.h"
 
+// Batocera defaults for <autoScroll>vertical</autoScroll>
+#define AUTO_SCROLL_DELAY        6000 // ms before scrolling starts
+#define AUTO_SCROLL_SPEED        150  // ms per 1px step
+#define AUTO_SCROLL_RESET_DELAY  6000 // ms held at bottom before resetting to top
+
 TextComponent::TextComponent(Window* window) : GuiComponent(window),
 	mFont(Font::get(FONT_SIZE_MEDIUM)), mUppercase(false), mColor(0x000000FF), mAutoCalcExtent(true, true),
 	mHorizontalAlignment(ALIGN_LEFT), mVerticalAlignment(ALIGN_CENTER), mLineSpacing(1.5f), mBgColor(0),
@@ -16,7 +21,10 @@ TextComponent::TextComponent(Window* window) : GuiComponent(window),
 	mMarqueeTime = 0;
 
 	mAutoScroll = false;
-
+	mVerticalScroll = false;
+	mAutoScrollDelay = AUTO_SCROLL_DELAY;
+	mAutoScrollSpeed = AUTO_SCROLL_SPEED;
+	resetVerticalScroll();
 }
 
 TextComponent::TextComponent(Window* window, const std::string& text, const std::shared_ptr<Font>& font, unsigned int color, Alignment align,
@@ -33,11 +41,17 @@ TextComponent::TextComponent(Window* window, const std::string& text, const std:
 	setPosition(pos);
 	setSize(size);
 
+	setSize(size);
+
 	mMarqueeOffset = 0;
 	mMarqueeOffset2 = 0;
 	mMarqueeTime = 0;
 
 	mAutoScroll = false;
+	mVerticalScroll = false;
+	mAutoScrollDelay = AUTO_SCROLL_DELAY;
+	mAutoScrollSpeed = AUTO_SCROLL_SPEED;
+	resetVerticalScroll();
 }
 
 void TextComponent::onSizeChanged()
@@ -106,6 +120,7 @@ void TextComponent::setText(const std::string& text)
 	mMarqueeOffset = 0;
 	mMarqueeOffset2 = 0;
 	mMarqueeTime = 0;
+	resetVerticalScroll();
 
 	onTextChanged();
 }
@@ -174,7 +189,8 @@ void TextComponent::render(const Transform4x4f& parentTrans)
 		Renderer::drawRect(0.0f, 0.0f, mSize.x(), mSize.y(), bgColor, bgColor);
 	}
 
-	if (mAutoScroll)
+	const bool clip = mAutoScroll || mVerticalScroll;
+	if (clip)
 		Renderer::pushClipRect(Vector2i(trans.translation().x(), trans.translation().y()), Vector2i(mSize.x(), mSize.y()));
 
 	if (mTextCache && mFont)
@@ -193,6 +209,7 @@ void TextComponent::render(const Transform4x4f& parentTrans)
 			yOff = (getSize().y() - textSize.y()) / 2.0f;
 			break;
 		}
+		yOff -= mVScrollOffset;
 		Vector3f off(mPadding.x(), mPadding.y() + yOff, 0);
 
 		if (Settings::getInstance()->getBool("DebugText"))
@@ -282,9 +299,10 @@ void TextComponent::render(const Transform4x4f& parentTrans)
 			mFont->renderGradientTextCache(mTextCache.get(), colorB, colorT);
 		}
 
-		if (mAutoScroll)
-			Renderer::popClipRect();
 	}
+
+	if (clip)
+		Renderer::popClipRect();
 }
 
 void TextComponent::calculateExtent()
@@ -357,6 +375,36 @@ void TextComponent::onTextChanged()
 void TextComponent::update(int deltaTime)
 {
 	GuiComponent::update(deltaTime);
+
+	if (mVerticalScroll)
+	{
+		const float limit = mSize.y() - mPadding.y() - mPadding.w();
+		const float textLength = mTextCache ? mTextCache->metrics.size.y() : 0.0f;
+
+		if (limit <= 0 || textLength <= limit)
+		{
+			resetVerticalScroll();
+			return;
+		}
+
+		if (mVScrollOffset + limit >= textLength)
+		{
+			// reached the bottom - hold, then jump back to the top and wait again
+			mVScrollOffset = textLength - limit;
+			mVScrollHold += deltaTime;
+			if (mVScrollHold >= AUTO_SCROLL_RESET_DELAY)
+				resetVerticalScroll();
+			return;
+		}
+
+		mVScrollTime += deltaTime;
+		while (mVScrollTime >= mAutoScrollSpeed)
+		{
+			mVScrollOffset += 1;
+			mVScrollTime -= mAutoScrollSpeed;
+		}
+		return;
+	}
 
 	int sy = mSize.y() - mPadding.y() - mPadding.w();
 	const bool isMultiline = !mAutoScroll && (mSize.y() == 0 || sy > mFont->getHeight()*1.95f);
@@ -537,10 +585,26 @@ void TextComponent::applyThemeWithType(const std::shared_ptr<ThemeData>& theme, 
 		else
 			mReflectOnBorders = false;
 
+		mVerticalScroll = false;
+
 		if (elem->has("singleLineScroll"))
 			mAutoScroll = elem->get<bool>("singleLineScroll");
+		else if (elem->has("autoScroll"))
+		{
+			const std::string autoScroll = elem->get<std::string>("autoScroll");
+			mAutoScroll = (autoScroll == "horizontal");
+			mVerticalScroll = (autoScroll == "vertical");
+		}
 		else
 			mAutoScroll = false;
+
+		if (elem->has("autoScrollDelay"))
+			mAutoScrollDelay = (int)Math::clamp(elem->get<float>("autoScrollDelay"), 0.0f, 1000000.0f);
+
+		if (elem->has("autoScrollSpeed"))
+			mAutoScrollSpeed = (int)Math::clamp(elem->get<float>("autoScrollSpeed"), 10.0f, 1000000.0f);
+
+		resetVerticalScroll();
 	}
 
 	setFont(Font::getFromTheme(elem, properties, mFont));
@@ -553,4 +617,17 @@ void TextComponent::setAutoScroll(bool value)
 
 	mAutoScroll = value;
 	onTextChanged();
+}
+
+void TextComponent::resetVerticalScroll()
+{
+	mVScrollOffset = 0;
+	mVScrollTime = -mAutoScrollDelay;
+	mVScrollHold = 0;
+}
+
+void TextComponent::onShow()
+{
+	GuiComponent::onShow();
+	resetVerticalScroll();
 }
