@@ -923,8 +923,6 @@ bool ThemeData::parseFilterAttributes(const pugi::xml_node& node)
 					if (selectedSubset == Utils::String::trim(value))
 						hasValue = true;
 
-				LOG(LogInfo) << "[ThemeDebug] ifSubset check subset=" << subsetToFind << " selected=\"" << selectedSubset << "\" requiredAnyOf=\"" << subsetValue << "\" result=" << hasValue;
-
 				if (!hasValue)
 					return false;
 			}
@@ -1355,6 +1353,15 @@ void ThemeData::parseElement(const pugi::xml_node& root, const std::map<std::str
 			break;
 		case PATH:
 		{
+			// {game:xxx} / {system:xxx} binding tokens are resolved per-selection at runtime
+			// (ThemeGameBindings), not file paths - store them verbatim instead of resolving
+			// against the theme dir and dropping them when the "file" doesn't exist
+			if (str.find("{game:") != std::string::npos || str.find("{system:") != std::string::npos)
+			{
+				element.properties[node.name()] = str;
+				break;
+			}
+
 			std::string path = Utils::FileSystem::resolveRelativePath(str, Utils::FileSystem::getParent(mPaths.back()), true);
 			
 			if (Utils::String::startsWith(path, "{random"))
