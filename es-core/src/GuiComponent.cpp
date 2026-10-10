@@ -104,6 +104,8 @@ bool GuiComponent::startStoryboard(const std::string& event, const std::function
 	if (it == mStoryboards.cend())
 		return false;
 
+	LOG(LogInfo) << "[SBDebug] start tag=" << getTag() << " event=" << event;
+
 	if (!mStoryboardBaseCaptured)
 	{
 		mBaseOpacity = mOpacity;
