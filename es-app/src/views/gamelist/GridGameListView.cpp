@@ -561,6 +561,7 @@ void GridGameListView::initMDValues()
 void GridGameListView::updateInfoPanel()
 {
 	FileData* file = (mGrid.size() == 0 || mGrid.isScrolling()) ? NULL : mGrid.getSelected();
+	updateThemeExtrasBindings(file);
 
 	bool fadingOut;
 	if (file == NULL)

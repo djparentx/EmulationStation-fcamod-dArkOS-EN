@@ -1,6 +1,6 @@
 #include <string>
 #include "views/gamelist/DetailedGameListView.h"
-#include "ThemeGameBindings.h"
+#include "BindingManager.h"
 #include "Log.h"
 #include "animations/LambdaAnimation.h"
 
@@ -405,52 +405,13 @@ void DetailedGameListView::updateInfoPanel()
 			mPlayCount.setValue(getMetadata(file, "playcount"));
 		}
 
-		for (auto extra : mThemeExtras)
+		updateThemeExtrasBindings(file);
+
+		if (restartStoryboards)
 		{
-			const std::string& tag = extra->getTag();
-			const ThemeData::ThemeElement* elem = getTheme()->getElement(getName(), tag, "");
-			if (elem == nullptr)
-				continue;
-
-			if (elem->has("visible:expr"))
-			{
-				const bool vis = ThemeGameBindings::evaluateCondition(elem->get<std::string>("visible:expr"), file, file->getSystem());
-				extra->setVisible(vis);
-				LOG(LogInfo) << "[SBDebug] visible tag=" << tag << " expr=" << elem->get<std::string>("visible:expr") << " -> " << vis << " video=" << file->getVideoPath();
-			}
-
-			if (elem->has("path"))
-			{
-				std::string resolved = ThemeGameBindings::resolve(elem->get<std::string>("path"), file, file->getSystem());
-				if (resolved != elem->get<std::string>("path"))
-				{
-					auto* img = dynamic_cast<ImageComponent*>(extra);
-					if (img != nullptr)
-					{
-						img->setImage(resolved);
-					}
-					else
-					{
-						auto* vid = dynamic_cast<VideoComponent*>(extra);
-						if (vid != nullptr)
-							vid->setVideo(resolved);
-					}
-				}
-			}
-
-			if (elem->has("text"))
-			{
-				std::string resolved = ThemeGameBindings::resolve(elem->get<std::string>("text"), file, file->getSystem());
-				if (resolved != elem->get<std::string>("text"))
-				{
-					auto* txt = dynamic_cast<TextComponent*>(extra);
-					if (txt != nullptr)
-						txt->setText(resolved);
-				}
-			}
-
-			if (restartStoryboards && extra->hasStoryboard("activate"))
-				extra->startStoryboard("activate", [file](const std::string& expr) { return ThemeGameBindings::evaluateCondition(expr, file, file->getSystem()); });
+			for (auto extra : mThemeExtras)
+				if (extra->hasStoryboard("activate"))
+					extra->startStoryboard("activate", [file](const std::string& expr) { return BindingManager::evaluateBoolean(expr, file); });
 		}
 		
 		fadingOut = false;
@@ -487,7 +448,7 @@ void DetailedGameListView::updateInfoPanel()
 		if (comp->hasStoryboard("activate"))
 		{
 			if (restartStoryboards)
-				comp->startStoryboard("activate", [file](const std::string& expr) { return ThemeGameBindings::evaluateCondition(expr, file, file->getSystem()); });
+				comp->startStoryboard("activate", [file](const std::string& expr) { return BindingManager::evaluateBoolean(expr, file); });
 			continue;
 		}
 

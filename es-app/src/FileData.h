@@ -5,6 +5,7 @@
 
 #include "utils/FileSystemUtil.h"
 #include "MetaData.h"
+#include "BindingManager.h"
 #include <unordered_map>
 
 class SystemData;
@@ -29,7 +30,7 @@ enum FileChangeType
 class FolderData;
 
 // A tree node that holds information for a file.
-class FileData
+class FileData : public IBindable
 {
 public:
 	FileData(FileType type, const std::string& path, SystemData* system);
@@ -89,6 +90,11 @@ public:
 	
 	std::string getMetadata(const std::string& key) { return getMetadata().get(key); }
 	void setMetadata(const std::string& key, const std::string& value) { getMetadata().set(key, value); }
+
+	// theme bindings {game:xxx} (AmberELEC IBindable)
+	BindableProperty getProperty(const std::string& name) override;
+	std::string getBindableTypeName() override { return "game"; }
+	IBindable* getBindableParent() override;
 
 private:
 	MetaDataList mMetadata;

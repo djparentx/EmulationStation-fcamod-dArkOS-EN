@@ -10,6 +10,7 @@
 #include "renderers/Renderer.h"
 #include "ThemeData.h"
 #include "Window.h"
+#include "utils/StringUtil.h"
 #include <algorithm>
 
 bool GuiComponent::ALLOWANIMATIONS = true;
@@ -518,6 +519,7 @@ void GuiComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const std
 		return;
 
 	setStoryboards(elem->storyboards);
+	loadBindingExpressions(elem);
 
 	using namespace ThemeFlags;
 	if(properties & POSITION && elem->has("pos"))
@@ -567,6 +569,116 @@ void GuiComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const std
 		setVisible(elem->get<bool>("visible"));
 	else
 		setVisible(true);
+}
+
+void GuiComponent::loadBindingExpressions(const ThemeData::ThemeElement* elem)
+{
+	mBindingExpressions.clear();
+
+	if (elem == nullptr)
+		return;
+
+	static const std::string suffix = "_binding";
+
+	for (const auto& prop : elem->properties)
+		if (prop.second.type == ThemeData::ThemeElement::Property::PropertyType::String && Utils::String::endsWith(prop.first, suffix))
+			mBindingExpressions[prop.first.substr(0, prop.first.size() - suffix.size())] = prop.second.s;
+}
+
+ThemeData::ThemeElement::Property GuiComponent::getProperty(const std::string name)
+{
+	Vector2f scale = getParent() ? getParent()->getSize() : Vector2f((float)Renderer::getScreenWidth(), (float)Renderer::getScreenHeight());
+
+	if (name == "pos")
+		return Vector2f(mPosition.x() / scale.x(), mPosition.y() / scale.y());
+
+	if (name == "x")
+		return mPosition.x() / scale.x();
+
+	if (name == "y")
+		return mPosition.y() / scale.y();
+
+	if (name == "size")
+		return Vector2f(mSize.x() / scale.x(), mSize.y() / scale.y());
+
+	if (name == "w")
+		return mSize.x() / scale.x();
+
+	if (name == "h")
+		return mSize.y() / scale.y();
+
+	if (name == "origin")
+		return getOrigin();
+
+	if (name == "rotation")
+		return (float)ES_RAD_TO_DEG(getRotation());
+
+	if (name == "rotationOrigin")
+		return getRotationOrigin();
+
+	if (name == "opacity")
+		return mOpacity / 255.0f;
+
+	if (name == "zIndex")
+		return getZIndex();
+
+	if (name == "scale")
+		return mScale.x();
+
+	if (name == "visible")
+		return mVisible;
+
+	ThemeData::ThemeElement::Property unk;
+	unk.type = ThemeData::ThemeElement::Property::PropertyType::Unknown;
+	return unk;
+}
+
+void GuiComponent::setProperty(const std::string name, const ThemeData::ThemeElement::Property& value)
+{
+	typedef ThemeData::ThemeElement::Property::PropertyType PropType;
+
+	Vector2f scale = getParent() ? getParent()->getSize() : Vector2f((float)Renderer::getScreenWidth(), (float)Renderer::getScreenHeight());
+
+	switch (value.type)
+	{
+	case PropType::Pair:
+		if (name == "pos")
+			setPosition(Vector3f(value.v.x() * scale.x(), value.v.y() * scale.y(), 0));
+		else if (name == "size")
+			setSize(Vector2f(value.v.x() * scale.x(), value.v.y() * scale.y()));
+		else if (name == "origin")
+			setOrigin(value.v);
+		else if (name == "rotationOrigin")
+			setRotationOrigin(value.v);
+		break;
+
+	case PropType::Float:
+		if (name == "x")
+			setPosition(Vector3f(value.f * scale.x(), mPosition.y(), mPosition.z()));
+		else if (name == "y")
+			setPosition(Vector3f(mPosition.x(), value.f * scale.y(), mPosition.z()));
+		else if (name == "w")
+			setSize(Vector2f(value.f * scale.x(), mSize.y()));
+		else if (name == "h")
+			setSize(Vector2f(mSize.x(), value.f * scale.y()));
+		else if (name == "rotation")
+			setRotationDegrees(value.f);
+		else if (name == "zIndex")
+			setZIndex(value.f);
+		else if (name == "opacity")
+			setOpacity((unsigned char)(Math::clamp(value.f, 0.0f, 1.0f) * 255.0f));
+		else if (name == "scale")
+			setScale(Vector3f(value.f, value.f, 1.0f));
+		break;
+
+	case PropType::Bool:
+		if (name == "visible")
+			setVisible(value.b);
+		break;
+
+	default:
+		break;
+	}
 }
 
 void GuiComponent::updateHelpPrompts()

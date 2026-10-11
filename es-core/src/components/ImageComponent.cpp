@@ -562,6 +562,7 @@ void ImageComponent::applyThemeWithType(const std::shared_ptr<ThemeData>& theme,
 	}
 
 	setStoryboards(elem->storyboards);
+	loadBindingExpressions(elem);
 
 	if (elem->has("linearSmooth"))
 		mLinear = elem->get<bool>("linearSmooth");
@@ -770,4 +771,64 @@ void ImageComponent::update(int deltaTime)
 bool ImageComponent::isTiled()
 { 
 	return mTexture != nullptr && mTexture->isTiled(); 
+}
+
+// theme bindings (AmberELEC ImageComponent::getProperty / setProperty)
+ThemeData::ThemeElement::Property ImageComponent::getProperty(const std::string name)
+{
+	Vector2f scale = getParent() ? getParent()->getSize() : Vector2f((float)Renderer::getScreenWidth(), (float)Renderer::getScreenHeight());
+
+	if (name == "maxSize" || name == "minSize")
+		return Vector2f(mSize.x() / scale.x(), mSize.y() / scale.y());
+	else if (name == "color")
+		return mColorShift;
+	else if (name == "colorEnd")
+		return mColorShiftEnd;
+	else if (name == "roundCorners")
+		return mRoundCorners;
+	else if (name == "path")
+		return mPath;
+	else if (name == "default")
+		return mDefaultPath;
+	else if (name == "autoFade")
+		return mAllowFading;
+
+	return GuiComponent::getProperty(name);
+}
+
+void ImageComponent::setProperty(const std::string name, const ThemeData::ThemeElement::Property& value)
+{
+	typedef ThemeData::ThemeElement::Property::PropertyType PropType;
+
+	Vector2f scale = getParent() ? getParent()->getSize() : Vector2f((float)Renderer::getScreenWidth(), (float)Renderer::getScreenHeight());
+
+	if (value.type == PropType::Float && name == "w")
+	{
+		mTargetSize = Vector2f(value.f * scale.x(), mTargetSize.y());
+		resize();
+	}
+	else if (value.type == PropType::Float && name == "h")
+	{
+		mTargetSize = Vector2f(mTargetSize.x(), value.f * scale.y());
+		resize();
+	}
+	else if (value.type == PropType::Pair && (name == "maxSize" || name == "minSize"))
+	{
+		mTargetSize = Vector2f(value.v.x() * scale.x(), value.v.y() * scale.y());
+		resize();
+	}
+	else if (value.type == PropType::Int && name == "color")
+		setColorShift(value.i);
+	else if (value.type == PropType::Int && name == "colorEnd")
+		setColorShiftEnd(value.i);
+	else if (value.type == PropType::Bool && name == "autoFade")
+		setAllowFading(value.b);
+	else if (value.type == PropType::Float && name == "roundCorners")
+		setRoundCorners(value.f);
+	else if (value.type == PropType::String && name == "default")
+		setDefaultImage(value.s);
+	else if (value.type == PropType::String && name == "path")
+		setImage(value.s);
+	else
+		GuiComponent::setProperty(name, value);
 }

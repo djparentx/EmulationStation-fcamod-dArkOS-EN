@@ -96,6 +96,9 @@ public:
 
 	virtual void applyTheme(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties) override;
 
+	ThemeData::ThemeElement::Property getProperty(const std::string name) override;
+	void setProperty(const std::string name, const ThemeData::ThemeElement::Property& value) override;
+
 protected:
 	// Same as applyTheme() but looks up the theme element with theme->getElement(view, element,
 	// expectedType) instead of the hardcoded "image" - used by subclasses (BatteryIconComponent,

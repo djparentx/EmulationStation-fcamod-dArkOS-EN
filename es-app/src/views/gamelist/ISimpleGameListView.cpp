@@ -7,6 +7,7 @@
 #include "Settings.h"
 #include "Sound.h"
 #include "SystemData.h"
+#include "BindingManager.h"
 
 ISimpleGameListView::ISimpleGameListView(Window* window, FolderData* root) : IGameListView(window, root),
 	mHeaderText(window), mHeaderImage(window), mBackground(window)
@@ -326,6 +327,15 @@ std::vector<std::string> ISimpleGameListView::getEntriesLetters()
 
 	std::vector<std::string> letters(setOfLetters.begin(), setOfLetters.end());
 	return letters;
+}
+
+void ISimpleGameListView::updateThemeExtrasBindings(FileData* file)
+{
+	if (file == nullptr)
+		return;
+
+	for (auto extra : mThemeExtras)
+		BindingManager::updateBindings(extra, file);
 }
 
 

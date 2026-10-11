@@ -13,6 +13,7 @@
 #include "AudioManager.h"
 #include "components/VideoComponent.h"
 #include "components/VideoVlcComponent.h"
+#include "BindingManager.h"
 #include <random>
 #include "guis/GuiTextEditPopupKeyboard.h"
 #include "guis/GuiTextEditPopup.h"
@@ -295,6 +296,10 @@ void SystemView::populate()
 			}
 		}
 	
+		// resolve {system:xxx} theme bindings (AmberELEC)
+		for (auto extra : e.data.backgroundExtras)
+			BindingManager::updateBindings(extra, *it);
+
 		// sort the extras by z-index
 		std::stable_sort(e.data.backgroundExtras.begin(), e.data.backgroundExtras.end(), [](GuiComponent* a, GuiComponent* b) {
 			return b->getZIndex() > a->getZIndex();
@@ -1421,7 +1426,11 @@ void SystemView::activateExtras(int cursor, bool activate)
 	{
 		GuiComponent *extra = data.backgroundExtras[j];
 		if (show && activate)
+		{
+			// refresh bindings - {system:total}, {global:xxx} may have changed since populate()
+			BindingManager::updateBindings(extra, mEntries.at(cursor).object);
 			extra->onShow();
+		}
 		else
 			extra->onHide();
 	}

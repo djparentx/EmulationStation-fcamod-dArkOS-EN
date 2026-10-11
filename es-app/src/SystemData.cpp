@@ -962,3 +962,48 @@ SystemData* SystemData::getSystem(const std::string name)
 
 	return nullptr;
 }
+
+// theme bindings {system:xxx} (AmberELEC SystemData::getProperty, adapted to this fork)
+BindableProperty SystemData::getProperty(const std::string& name)
+{
+	if (name == "name")
+		return getName();
+
+	if (name == "fullName")
+		return getFullName();
+
+	if (name == "manufacturer")
+		return getSystemMetadata().manufacturer;
+
+	if (name == "theme")
+		return getThemeFolder();
+
+	if (name == "releaseYear")
+		return getSystemMetadata().releaseYear <= 0 ? std::string() : std::to_string(getSystemMetadata().releaseYear);
+
+	if (name == "hardwareType")
+		return getSystemMetadata().hardwareType;
+
+	if (name == "collection")
+		return isCollection();
+
+	if (name == "command")
+		return mEnvData != nullptr ? mEnvData->mLaunchCommand : std::string();
+
+	if (name == "image" || name == "logo")
+	{
+		if (mTheme != nullptr)
+		{
+			const ThemeData::ThemeElement* logoElem = mTheme->getElement("system", "logo", "image");
+			if (logoElem && logoElem->has("path"))
+				return BindableProperty(logoElem->get<std::string>("path"), BindablePropertyType::Path);
+		}
+
+		return BindableProperty("", BindablePropertyType::Path);
+	}
+
+	if (name == "total")
+		return (int)getGameCount();
+
+	return BindableProperty::Null;
+}

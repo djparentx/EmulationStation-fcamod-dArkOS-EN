@@ -292,6 +292,7 @@ void VideoGameListView::initMDValues()
 void VideoGameListView::updateInfoPanel()
 {
 	FileData* file = (mList.size() == 0 || mList.isScrolling()) ? NULL : mList.getSelected();
+	updateThemeExtrasBindings(file);
 
 	Utils::FileSystem::removeFile(getTitlePath());
 

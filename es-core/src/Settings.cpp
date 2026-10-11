@@ -406,3 +406,20 @@ SETTINGS_GETSET(bool, mBoolMap, getBool, setBool, false);
 SETTINGS_GETSET(int, mIntMap, getInt, setInt, 0);
 SETTINGS_GETSET(float, mFloatMap, getFloat, setFloat, 0.0f);
 SETTINGS_GETSET(const std::string&, mStringMap, getString, setString, mEmptyString);
+
+Settings::SettingType Settings::getSettingType(const std::string& name)
+{
+	if (mBoolMap.find(name) != mBoolMap.cend())
+		return SettingType::Bool;
+
+	if (mIntMap.find(name) != mIntMap.cend())
+		return SettingType::Int;
+
+	if (mFloatMap.find(name) != mFloatMap.cend())
+		return SettingType::Float;
+
+	if (mStringMap.find(name) != mStringMap.cend())
+		return SettingType::String;
+
+	return SettingType::Unknown;
+}

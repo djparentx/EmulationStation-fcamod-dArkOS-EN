@@ -28,6 +28,10 @@ public:
 
 	std::map<std::string, std::string>& getStringMap() { return mStringMap; }
 
+	// AmberELEC theme bindings: {settings:xxx}
+	enum class SettingType { Unknown, Bool, Int, Float, String };
+	SettingType getSettingType(const std::string& name);
+
 private:
 	static Settings* sInstance;
 

@@ -189,12 +189,34 @@ public:
 
 		struct Property
 		{
-			void operator= (const Vector2f& value)     { v = value; }
-			void operator= (const std::string& value)  { s = value; }
-			void operator= (const unsigned int& value) { i = value; }
-			void operator= (const float& value)        { f = value; }
-			void operator= (const bool& value)         { b = value; }
-			void operator= (const Vector4f& value)     { r = value; v = Vector2f(value.x(), value.y()); }
+		public:
+			// AmberELEC: typed so theme bindings / storyboards can get/set component properties generically
+			enum PropertyType
+			{
+				String,
+				Int,
+				Float,
+				Bool,
+				Pair,
+				Rect,
+
+				Unknown
+			};
+
+			Property() { i = 0; f = 0; b = false; type = PropertyType::String; };
+			Property(const Vector2f& value)     { i = 0; f = 0; b = false; v = value; type = PropertyType::Pair; };
+			Property(const std::string& value)  { i = 0; f = 0; b = false; s = value; type = PropertyType::String; };
+			Property(const unsigned int& value) { i = value; f = 0; b = false; type = PropertyType::Int; };
+			Property(const float& value)        { i = 0; f = value; b = false; type = PropertyType::Float; };
+			Property(const bool& value)         { i = 0; f = 0; b = value; type = PropertyType::Bool; };
+			Property(const Vector4f& value)     { i = 0; f = 0; b = false; r = value; v = Vector2f(value.x(), value.y()); type = PropertyType::Rect; };
+
+			void operator= (const Vector2f& value)     { v = value; type = PropertyType::Pair; }
+			void operator= (const std::string& value)  { s = value; type = PropertyType::String; }
+			void operator= (const unsigned int& value) { i = value; type = PropertyType::Int; }
+			void operator= (const float& value)        { f = value; type = PropertyType::Float; }
+			void operator= (const bool& value)         { b = value; type = PropertyType::Bool; }
+			void operator= (const Vector4f& value)     { r = value; v = Vector2f(value.x(), value.y()); type = PropertyType::Rect; }
 
 			Vector2f     v;
 			std::string  s;
@@ -202,6 +224,7 @@ public:
 			float        f;
 			bool         b;
 			Vector4f     r;
+			PropertyType type;
 		};
 
 		std::map< std::string, Property > properties;

@@ -73,6 +73,9 @@ public:
 
 	virtual void applyTheme(const std::shared_ptr<ThemeData>& theme, const std::string& view, const std::string& element, unsigned int properties) override;
 
+	ThemeData::ThemeElement::Property getProperty(const std::string name) override;
+	void setProperty(const std::string name, const ThemeData::ThemeElement::Property& value) override;
+
 	virtual std::vector<HelpPrompt> getHelpPrompts() override;
 
 	virtual void update(int deltaTime);

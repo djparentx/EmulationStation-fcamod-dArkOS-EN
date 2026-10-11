@@ -9,6 +9,7 @@
 #include "HelpStyle.h"
 #include "InputConfig.h"
 #include "EsLocale.h"
+#include "ThemeData.h"
 #include <functional>
 #include <map>
 #include <memory>
@@ -178,6 +179,12 @@ public:
 	void stopStoryboard();
 	void restoreStoryboardBase();
 
+	// theme bindings (AmberELEC): "<property>_binding" expressions, resolved by BindingManager
+	virtual ThemeData::ThemeElement::Property getProperty(const std::string name);
+	virtual void setProperty(const std::string name, const ThemeData::ThemeElement::Property& value);
+	const std::map<std::string, std::string>& getBindingExpressions() const { return mBindingExpressions; }
+	void loadBindingExpressions(const ThemeData::ThemeElement* elem);
+
 protected:
 	void renderChildren(const Transform4x4f& transform) const;
 	void updateSelf(int deltaTime); // updates animations
@@ -206,6 +213,8 @@ protected:
 	bool mVisible;
 
 	bool mStaticExtra;
+
+	std::map<std::string, std::string> mBindingExpressions;
 
 public:
 	const static unsigned char MAX_ANIMATIONS = 4;

@@ -15,6 +15,7 @@
 
 #include "FileFilterIndex.h"
 #include "Settings.h"
+#include "BindingManager.h"
 
 class FileData;
 class FolderData;
@@ -162,7 +163,7 @@ struct SystemEnvironmentData
 	}
 };
 
-class SystemData
+class SystemData : public IBindable
 {
 public:
 	SystemData(const SystemMetadata& metadata, SystemEnvironmentData* envData, bool CollectionSystem = false, bool groupedSystem = false);
@@ -258,6 +259,10 @@ public:
 
 	static std::unordered_set<std::string> getAllGroupNames();
 	static std::unordered_set<std::string> getGroupChildSystemNames(const std::string groupName);
+
+	// theme bindings {system:xxx} (AmberELEC IBindable)
+	BindableProperty getProperty(const std::string& name) override;
+	std::string getBindableTypeName() override { return "system"; }
 
 private:
 	static SystemData* loadSystem(pugi::xml_node system);

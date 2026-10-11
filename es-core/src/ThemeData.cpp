@@ -116,6 +116,7 @@ std::map<std::string, std::map<std::string, ThemeData::ElementPropertyType>> The
 		{ "autoScroll", STRING },
 		{ "autoScrollDelay", FLOAT },
 		{ "autoScrollSpeed", FLOAT },
+		{ "emptyTextDefaults", BOOLEAN },
 		{ "padding", NORMALIZED_RECT },
 		{ "visible", BOOLEAN },
 		{ "zIndex", FLOAT } } },
@@ -1336,6 +1337,12 @@ bool ThemeData::parseRegion(const pugi::xml_node& node)
 	return false;
 }
 
+// AmberELEC: a value containing {type:property} is a binding, resolved per selection by BindingManager
+static bool isBindingExpression(const std::string& str)
+{
+	return str.find('{') != std::string::npos && str.find(':') != std::string::npos && str.find('}') != std::string::npos;
+}
+
 void ThemeData::parseElement(const pugi::xml_node& root, const std::map<std::string, ElementPropertyType>& typeMap, ThemeElement& element, bool overwrite)
 {
 	// ThemeException error;
@@ -1388,7 +1395,7 @@ void ThemeData::parseElement(const pugi::xml_node& root, const std::map<std::str
 			type = typeIt->second;
 		
 		if (!overwrite && (element.properties.find(node.name()) != element.properties.cend() ||
-			element.properties.find(std::string(node.name()) + ":expr") != element.properties.cend()))
+			element.properties.find(std::string(node.name()) + "_binding") != element.properties.cend()))
 			continue;
 
 		std::string str = resolveSystemVariable(mSystemThemeFolder, resolvePlaceholders(node.text().as_string()));
@@ -1436,19 +1443,16 @@ void ThemeData::parseElement(const pugi::xml_node& root, const std::map<std::str
 			break;
 		}
 		case STRING:
-			element.properties[node.name()] = str;
+			if (isBindingExpression(str))
+				element.properties[std::string(node.name()) + "_binding"] = str;
+			else
+			{
+				element.properties.erase(std::string(node.name()) + "_binding");
+				element.properties[node.name()] = str;
+			}
 			break;
 		case PATH:
 		{
-			// {game:xxx} / {system:xxx} binding tokens are resolved per-selection at runtime
-			// (ThemeGameBindings), not file paths - store them verbatim instead of resolving
-			// against the theme dir and dropping them when the "file" doesn't exist
-			if (str.find("{game:") != std::string::npos || str.find("{system:") != std::string::npos)
-			{
-				element.properties[node.name()] = str;
-				break;
-			}
-
 			std::string path = Utils::FileSystem::resolveRelativePath(str, Utils::FileSystem::getParent(mPaths.back()), true);
 			
 			if (Utils::String::startsWith(path, "{random"))
@@ -1470,6 +1474,16 @@ void ThemeData::parseElement(const pugi::xml_node& root, const std::map<std::str
 
 				break;
 			}
+
+			// AmberELEC: {game:image} / {system:theme} ... bindings are resolved per selection (BindingManager)
+			if (isBindingExpression(path))
+			{
+				element.properties[std::string(node.name()) + "_binding"] = path;
+				element.properties[node.name()] = path;
+				break;
+			}
+			else
+				element.properties.erase(std::string(node.name()) + "_binding");
 
 			if (path[0] == '/')
 			{
@@ -1505,28 +1519,37 @@ void ThemeData::parseElement(const pugi::xml_node& root, const std::map<std::str
 			break;
 		}
 		case COLOR:
-			element.properties[node.name()] = getHexColor(str.c_str());
+			if (isBindingExpression(str))
+				element.properties[std::string(node.name()) + "_binding"] = str;
+			else
+			{
+				element.properties.erase(std::string(node.name()) + "_binding");
+				element.properties[node.name()] = getHexColor(str.c_str());
+			}
 			break;
 		case FLOAT:
 		{
-			//float floatVal = atof(str.c_str());  static_cast<float>(strtod(str.c_str(), 0));
-			element.properties[node.name()] = (float) atof(str.c_str()); //floatVal;
+			if (isBindingExpression(str))
+				element.properties[std::string(node.name()) + "_binding"] = str;
+			else
+			{
+				element.properties.erase(std::string(node.name()) + "_binding");
+				element.properties[node.name()] = (float) atof(str.c_str());
+			}
 			break;
 		}
 
 		case BOOLEAN:
 		{
-			// Batocera binding expression, e.g. <visible>!exists({game:video})</visible> -
-			// evaluated per game at runtime (DetailedGameListView), so keep it as a string
-			// under "<name>:expr". Last definition wins between plain and expression forms.
-			const std::string exprKey = std::string(node.name()) + ":expr";
-			if (str.find("{game:") != std::string::npos || str.find("{system:") != std::string::npos || str.find('(') != std::string::npos)
+			// AmberELEC: binding stored as "<name>_binding", evaluated per selection (BindingManager).
+			// Plain function calls without {x:y} tokens, e.g. exists("..."), are evaluated the same way
+			if (isBindingExpression(str) || str.find('(') != std::string::npos)
 			{
-				element.properties.erase(node.name());
-				element.properties[exprKey] = str;
+				element.properties[std::string(node.name()) + "_binding"] = str;
+				element.properties[node.name()] = true;
 				break;
 			}
-			element.properties.erase(exprKey);
+			element.properties.erase(std::string(node.name()) + "_binding");
 
 			// only look at first char
 			char first = str[0];

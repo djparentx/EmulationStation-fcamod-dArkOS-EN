@@ -607,6 +607,12 @@ void TextComponent::applyThemeWithType(const std::shared_ptr<ThemeData>& theme, 
 		resetVerticalScroll();
 	}
 
+	// AmberELEC: on by default, off for children of a container (stackpanel)
+	if (elem->has("emptyTextDefaults"))
+		mBindingDefaults = elem->get<bool>("emptyTextDefaults");
+	else
+		mBindingDefaults = (getParent() == nullptr);
+
 	setFont(Font::getFromTheme(elem, properties, mFont));
 }
 
@@ -630,4 +636,48 @@ void TextComponent::onShow()
 {
 	GuiComponent::onShow();
 	resetVerticalScroll();
+}
+
+// theme bindings (AmberELEC TextComponent::getProperty / setProperty)
+ThemeData::ThemeElement::Property TextComponent::getProperty(const std::string name)
+{
+	if (name == "color")
+		return mColor;
+	else if (name == "backgroundColor")
+		return mBgColor;
+	else if (name == "glowColor")
+		return mGlowColor;
+	else if (name == "glowSize")
+		return (float)mGlowSize;
+	else if (name == "lineSpacing")
+		return mLineSpacing;
+	else if (name == "text" || name == "value")
+		return mText;
+
+	return GuiComponent::getProperty(name);
+}
+
+void TextComponent::setProperty(const std::string name, const ThemeData::ThemeElement::Property& value)
+{
+	typedef ThemeData::ThemeElement::Property::PropertyType PropType;
+
+	if (value.type == PropType::Int && name == "color")
+		setColor(value.i);
+	else if (value.type == PropType::Int && name == "backgroundColor")
+	{
+		setBackgroundColor(value.i);
+		setRenderBackground(value.i != 0);
+	}
+	else if (value.type == PropType::Int && name == "glowColor")
+		setGlowColor(value.i);
+	else if (value.type == PropType::Float && name == "glowSize")
+		setGlowSize((unsigned int)value.f);
+	else if (value.type == PropType::Float && name == "lineSpacing")
+		setLineSpacing(value.f);
+	else if (value.type == PropType::String && name == "text")
+		setText(value.s);
+	else if (value.type == PropType::String && name == "value")
+		setValue(value.s);
+	else
+		GuiComponent::setProperty(name, value);
 }

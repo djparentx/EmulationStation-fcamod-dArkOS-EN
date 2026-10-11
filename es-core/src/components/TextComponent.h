@@ -63,6 +63,11 @@ public:
 	bool getAutoScroll() { return mAutoScroll; }
 	void setAutoScroll(bool value);
 
+	// theme bindings (AmberELEC)
+	ThemeData::ThemeElement::Property getProperty(const std::string name) override;
+	void setProperty(const std::string name, const ThemeData::ThemeElement::Property& value) override;
+	bool getBindingDefaults() { return mBindingDefaults; }
+
 	void onShow() override;
 
 protected:
@@ -103,6 +108,9 @@ private:
 	int mMarqueeTime;
 
 	bool mAutoScroll;
+
+	// <emptyTextDefaults>: bound empty / "0" values display as "Unknown" / "None"
+	bool mBindingDefaults = true;
 
 	// theme <autoScroll>vertical</autoScroll> - Batocera semantics
 	void resetVerticalScroll();

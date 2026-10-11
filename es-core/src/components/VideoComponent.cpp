@@ -214,6 +214,7 @@ void VideoComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const s
 	}
 
 	setStoryboards(elem->storyboards);
+	loadBindingExpressions(elem);
 
 	Vector2f scale = getParent() ? getParent()->getSize() : Vector2f((float)Renderer::getScreenWidth(), (float)Renderer::getScreenHeight());
 
@@ -518,4 +519,26 @@ void VideoComponent::setRoundCorners(float value)
 { 
 	mRoundCorners = value; 
 	mStaticImage.setRoundCorners(value);
+}
+
+// theme bindings (AmberELEC VideoComponent::getProperty / setProperty)
+ThemeData::ThemeElement::Property VideoComponent::getProperty(const std::string name)
+{
+	if (name == "path")
+		return mVideoPath;
+
+	return GuiComponent::getProperty(name);
+}
+
+void VideoComponent::setProperty(const std::string name, const ThemeData::ThemeElement::Property& value)
+{
+	if (value.type == ThemeData::ThemeElement::Property::PropertyType::String && name == "path")
+	{
+		if (!value.s.empty() && Utils::FileSystem::exists(value.s))
+			setVideo(value.s);
+		else
+			setVideo(mConfig.defaultVideoPath);
+	}
+	else
+		GuiComponent::setProperty(name, value);
 }
