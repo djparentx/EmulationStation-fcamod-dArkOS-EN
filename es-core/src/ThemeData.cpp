@@ -567,6 +567,9 @@ void ThemeData::loadFile(const std::string system, std::map<std::string, std::st
 	mVariables.clear();
 	mVariables.insert(sysDataMap.cbegin(), sysDataMap.cend());
 	mVariables["lang"] = mLanguage;
+	mVariables["themePath"] = Utils::FileSystem::getParent(mPaths.back());
+	mVariables["currentPath"] = Utils::FileSystem::getParent(mPaths.back());
+	mVariables["root"] = Utils::FileSystem::getParent(mPaths.back());
 
 	// Batocera screen.* variables (used by "if" expressions, e.g. aspect-ratio auto detection)
 	{
